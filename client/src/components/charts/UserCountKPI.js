@@ -27,7 +27,6 @@ const UserCountKPI = () => {
       {stats !== null && !loading ? (
         <Card className={classes.root}>
           <CardHeader
-            key={stats[0].id}
             title={stats[0].statsActive}
             subheader={"Active Users"}
           />
