@@ -22,6 +22,9 @@ export const UPDATE_USER = "UPDATE_USER";
 export const FILTER_USERS = "FILTER_USERS";
 export const CLEAR_USERS = "CLEAR_USERS"
 export const USER_ERROR = "USER_ERROR";
+//KPI & Charts Framework Reducer
+export const GET_STATS = "GET_STATS";
+export const STATS_ERROR = "STATS_ERROR";
 //Alerts Framework Reducer
 export const SET_ALERT = "SET_ALERT";
 export const REMOVE_ALERT = "REMOVE_ALERT";

@@ -19,6 +19,7 @@ import PrivateRoute from "./components/routing/PrivateRoute";
 import AlertState from "./context/alert/AlertState";
 import ContactState from "./context/contact/ContactState";
 import UserAdminState from "./context/userAdmin/UserAdminState";
+import StatsState from "./context/stats/StatsState";
 import AuthState from "./context/auth/AuthState";
 
 if (localStorage.token) {
@@ -29,6 +30,7 @@ const App = () => {
   return (
     <AuthState>
       <ContactState>
+      <StatsState>
         <UserAdminState>
           <AlertState>
             <Router>
@@ -52,7 +54,9 @@ const App = () => {
               </Fragment>
             </Router>
           </AlertState>
+          
         </UserAdminState>
+        </StatsState>
       </ContactState>
     </AuthState>
   );

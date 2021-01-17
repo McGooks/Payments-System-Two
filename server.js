@@ -12,6 +12,7 @@ app.use(express.json({ extended: false }));
 //Define Routes
 app.use("/api/userAdmin", require("./routes/userAdmin"));
 app.use("/api/payments", require("./routes/payments"));
+app.use("/api/stats", require("./routes/stats"))
 app.use("/api/users", require("./routes/users"));
 app.use("/api/auth", require("./routes/auth"));
 

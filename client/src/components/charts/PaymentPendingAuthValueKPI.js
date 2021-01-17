@@ -1,24 +1,43 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
+import React, { useContext, useEffect } from "react";
+import StatsContext from "../../context/stats/statsContext";
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import ProgressIndicator from "../layouts/Spinner";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
-    height: '100%',
+    height: "100%",
+    whiteSpace: "pre-line",
   },
 }));
-
 const PaymentPendingAuthValueKPI = () => {
   const classes = useStyles();
+  const statsContext = useContext(StatsContext);
+  const { stats, getStatData, loading } = statsContext;
+
+  useEffect(() => {
+    getStatData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  console.log(stats)
   return (
-    <Card className={classes.root}>
-      <CardHeader
-        title="£1,159.47"
-        subheader="Pending Authorisation"
-      />
-    </Card>
+    <>
+      {stats !== null && !loading ? (
+        <Card className={classes.root}>
+          <CardHeader
+            key={stats[3].id}
+            title={`£${stats[3].statsPaymentAuthMTD[3].total}`}
+            subheader={"Pending Authorisation"}
+          />
+        </Card>
+      ) : (
+        <ProgressIndicator />
+      )}
+    </>
   );
-}
-export default PaymentPendingAuthValueKPI
+};
+
+export default PaymentPendingAuthValueKPI;

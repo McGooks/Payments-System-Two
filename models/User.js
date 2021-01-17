@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const role = ["user", "admin", "modOwner", "schoolMgmt", "clerical", "adhoc"];
+const role = ["User", "Admin", "Module Owner", "School Management", "Clerical", "Adhoc"];
+const status = ["Pending", "Active", "Disabled", "Expired"]
 const UserSchema = mongoose.Schema({
   createdAt: {
     type: Date,
@@ -62,6 +63,12 @@ const UserSchema = mongoose.Schema({
     type: Date,
     default: "",
   },
+  payment: {
+    type: Number,
+  },
+  payment1: {
+    type: Number,
+  },
   QUBID: {
     type: Number,
     required: true,
@@ -71,10 +78,11 @@ const UserSchema = mongoose.Schema({
     type: String,
     enum: role,
     required: true,
-    default: "user",
+    default: "User",
   },
   status: {
     type: String,
+    enum: status,
     default: "Pending"
   },
   updatedAt: {

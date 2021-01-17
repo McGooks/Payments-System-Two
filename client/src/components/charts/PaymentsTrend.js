@@ -13,6 +13,7 @@ const PaymentTrend = () => {
           [2, 4],
           [3, 2],
           [4, 7],
+          [5, 0],
         ],
       },
       {
@@ -43,9 +44,10 @@ const PaymentTrend = () => {
     <Card>
       <div
         style={{
-          width: "450px",
-          height: "300px",
-          margin: "1rem",
+          width: 450,
+          height: 300,
+          margin: 15,
+          padding: 1
         }}
       >
         <Chart data={data} axes={axes} />

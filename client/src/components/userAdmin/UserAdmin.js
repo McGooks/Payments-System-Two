@@ -1,12 +1,11 @@
 import React, { useContext, Fragment, useEffect } from "react";
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
 import { Grid } from "@material-ui/core";
-import Chip from '@material-ui/core/Chip';
+import Chip from "@material-ui/core/Chip";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
 
 const UserAdmin = () => {
-
   const userAdminContext = useContext(UserAdminContext);
   const { users, getUsers, loading } = userAdminContext;
 
@@ -22,18 +21,18 @@ const UserAdmin = () => {
 
   const CustomChip = ({ label, onDelete }) => {
     return (
-        <Chip
-            variant="outlined"
-            color="secondary"
-            label={label}
-            onDelete={onDelete}
-        />
+      <Chip
+        variant="outlined"
+        color="secondary"
+        label={label}
+        onDelete={onDelete}
+      />
     );
-};
+  };
 
-const CustomFilterList = (props) => {
-  return <TableFilterList {...props} ItemComponent={CustomChip} />;
-};
+  const CustomFilterList = (props) => {
+    return <TableFilterList {...props} ItemComponent={CustomChip} />;
+  };
 
   const options = {
     filter: true,
@@ -141,7 +140,7 @@ const CustomFilterList = (props) => {
                   options={options}
                   components={{
                     TableFilterList: CustomFilterList,
-                  }} 
+                  }}
                 />
               </Grid>
             </Grid>

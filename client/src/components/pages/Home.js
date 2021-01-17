@@ -11,22 +11,20 @@ import PaymentsTrend from "../../components/charts/PaymentsTrend";
 import DemoChart from "../../components/charts/DemoChart";
 //Navigation
 import NavButtonHome from "../../components/layouts/NavButtonHome";
-//Components
-import Contacts from "../contacts/Contacts";
-import ContactForm from "../contacts/ContactForm";
-import ContactFilter from "../contacts/ContactFilter"
 //State
 import AuthContext from "../../context/auth/authContext"
+
 
 const Home = () => {
  const authContext = useContext(AuthContext)
  const { user } = authContext;
 
+
  useEffect(() => {
   authContext.loadUser()
+
  // eslint-disable-next-line react-hooks/exhaustive-deps
  }, [])
-
 
   return (
     <>
@@ -36,13 +34,13 @@ const Home = () => {
       {/*needs to be updated to be conditional based on db records*/}
       <Grid container direction='row' spacing={4} alignItems='stretch' >
         <Grid item xs={12} md sm={6}>
-        <UserCountKPI/>
+        <UserCountKPI key={1}/>
         </Grid>
         <Grid item xs={12} md sm={6}>
-        <PaymentPendingAuthCountKPI />
+        <PaymentPendingAuthCountKPI key={2}/>
         </Grid>
         <Grid item xs={12} md sm={6}>
-        <PaymentPendingAuthValueKPI />
+        <PaymentPendingAuthValueKPI key={3}/>
         </Grid>
         <Grid item xs={12} md sm={6}>
         <PaymentsAuthValueKPI />
@@ -59,14 +57,6 @@ const Home = () => {
           <DemoChart />
         </Grid>
       </Grid>
-    <div className="grid-2">
-      <div>
-        <ContactForm />
-      </div>
-      <div>
-        <ContactFilter/>
-      </div>
-    </div>
     </>
   );
 };

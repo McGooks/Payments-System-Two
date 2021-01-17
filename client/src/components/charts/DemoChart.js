@@ -31,11 +31,12 @@ const PaymentTrend = () => {
     return (
         <Card>
     <div
-      style={{
-        width: '450px',
-        height: '300px',
-        margin: "1rem",
-      }}
+        style={{
+          width: 450,
+          height: 300,
+          margin: 15,
+          padding: 1,
+        }}
     >
         
       <Chart data={data} series={{type: "bar"}} axes={axes} />
