@@ -14,13 +14,14 @@ import {
   CLEAR_FILTER,
   USER_ERROR,
   CLEAR_USERS,
+  CLEAR_ERRORS,
 } from "../types";
 
 const UserAdminState = (props) => {
   const initialState = {
+    loading: true,
     users: null,
     current: null,
-    filtered: null,
     error: null,
   };
 
@@ -32,7 +33,7 @@ const UserAdminState = (props) => {
       const res = await axios.get("/api/userAdmin");
       dispatch({ type: GET_USERS, payload: res.data });
     } catch (error) {
-      dispatch({ type: USER_ERROR, payload: error.response});
+      dispatch({ type: USER_ERROR, payload: error.response.data.msg});
     }
   };
 
@@ -48,7 +49,7 @@ const UserAdminState = (props) => {
       const res = await axios.post("api/userAdmin", user, config);
       dispatch({ type: ADD_USER, payload: res.data });
     } catch (error) {
-      dispatch({ type: USER_ERROR, payload: error.response.msg });
+      dispatch({ type: USER_ERROR, payload: error.response.data.msg });
     }
   };
 
@@ -58,7 +59,7 @@ const UserAdminState = (props) => {
       await axios.delete(`api/userAdmin/${id}`);
       dispatch({ type: DELETE_USER, payload: id });
     } catch (error) {
-      dispatch({ type: USER_ERROR, payload: error.response.msg });
+      dispatch({ type: USER_ERROR, payload: error.response.data.msg});
     }
   };
 
@@ -110,12 +111,16 @@ const UserAdminState = (props) => {
     dispatch({ type: CLEAR_USERS });
   };
 
+  const clearErrors = () => {
+    dispatch({ type: CLEAR_ERRORS });
+  };
+
   return (
     <UserAdminContext.Provider
       value={{
         users: state.users,
+        loading: state.loading,
         current: state.current,
-        filtered: state.filtered,
         error: state.error,
         getUsers,
         addUser,
@@ -123,9 +128,7 @@ const UserAdminState = (props) => {
         setCurrent,
         clearCurrent,
         updateUser,
-        filterUsers,
-        clearFilter,
-        clearUsers,
+        clearUsers
       }}
     >
       {props.children}

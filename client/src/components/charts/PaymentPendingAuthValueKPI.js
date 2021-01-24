@@ -28,7 +28,7 @@ const PaymentPendingAuthValueKPI = () => {
       {stats !== null && !loading ? (
         <Card className={classes.root}>
           <CardHeader
-            title={`£${stats[3].statsPaymentAuthMTD[2].total}`}
+            title={`£${stats[4].statsPaymentAuthMTD[2].total}`}
             subheader={"Pending Authorisation"}
           />
         </Card>

@@ -30,32 +30,35 @@ const App = () => {
   return (
     <AuthState>
       <ContactState>
-      <StatsState>
-        <UserAdminState>
-          <AlertState>
-            <Router>
-              <Fragment>
-                <NavigationBar />
-                <div className="container">
-                  <Alerts />
-                  <Switch>
-                    <PrivateRoute exact path="/" component={Home} />
-                    <PrivateRoute
-                      exact
-                      path="/userAdmin"
-                      component={UserAdmin}
-                    />
-                    <PrivateRoute exact path="/payments" component={Payments} />
-                    <Route exact path="/about" component={About} />
-                    <Route exact path="/register" component={Register} />
-                    <Route exact path="/login" component={Login} />
-                  </Switch>
-                </div>
-              </Fragment>
-            </Router>
-          </AlertState>
-          
-        </UserAdminState>
+        <StatsState>
+          <UserAdminState>
+            <AlertState>
+              <Router>
+                <Fragment>
+                  <NavigationBar />
+                  <div className="container">
+                    <Alerts />
+                    <Switch>
+                      <PrivateRoute exact path="/" component={Home} />
+                      <PrivateRoute
+                        exact
+                        path="/userAdmin"
+                        component={UserAdmin}
+                      />
+                      <PrivateRoute
+                        exact
+                        path="/payments"
+                        component={Payments}
+                      />
+                      <Route exact path="/about" component={About} />
+                      <Route exact path="/register" component={Register} />
+                      <Route exact path="/login" component={Login} />
+                    </Switch>
+                  </div>
+                </Fragment>
+              </Router>
+            </AlertState>
+          </UserAdminState>
         </StatsState>
       </ContactState>
     </AuthState>

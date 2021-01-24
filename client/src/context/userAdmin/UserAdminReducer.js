@@ -8,6 +8,7 @@ import {
   UPDATE_USER,
   FILTER_USERS,
   CLEAR_FILTER,
+  CLEAR_ERRORS,
   USER_ERROR,
   CLEAR_USERS,
 } from "../types";
@@ -31,9 +32,7 @@ export default (state, action) => {
     case DELETE_USER: {
       return {
         ...state,
-        users: state.users.filter(
-          (user) => user._id !== action.payload
-        ),
+        users: state.users.filter((user) => user._id !== action.payload),
         loading: false,
       };
     }
@@ -82,6 +81,11 @@ export default (state, action) => {
         filtered: null,
       };
     }
+    case CLEAR_ERRORS:
+      return {
+        ...state,
+        error: null,
+      };
     case USER_ERROR: {
       return {
         ...state,

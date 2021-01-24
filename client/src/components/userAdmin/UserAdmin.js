@@ -1,16 +1,28 @@
 import React, { useContext, Fragment, useEffect } from "react";
+//Context
+import AlertContext from "../../context/alert/alertContext";
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
+//Components
 import { Grid } from "@material-ui/core";
 import Chip from "@material-ui/core/Chip";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
+import CustomToolbar from "../layouts/CustomToolbar";
 
 const UserAdmin = () => {
   const userAdminContext = useContext(UserAdminContext);
-  const { users, getUsers, loading } = userAdminContext;
+  const alertContext = useContext(AlertContext);
+  const { users, getUsers, deleteUser, loading, error, clearErrors } = userAdminContext;
+  const { setAlert } = alertContext;
 
   useEffect(() => {
     getUsers();
+    console.log(loading ? "Off" : "On")
+
+    if (error === "You cannot delete your own record") {
+      setAlert(error, "danger");
+      clearErrors();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -37,6 +49,10 @@ const UserAdmin = () => {
   const options = {
     filter: true,
     filterType: "dropdown",
+    sortOrder: {
+      name: 'QUBID',
+      direction: 'asc'
+    },
     downloadOptions: {
       filterOptions: {
         useDisplayedColumnsOnly: false,
@@ -49,9 +65,27 @@ const UserAdmin = () => {
     draggableColumns: {
       enabled: true,
     },
+    customToolbar: () => {
+      return <CustomToolbar />;
+    },
+    onRowsDelete: (rows) => {
+      const projectsToDelete = rows.data.map((d) => users[d.dataIndex]);
+      console.log(projectsToDelete)
+      projectsToDelete.map(a => deleteUser(a._id))
+    },
   };
 
   const columns = [
+    {
+      name: "_id",
+      label: "UserId",
+      options: {
+        filter: false,
+        display: false,
+        download: false,
+        sort: false,
+      },
+    },
     {
       name: "QUBID",
       label: "ID",
@@ -124,6 +158,55 @@ const UserAdmin = () => {
         sort: false,
       },
     },
+    {
+      name: "Edit",
+      options: {
+        filter: false,
+        sort: false,
+        empty: true,
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          return (
+            <button
+              onClick={() =>
+                window.alert(
+                  `Clicked "Edit" for row ${rowIndex} with dataIndex of ${dataIndex}`
+                )
+              }
+            >
+              Edit
+            </button>
+          );
+        },
+      },
+    },
+    {
+      name: "Add",
+      options: {
+        filter: false,
+        sort: false,
+        empty: true,
+        customBodyRenderLite: (dataIndex) => {
+          return (
+            <button
+              onClick={() => {
+                const { data } = this.state;
+                data.unshift([
+                  "Mason Ray",
+                  "Computer Scientist",
+                  "San Francisco",
+                  39,
+                  "$142,000",
+                ]);
+                this.setState({ data });
+              }}
+            >
+              Add
+            </button>
+          );
+        },
+      },
+    },
+  
   ];
 
   return (

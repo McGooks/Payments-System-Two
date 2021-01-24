@@ -7,8 +7,8 @@ const auth = require("../middleware/auth");
 const { check, validationResult } = require("express-validator");
 const Stat = require("../models/User");
 
-//@route    GET api/stats/active
-//@desc     Get all active user stats
+//@route    GET api/stats/
+//@desc     Get stats
 //@access   Private
 router.get("/", auth, async (req, res) => {
   try {

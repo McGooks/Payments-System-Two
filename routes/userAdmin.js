@@ -85,12 +85,13 @@ router.put("/:id", auth, async (req, res) => {
 //@access   PRIVATE
 router.delete("/:id", auth, async (req, res) => {
   try {
+    console.log(req.user.id, "my user ID")
+    console.log(req.params.id, "id being passed from the table")
     let user = await User.findById(req.params.id); // find user by ID
     if (!user) return res.status(404).json({ msg: "user not found" });
-    // //ensure user owns user
-    // if (user.user.toString() !== req.user.id) {
-    //   return res.status(401).json({ msg: "Not Authorised" });
-    // }
+    if (req.params.id === req.user.id) {
+      return res.status(401).json({ msg: "You cannot delete your own record" });
+    }
     await User.findByIdAndRemove(
       req.params.id,
       res.json({ msg: "User Removed" })
