@@ -2,19 +2,16 @@ import React, { useContext, useEffect } from "react";
 //Navigation
 import NavButtonUserMgmt from "../../components/layouts/NavButtonUserMgmt"
 //Components
-import Users from "../userAdmin/UserAdmin";
+import UsersAdminTable from "../userAdmin/UserAdmin";
 //State
 import AuthContext from "../../context/auth/authContext";
-import UserAdminContext from "../../context/userAdmin/userAdminContext";
-
 
 const UserAdmin = () => {
   const authContext = useContext(AuthContext);
-
+  const { loadUser } = authContext
 
   useEffect(() => {
-    authContext.loadUser();
-
+    loadUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -22,7 +19,7 @@ const UserAdmin = () => {
     <>
     <NavButtonUserMgmt />
     <div className="grid-1">
-      <Users />
+      <UsersAdminTable />
     </div>
     </>
   );

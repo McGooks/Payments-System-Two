@@ -11,6 +11,8 @@ import {
   CLEAR_ERRORS,
   USER_ERROR,
   CLEAR_USERS,
+  OPEN_DIALOG,
+  CLOSE_DIALOG
 } from "../types";
 
 export default (state, action) => {
@@ -90,6 +92,19 @@ export default (state, action) => {
       return {
         ...state,
         error: action.payload,
+      };
+    }
+    case OPEN_DIALOG: {
+      return {
+        ...state,
+        toggleDialog: true,
+      };
+    }
+    case CLOSE_DIALOG: {
+      return {
+        ...state,
+        current: null,
+        toggleDialog: false,
       };
     }
     default:

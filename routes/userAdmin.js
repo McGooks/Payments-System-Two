@@ -24,20 +24,35 @@ router.get("/", auth, async (req, res) => {
 //@access   PRIVATE
 router.post(
   "/",
-  [auth, [check("name", "Name is required").not().isEmpty()]],
+  [auth, [check("firstName", "First Name is required").not().isEmpty()]],
+  [auth, [check("lastName", "Last Name is required").not().isEmpty()]],
+  [auth, [check("email", "Email is required").not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { name, email, phone, type } = req.body;
+    const {
+      dob,
+      email,
+      firstName,
+      lastName,
+      password,
+      QUBID,
+      role,
+      status,
+    } = req.body;
     try {
       const newUser = new User({
-        name,
+        dob,
         email,
-        phone,
-        type,
-        user: req.user.id,
+        firstName,
+        lastName,
+        password,
+        QUBID,
+        role,
+        status,
+        createdById: req.user.id,
       });
       const user = await newUser.save();
       res.json(user);
@@ -85,8 +100,8 @@ router.put("/:id", auth, async (req, res) => {
 //@access   PRIVATE
 router.delete("/:id", auth, async (req, res) => {
   try {
-    console.log(req.user.id, "my user ID")
-    console.log(req.params.id, "id being passed from the table")
+    console.log(req.user.id, "my user ID");
+    console.log(req.params.id, "id being passed from the table");
     let user = await User.findById(req.params.id); // find user by ID
     if (!user) return res.status(404).json({ msg: "user not found" });
     if (req.params.id === req.user.id) {
@@ -96,7 +111,7 @@ router.delete("/:id", auth, async (req, res) => {
       req.params.id,
       res.json({ msg: "User Removed" })
     );
-  } catch (err) {
+  } catch (error) {
     console.error(err.message);
     res.status(500).send("Server Error");
   }

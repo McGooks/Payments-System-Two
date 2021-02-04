@@ -4,6 +4,7 @@ import AlertContext from "../../context/alert/alertContext";
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
 //Components
 import { Grid } from "@material-ui/core";
+import EditIcon from "@material-ui/icons/Edit";
 import Chip from "@material-ui/core/Chip";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
@@ -12,13 +13,26 @@ import CustomToolbar from "../layouts/CustomToolbar";
 const UserAdmin = () => {
   const userAdminContext = useContext(UserAdminContext);
   const alertContext = useContext(AlertContext);
-  const { users, getUsers, deleteUser, loading, error, clearErrors } = userAdminContext;
+  const {
+    users,
+    getUsers,
+    deleteUser,
+    loading,
+    error,
+    clearErrors,
+    setDialogOpen,
+    setCurrent,
+  } = userAdminContext;
   const { setAlert } = alertContext;
+
+  // const openEditDialog = (dataIndex) => {
+  //   setDialogOpen();
+  //   setCurrent(users[dataIndex]._id);
+  //   console.log("Current is set to: ", current);
+  // };
 
   useEffect(() => {
     getUsers();
-    console.log(loading ? "Off" : "On")
-
     if (error === "You cannot delete your own record") {
       setAlert(error, "danger");
       clearErrors();
@@ -31,11 +45,18 @@ const UserAdmin = () => {
     return <h4>Please add a user</h4>; // if user list is empty
   }
 
+  function handleClick(e, dataIndex) {
+    e.preventDefault();
+    setDialogOpen();
+    setCurrent(users[dataIndex]._id);
+    console.log("Handled Click", setCurrent(users[dataIndex]))
+  }
+
   const CustomChip = ({ label, onDelete }) => {
     return (
       <Chip
         variant="outlined"
-        color="secondary"
+        color="primary"
         label={label}
         onDelete={onDelete}
       />
@@ -50,8 +71,8 @@ const UserAdmin = () => {
     filter: true,
     filterType: "dropdown",
     sortOrder: {
-      name: 'QUBID',
-      direction: 'asc'
+      name: "QUBID",
+      direction: "asc",
     },
     downloadOptions: {
       filterOptions: {
@@ -70,8 +91,7 @@ const UserAdmin = () => {
     },
     onRowsDelete: (rows) => {
       const projectsToDelete = rows.data.map((d) => users[d.dataIndex]);
-      console.log(projectsToDelete)
-      projectsToDelete.map(a => deleteUser(a._id))
+      projectsToDelete.map((a) => deleteUser(a._id));
     },
   };
 
@@ -116,18 +136,6 @@ const UserAdmin = () => {
         sort: true,
       },
     },
-    // {
-    //   name: "name",
-    //   label: "Name",
-    //   options: {
-    //     filter: true,
-    //     sort: true,
-    //     customBodyRenderLite: (params) => {
-    //       let val = users[params].firstName + " " + users[params].lastName;
-    //       return val;
-    //     },
-    //   },
-    // },
     {
       name: "email",
       label: "Email",
@@ -164,49 +172,44 @@ const UserAdmin = () => {
         filter: false,
         sort: false,
         empty: true,
-        customBodyRenderLite: (dataIndex, rowIndex) => {
-          return (
-            <button
-              onClick={() =>
-                window.alert(
-                  `Clicked "Edit" for row ${rowIndex} with dataIndex of ${dataIndex}`
-                )
-              }
-            >
-              Edit
-            </button>
-          );
-        },
-      },
-    },
-    {
-      name: "Add",
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
         customBodyRenderLite: (dataIndex) => {
           return (
-            <button
-              onClick={() => {
-                const { data } = this.state;
-                data.unshift([
-                  "Mason Ray",
-                  "Computer Scientist",
-                  "San Francisco",
-                  39,
-                  "$142,000",
-                ]);
-                this.setState({ data });
+            <EditIcon
+              onClick={(e) => {
+                handleClick(e, dataIndex);
               }}
-            >
-              Add
-            </button>
+            />
           );
         },
       },
     },
-  
+    // {
+    //   name: "Add",
+    //   options: {
+    //     filter: false,
+    //     sort: false,
+    //     empty: true,
+    //     customBodyRenderLite: (dataIndex) => {
+    //       return (
+    //         <button
+    //           onClick={() => {
+    //             const { data } = this.state;
+    //             data.unshift([
+    //               "Mason Ray",
+    //               "Computer Scientist",
+    //               "San Francisco",
+    //               39,
+    //               "$142,000",
+    //             ]);
+    //             this.setState({ data });
+    //           }}
+    //         >
+    //           Add
+    //         </button>
+    //       );
+    //     },
+    //   },
+    // },
   ];
 
   return (

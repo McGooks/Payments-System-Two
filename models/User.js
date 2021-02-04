@@ -19,7 +19,7 @@ const UserSchema = mongoose.Schema({
     default: false,
   },
   dob: {
-    type: Date,
+    type: String,
     default: "",
   },
   email: {
@@ -33,7 +33,7 @@ const UserSchema = mongoose.Schema({
   },
   emailVerificationTokenExpiresAt: {
     type: Date,
-    default: "",
+    default: () => Date.now() + 7*24*60*60*1000,
   },
   emailVerified: {
     type: Boolean,
@@ -61,7 +61,7 @@ const UserSchema = mongoose.Schema({
   },
   passwordResetTokenExpiresAt: {
     type: Date,
-    default: "",
+    default: () => Date.now() + 7*24*60*60*1000,
   },
   payment: {
     type: Number,

@@ -15,6 +15,8 @@ import {
   USER_ERROR,
   CLEAR_USERS,
   CLEAR_ERRORS,
+  OPEN_DIALOG,
+  CLOSE_DIALOG,
 } from "../types";
 
 const UserAdminState = (props) => {
@@ -23,6 +25,7 @@ const UserAdminState = (props) => {
     users: null,
     current: null,
     error: null,
+    toggleDialog: false,
   };
 
   const [state, dispatch] = useReducer(userReducer, initialState);
@@ -33,12 +36,11 @@ const UserAdminState = (props) => {
       const res = await axios.get("/api/userAdmin");
       dispatch({ type: GET_USERS, payload: res.data });
     } catch (error) {
-      dispatch({ type: USER_ERROR, payload: error.response.data.msg});
+      dispatch({ type: USER_ERROR, payload: error.response.data.msg });
     }
   };
 
   //Add User
-
   const addUser = async (user) => {
     const config = {
       headers: {
@@ -59,7 +61,7 @@ const UserAdminState = (props) => {
       await axios.delete(`api/userAdmin/${id}`);
       dispatch({ type: DELETE_USER, payload: id });
     } catch (error) {
-      dispatch({ type: USER_ERROR, payload: error.response.data.msg});
+      dispatch({ type: USER_ERROR, payload: error.response.data.msg });
     }
   };
 
@@ -72,11 +74,7 @@ const UserAdminState = (props) => {
       },
     };
     try {
-      const res = await axios.put(
-        `api/userAdmin/${user._id}`,
-        user,
-        config
-      );
+      const res = await axios.put(`api/userAdmin/${user._id}`, user, config);
       dispatch({ type: UPDATE_USER, payload: res.data });
     } catch (error) {
       dispatch({ type: USER_ERROR, payload: error.response.msg });
@@ -93,32 +91,26 @@ const UserAdminState = (props) => {
     dispatch({ type: CLEAR_CURRENT });
   };
 
-  //Filter Users
-
-  const filterUsers = (text) => {
-    dispatch({ type: FILTER_USERS, payload: text });
-  };
-
-  //Clear Filters
-
-  const clearFilter = () => {
-    dispatch({ type: CLEAR_FILTER });
-  };
-
-  //Clear Users
-
-  const clearUsers = () => {
-    dispatch({ type: CLEAR_USERS });
-  };
-
+  //Clear Errors User
   const clearErrors = () => {
     dispatch({ type: CLEAR_ERRORS });
+  };
+
+  //Set Dialog Open
+  const setDialogOpen = () => {
+    dispatch({ type: OPEN_DIALOG });
+  };
+
+  //Set Dialog Open
+  const setDialogClosed = () => {
+    dispatch({ type: CLOSE_DIALOG });
   };
 
   return (
     <UserAdminContext.Provider
       value={{
         users: state.users,
+        toggleDialog: state.toggleDialog,
         loading: state.loading,
         current: state.current,
         error: state.error,
@@ -128,7 +120,9 @@ const UserAdminState = (props) => {
         setCurrent,
         clearCurrent,
         updateUser,
-        clearUsers
+        clearErrors,
+        setDialogOpen,
+        setDialogClosed
       }}
     >
       {props.children}

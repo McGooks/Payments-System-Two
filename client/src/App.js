@@ -1,4 +1,5 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
+
 import "./App.css";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 //Authentication
@@ -22,11 +23,20 @@ import UserAdminState from "./context/userAdmin/UserAdminState";
 import StatsState from "./context/stats/StatsState";
 import AuthState from "./context/auth/AuthState";
 
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
+
+import Notification from "materialize-css/dist/js/materialize.min.js";
+
 if (localStorage.token) {
   SetAuthToken(localStorage.token);
 }
 
 const App = () => {
+  useEffect(() => {
+    Notification.AutoInit();
+  });
+
   return (
     <AuthState>
       <ContactState>
@@ -39,6 +49,7 @@ const App = () => {
                   <div className="container">
                     <Alerts />
                     <Switch>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
                       <PrivateRoute exact path="/" component={Home} />
                       <PrivateRoute
                         exact
@@ -53,6 +64,7 @@ const App = () => {
                       <Route exact path="/about" component={About} />
                       <Route exact path="/register" component={Register} />
                       <Route exact path="/login" component={Login} />
+                      </MuiPickersUtilsProvider>
                     </Switch>
                   </div>
                 </Fragment>
