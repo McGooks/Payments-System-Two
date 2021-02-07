@@ -2,6 +2,8 @@
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
+  PASSWORD_RESET_EMAIL_SUCCESS,
+  PASSWORD_RESET_EMAIL_FAIL,
   USER_LOADED,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
@@ -42,6 +44,14 @@ export default (state, action) => {
         error: action.payload,
       };
 
+    case PASSWORD_RESET_EMAIL_SUCCESS: 
+    return {
+      ...state,
+    }
+    case PASSWORD_RESET_EMAIL_FAIL:
+      return {
+        ...state,
+      }
     case CLEAR_ERRORS:
       return {
         ...state,

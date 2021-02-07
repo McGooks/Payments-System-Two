@@ -9,7 +9,7 @@ import Chip from "@material-ui/core/Chip";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
-import CustomToolbar from "../layouts/CustomToolbar";
+// import CustomToolbar from "../layouts/CustomToolbar";
 
 const UserAdmin = () => {
   const userAdminContext = useContext(UserAdminContext);
@@ -44,7 +44,6 @@ const UserAdmin = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(users);
   if (users !== null && users.length === 0 && !loading) {
     return <h4>Please add a user</h4>; // if user list is empty
   }
@@ -124,7 +123,7 @@ const UserAdmin = () => {
     },
     {
       name: "QUBID",
-      label: "ID",
+      label: "QUBID",
       options: {
         filter: false,
         display: true,
@@ -188,6 +187,7 @@ const UserAdmin = () => {
         filter: false,
         sort: false,
         empty: true,
+        download: false,
         customBodyRenderLite: (dataIndex) => {
           return (
             <EditIcon

@@ -3,6 +3,7 @@ import {
   GET_USERS,
   ADD_USER,
   DELETE_USER,
+  GET_IMPORT_USERS,
   SET_CURRENT,
   CLEAR_CURRENT,
   UPDATE_USER,
@@ -23,6 +24,13 @@ export default (state, action) => {
         users: action.payload,
         loading: false,
       };
+    }
+    case GET_IMPORT_USERS: {
+      return {
+        ...state,
+        importUsers: action.payload,
+        loading: false,
+      }
     }
     case ADD_USER: {
       return {

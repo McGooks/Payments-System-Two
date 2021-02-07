@@ -23,10 +23,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const actions = [
-  { icon: (<Link to="/"><ArrowBackIcon /></Link>), name: "Back" },
-  { icon: (<Link to="/import"><Import /></Link>), name: "Import File" },
-  { icon: (<Link to="/payments"><AttachMoneyIcon /></Link>), name: "Manually Add Payment" },
-  { icon: <Reports />, name: "Reports" },
+  { id: 1, icon: (<Link to="/"><ArrowBackIcon /></Link>), name: "Back" },
+  { id: 2, icon: (<Link to="/import"><Import /></Link>), name: "Import File" },
+  { id: 3, icon: (<Link to="/payments"><AttachMoneyIcon /></Link>), name: "Manually Add Payment" },
+  { id: 4, icon: <Reports />, name: "Report Manager" },
 ];
 
 const AddBtn = () => {

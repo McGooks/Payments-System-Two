@@ -26,7 +26,7 @@ function NavigationBar({ title, icon }) {
     </Fragment>
   );
 
-  const guestLinks = (
+  const unAuthLinks = (
     <Fragment>
       <li>
         <Link to="/register">Register</Link>
@@ -46,13 +46,7 @@ function NavigationBar({ title, icon }) {
         </Link>
       </h1>
       <ul>
-        {/* <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/about">About</Link>
-        </li> */}
-        {isAuthenticated ? authLinks : guestLinks}
+        {isAuthenticated ? authLinks : unAuthLinks}
       </ul>
     </div>
   );
@@ -62,7 +56,7 @@ NavigationBar.propTypes = {
   icon: PropTypes.string,
 };
 NavigationBar.defaultProps = {
-  title: " NSP",
+  title: " Demonstrator Payment Manager",
   icon: "fas fa-handshake",
 };
 export default NavigationBar;

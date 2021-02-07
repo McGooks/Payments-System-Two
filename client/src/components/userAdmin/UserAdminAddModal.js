@@ -244,29 +244,6 @@ const UserAdminAddModal = () => {
                 label="Date Of Birth"
                 variant="outlined"
               />
-              {/* <DatePicker
-                className={classes.textField}
-                disableFuture
-                label="Date of Birth"
-                inputVariant="outlined"
-                openTo="year"
-                format="dd/MM/yyyy"
-                views={["year", "month", "date"]}
-                id="dob"
-                value={dob}
-                onChange={onChange}
-                 renderInput={(params) => (
-                  <TextField
-                  {...params}
-                  required
-                    id="dob"
-                    label="Date Of Birth"
-                    type="date"
-                    name="dob"
-                    className={classes.textField}
-                  />
-          )}
-              /> */}
               <TextField
                 className={classes.textField}
                 required

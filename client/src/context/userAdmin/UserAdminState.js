@@ -10,18 +10,17 @@ import {
   SET_CURRENT,
   CLEAR_CURRENT,
   UPDATE_USER,
-  FILTER_USERS,
-  CLEAR_FILTER,
   USER_ERROR,
-  CLEAR_USERS,
   CLEAR_ERRORS,
   OPEN_DIALOG,
   CLOSE_DIALOG,
+  GET_IMPORT_USERS
 } from "../types";
 
 const UserAdminState = (props) => {
   const initialState = {
     loading: true,
+    importUsers: null,
     users: null,
     current: null,
     error: null,
@@ -81,6 +80,12 @@ const UserAdminState = (props) => {
     }
   };
 
+  //Import Users from File
+
+  const getImportUsers = (importUsers) => {
+    dispatch({ type: GET_IMPORT_USERS, payload: importUsers });
+  }
+
   //Set Current User
   const setCurrent = (user) => {
     dispatch({ type: SET_CURRENT, payload: user });
@@ -109,6 +114,7 @@ const UserAdminState = (props) => {
   return (
     <UserAdminContext.Provider
       value={{
+        importUsers: state.importUsers,
         users: state.users,
         toggleDialog: state.toggleDialog,
         loading: state.loading,
@@ -122,7 +128,8 @@ const UserAdminState = (props) => {
         updateUser,
         clearErrors,
         setDialogOpen,
-        setDialogClosed
+        setDialogClosed,
+        getImportUsers,
       }}
     >
       {props.children}

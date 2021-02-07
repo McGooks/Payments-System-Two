@@ -19,6 +19,18 @@ const Home = () => {
  const authContext = useContext(AuthContext)
  const { user } = authContext;
 
+ const getGreeting = () => {
+  const timeOfDayWords = new Date();
+  if (timeOfDayWords.getHours() >= 4 && timeOfDayWords.getHours() <= 12) {
+    return "Good Morning";
+  } else if (timeOfDayWords.getHours() >= 13 && timeOfDayWords.getHours() <= 16) {
+    return "Good Day";
+  } else if (timeOfDayWords.getHours() >= 17 && timeOfDayWords.getHours() <= 23) {
+    return "Good Evening";
+  } else {
+    return "Good Night";
+  }
+};
 
  useEffect(() => {
   authContext.loadUser()
@@ -28,7 +40,7 @@ const Home = () => {
   return (
     <>
     <NavButtonHome/>
-    <h1 className="HomeGreeting">Hi, {user && user.firstName}</h1>
+    <h1 className="HomeGreeting">{getGreeting()}, {user && user.firstName}</h1>
       <h3 className="HomeGreetingSubtitle">You have pending tasks</h3>{" "}
       {/*needs to be updated to be conditional based on db records*/}
       <Grid container direction='row' spacing={4} alignItems='stretch' >

@@ -7,6 +7,8 @@ import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import GroupIcon from '@material-ui/icons/Group';
 import Payments from "@material-ui/icons/AccountBalanceWallet";
 import Reports from "@material-ui/icons/Assessment";
+import Admin from "@material-ui/icons/Settings";
+import InfoIcon from '@material-ui/icons/Info';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,10 +24,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const actions = [
-  { icon: (<Link to="/userAdmin"><GroupIcon /></Link>), name: "User Management" },
-  { icon: (<Link to="/payments"><Payments /></Link>), name: "Payments" },
-  { icon: <Reports />, name: "Reports" },
-  // { icon: <Admin />, name: "Admin" },
+  { id: 1, icon: (<Link to="/userAdmin"><GroupIcon /></Link>), name: "User Management" },
+  { id: 2, icon: (<Link to="/payments"><Payments /></Link>), name: "Payments" },
+  { id: 3, icon: <Reports />, name: "Report Manager" },
+  { id: 4, icon: <Admin />, name: "Admin" },
+  { id: 5, icon: (<Link to="/about"><InfoIcon /></Link>), name: "About" },
 ];
 
 const NavButtonHome = () => {
@@ -53,7 +56,7 @@ const NavButtonHome = () => {
       >
         {actions.map((action) => (
           <SpeedDialAction
-            key={action.name}
+            key={action.id}
             icon={action.icon}
             tooltipTitle={action.name}
             onClick={handleClose}

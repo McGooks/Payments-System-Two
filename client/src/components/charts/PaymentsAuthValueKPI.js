@@ -16,7 +16,6 @@ const PaymentsAuthValueKPI = () => {
   const classes = useStyles();
 
   let currentMonth = new Date();
-  console.log(currentMonth);
 
   return (
     <Card className={classes.root}>

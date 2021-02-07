@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 
 import "./App.css";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
@@ -9,6 +9,7 @@ import Home from "./components/pages/Home";
 import UserAdmin from "./components/pages/UserAdmin";
 import Payments from "./components/pages/Payments";
 import About from "./components/pages/About";
+import Import from "./components/pages/Import";
 //Public Pages
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
@@ -49,6 +50,11 @@ const App = () => {
                         exact
                         path="/userAdmin"
                         component={UserAdmin}
+                      />
+                      <PrivateRoute
+                        exact
+                        path="/import"
+                        component={Import}
                       />
                       <PrivateRoute
                         exact

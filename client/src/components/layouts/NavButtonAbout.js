@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import MenuIcon from '@material-ui/icons/Menu';
+import Button from '@material-ui/core/Button';
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
@@ -27,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const NavButtonUserMgmt = () => {
+const NavButtonAbout = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false)
   const userAdminContext = useContext(UserAdminContext);
@@ -65,9 +66,9 @@ const NavButtonUserMgmt = () => {
 
   const actions = [
     { id: 1, icon: (<Link to="/"><ArrowBackIcon /></Link>), name: "Back", },
-    { id: 2, icon: (<Link to="/import"><GroupAddIcon /></Link>), name: "Import User File"},
-    { id: 3, icon: (<Link><PersonAddIcon /></Link>), name: "Manually Add User"},
-    { id: 4, icon: (<Link><Reports /></Link>), name: "Report Manager"},
+    // { id: 2 , icon: (<Link to="/import"><GroupAddIcon /></Link>), name: "Import User File"},
+    // { id: 3, icon: (<Link><PersonAddIcon /></Link>), name: "Manually Add User"},
+    // { id: 4, icon: <Reports />, name: "Operation 2"},
   ];
   
 
@@ -100,4 +101,4 @@ const NavButtonUserMgmt = () => {
   );
 };
 
-export default NavButtonUserMgmt;
+export default NavButtonAbout;

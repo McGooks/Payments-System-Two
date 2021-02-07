@@ -22,6 +22,7 @@ export const UPDATE_USER = "UPDATE_USER";
 export const FILTER_USERS = "FILTER_USERS";
 export const CLEAR_USERS = "CLEAR_USERS";
 export const USER_ERROR = "USER_ERROR";
+export const GET_IMPORT_USERS = "GET_IMPORT_USERS";
 //KPI & Charts Framework Reducer
 export const GET_STATS = "GET_STATS";
 export const STATS_ERROR = "STATS_ERROR";
@@ -32,6 +33,8 @@ export const CLEAR_ERRORS = "CLEAR_ERRORS";
 //Authentication Reducer
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 export const REGISTER_FAIL = "REGISTER_FAIL";
+export const PASSWORD_RESET_EMAIL_SUCCESS = "PASSWORD_RESET_EMAIL_SUCCESS";
+export const PASSWORD_RESET_EMAIL_FAIL = "PASSWORD_RESET_EMAIL_FAIL";
 export const USER_LOADED = "USER_LOADED";
 export const AUTH_ERROR = "AUTH_ERROR";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";

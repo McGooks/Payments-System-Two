@@ -3,11 +3,34 @@ import React, { useState, useContext, useEffect } from "react";
 import { useSnackbar } from "notistack";
 //Context
 import AuthContext from "../../context/auth/authContext";
+//UI
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  textFieldFull: {
+    marginTop: theme.spacing(2),
+    width: "100%",
+  },
+  button:{
+    backgroundColor: 'rgb(214, 0, 13)',
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  }
+}));
+
 
 const Register = (props) => {
+  const classes = useStyles();
   const authContext = useContext(AuthContext);
   const { register, error, clearErrors, isAuthenticated } = authContext;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -61,52 +84,69 @@ const Register = (props) => {
         Account <span className="text-primary">Register</span>
       </h1>
       <form onSubmit={onSubmit}>
-      <div className="form-group">
-          <label htmlFor="name">QUB ID</label>
-          <input
+      <div>
+        <div>
+          <TextField
+            className={classes.textFieldFull}
+            required
+            id="email"
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={email}
+            onChange={onChange}
+            label="Email"
+            variant="outlined"
+            autocomplete="username"
+          />
+        </div>
+        <TextField
+            className={classes.textFieldFull}
+            required
+            id="QUBID"
             type="text"
             name="QUBID"
             value={QUBID}
             onChange={onChange}
             placeholder="QUB ID Number"
+            label="QUB ID"
+            variant="outlined"
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="email">Email Address</label>
-          <input
-            type="email"
-            name="email"
-            value={email}
-            onChange={onChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
+        <div>
+          <TextField
+            className={classes.textFieldFull}
+            required
+            id="password"
             type="password"
             name="password"
+            placeholder="password"
             value={password}
             onChange={onChange}
-
+            label="Password"
+            variant="outlined"
+            autocomplete="current-password"
             minLength="6"
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="password2">Confirm Password</label>
-          <input
+        <div>
+          <TextField
+            className={classes.textFieldFull}
+            required
+            id="password2"
             type="password"
             name="password2"
+            placeholder="password"
             value={password2}
             onChange={onChange}
-
+            label="Confirm Password"
+            variant="outlined"
             minLength="6"
           />
         </div>
-        <input
-          type="submit"
-          value="Register"
-          className="btn btn-primary btn-block"
-        />
+        <Button size="large" fullWidth={true} className={classes.button} onClick={onSubmit} color="secondary" variant="contained">
+          Register
+        </Button>
       </form>
     </div>
   );

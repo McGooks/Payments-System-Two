@@ -2,15 +2,11 @@ const mongoose = require("mongoose");
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const PaymentsSchema = mongoose.Schema({
-  // id:{
-  //   type: Object,
-  //   default: new mongoose.Types.ObjectId(),
-  // },
-  nsp_ID: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "NSUser",
+    ref: "User",
   },
-  nsp_number: {
+  QUBID: {
     type: Number,
     required: true,
   },

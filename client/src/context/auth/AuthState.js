@@ -7,6 +7,8 @@ import SetAuthToken from "../../utils/SetAuthToken";
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
+  PASSWORD_RESET_EMAIL_SUCCESS,
+  PASSWORD_RESET_EMAIL_FAIL,
   USER_LOADED,
   AUTH_ERROR,
   LOGIN_SUCCESS,
@@ -92,6 +94,7 @@ const AuthState = (props) => {
     }
   };
 
+  
 
   //LOGOUT
 

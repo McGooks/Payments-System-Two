@@ -3,10 +3,31 @@ import React, { useState, useContext, useEffect } from "react";
 import { useSnackbar } from "notistack";
 //Context
 import AuthContext from "../../context/auth/authContext";
+//UI
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  textFieldFull: {
+    marginTop: theme.spacing(2),
+    width: "100%",
+  },
+  button:{
+    backgroundColor: 'rgb(214, 0, 13)',
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  }
+}));
 
 const Login = (props) => {
+  const classes = useStyles();
   const authContext = useContext(AuthContext);
-  
+
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { login, error, clearErrors, isAuthenticated } = authContext;
 
@@ -17,7 +38,7 @@ const Login = (props) => {
     if (error) {
       enqueueSnackbar(`Invalid User Credentials`, {
         variant: "error",
-      })
+      });
       clearErrors();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -41,7 +62,7 @@ const Login = (props) => {
     if (email === "" || password === "") {
       enqueueSnackbar(`Please complete all fields`, {
         variant: "warning",
-      })
+      });
     } else {
       login({
         email,
@@ -55,29 +76,37 @@ const Login = (props) => {
         Account <span className="text-primary">Login</span>
       </h1>
       <form onSubmit={onSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Email Address</label>
-          <input
+        <div>
+          <TextField
+            className={classes.textFieldFull}
+            required
+            id="email"
             type="email"
             name="email"
+            placeholder="Email"
             value={email}
             onChange={onChange}
+            label="Email"
+            variant="outlined"
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
+        <div>
+          <TextField
+            className={classes.textFieldFull}
+            required
+            id="password"
             type="password"
             name="password"
+            placeholder="password"
             value={password}
             onChange={onChange}
+            label="Password"
+            variant="outlined"
           />
         </div>
-        <input
-          type="submit"
-          value="Login"
-          className="btn btn-primary btn-block"
-        />
+        <Button size="large" fullWidth={true} className={classes.button} onClick={onSubmit} color="secondary" variant="contained">
+          Login
+        </Button>
       </form>
     </div>
   );
