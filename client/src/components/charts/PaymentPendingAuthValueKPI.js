@@ -22,13 +22,13 @@ const PaymentPendingAuthValueKPI = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(stats)
+  console.log("Stats",stats)
   return (
     <>
       {stats !== null && !loading ? (
         <Card className={classes.root}>
           <CardHeader
-            title={`£${stats[4].statsPaymentAuthMTD[2].total}`}
+            title={`£${stats[3].statsPaymentPendingAuth[0].total}`}
             subheader={"Pending Authorisation"}
           />
         </Card>

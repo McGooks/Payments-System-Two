@@ -1,21 +1,23 @@
 import React, { useState, useContext, useEffect } from "react";
+//Components
+import { useSnackbar } from "notistack";
 //Context
-import AlertContext from "../../context/alert/alertContext";
 import AuthContext from "../../context/auth/authContext";
 
 const Login = (props) => {
-  const alertContext = useContext(AlertContext);
   const authContext = useContext(AuthContext);
-
-  const { setAlert } = alertContext;
+  
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { login, error, clearErrors, isAuthenticated } = authContext;
 
   useEffect(() => {
     if (isAuthenticated) {
       props.history.push("/");
     }
-    if (error === "Invalid Credentials") {
-      setAlert(error, "danger");
+    if (error) {
+      enqueueSnackbar(`Invalid User Credentials`, {
+        variant: "error",
+      })
       clearErrors();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,7 +39,9 @@ const Login = (props) => {
   const onSubmit = (e) => {
     e.preventDefault();
     if (email === "" || password === "") {
-      setAlert("Please fill in all fields", "danger");
+      enqueueSnackbar(`Please complete all fields`, {
+        variant: "warning",
+      })
     } else {
       login({
         email,
@@ -58,7 +62,6 @@ const Login = (props) => {
             name="email"
             value={email}
             onChange={onChange}
-            required
           />
         </div>
         <div className="form-group">
@@ -68,7 +71,6 @@ const Login = (props) => {
             name="password"
             value={password}
             onChange={onChange}
-            required
           />
         </div>
         <input

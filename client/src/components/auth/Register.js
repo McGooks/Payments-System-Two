@@ -1,24 +1,24 @@
 import React, { useState, useContext, useEffect } from "react";
-import AlertContext from "../../context/alert/alertContext";
+//Components
+import { useSnackbar } from "notistack";
+//Context
 import AuthContext from "../../context/auth/authContext";
 
 const Register = (props) => {
-  const alertContext = useContext(AlertContext);
   const authContext = useContext(AuthContext);
-
-  const { setAlert } = alertContext;
   const { register, error, clearErrors, isAuthenticated } = authContext;
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (isAuthenticated) {
       props.history.push("/");
     }
-
-    if (error === "User already exists, please contact system administrator") {
-      setAlert(error, "danger");
+    if (error) {
+      enqueueSnackbar(`User already exists, please contact system administrator`, {
+        variant: "error",
+      })
       clearErrors();
     }
-    
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, isAuthenticated, props.history]);
 
@@ -40,9 +40,13 @@ const Register = (props) => {
   const onSubmit = (e) => {
     e.preventDefault();
     if (QUBID === "" || email === "" || password === "") {
-      setAlert("Please complete all fields", "danger");
+      enqueueSnackbar(`Please complete all fields`, {
+        variant: "warning",
+      })
     } else if (password !== password2) {
-      setAlert("Passwords do not match", "danger");
+      enqueueSnackbar(`Passwords do not match`, {
+        variant: "error",
+      })
     } else {
       register({
         QUBID,
@@ -76,16 +80,6 @@ const Register = (props) => {
             onChange={onChange}
           />
         </div>
-        {/* <div className="form-group">
-          <label htmlFor="email">Date of Birth</label>
-          <input
-            type="date"
-            name="dob"
-            value={dob}
-            onChange={onChange}
-            required
-          />
-        </div> */}
         <div className="form-group">
           <label htmlFor="password">Password</label>
           <input

@@ -14,17 +14,13 @@ import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 //Components
 import NavigationBar from "./components/layouts/NavigationBar";
-import Alerts from "./components/layouts/Alerts";
 import PrivateRoute from "./components/routing/PrivateRoute";
+import { SnackbarProvider } from "notistack";
 //State
-import AlertState from "./context/alert/AlertState";
 import ContactState from "./context/contact/ContactState";
 import UserAdminState from "./context/userAdmin/UserAdminState";
 import StatsState from "./context/stats/StatsState";
 import AuthState from "./context/auth/AuthState";
-
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
 
 import Notification from "materialize-css/dist/js/materialize.min.js";
 
@@ -42,14 +38,12 @@ const App = () => {
       <ContactState>
         <StatsState>
           <UserAdminState>
-            <AlertState>
+            <SnackbarProvider maxSnack={10}>
               <Router>
                 <Fragment>
                   <NavigationBar />
                   <div className="container">
-                    <Alerts />
                     <Switch>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
                       <PrivateRoute exact path="/" component={Home} />
                       <PrivateRoute
                         exact
@@ -64,12 +58,11 @@ const App = () => {
                       <Route exact path="/about" component={About} />
                       <Route exact path="/register" component={Register} />
                       <Route exact path="/login" component={Login} />
-                      </MuiPickersUtilsProvider>
                     </Switch>
                   </div>
                 </Fragment>
               </Router>
-            </AlertState>
+            </SnackbarProvider>
           </UserAdminState>
         </StatsState>
       </ContactState>

@@ -1,22 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import ViewListIcon from '@material-ui/icons/ViewList';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import ViewListIcon from "@material-ui/icons/ViewList";
+import ThumbUpIcon from "@material-ui/icons/ThumbUp";
+import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 
 const options = [
-  { icon: (<Link to="/payments"><ViewListIcon /></Link>), name: "View" },
-  { icon: (<Link to="/payments"><ThumbUpIcon /></Link>), name: "Approve All" },
-  { icon: (<Link to="/payments"><ThumbDownIcon /></Link>), name: "Reject All" },
+  {
+    id: 1,
+    icon: (
+      <Link to="/payments">
+        <ViewListIcon />
+      </Link>
+    ),
+    name: "View",
+  },
+  {
+    id: 2,
+    icon: (
+      <Link to="/payments">
+        <ThumbUpIcon />
+      </Link>
+    ),
+    name: "Approve All",
+  },
+  {
+    id: 3,
+    icon: (
+      <Link to="/payments">
+        <ThumbDownIcon />
+      </Link>
+    ),
+    name: "Reject All",
+  },
   // { icon: <Admin />, name: "Admin" },
 ];
 
 const LongMenu = () => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
@@ -45,14 +69,14 @@ const LongMenu = () => {
         onClose={handleClose}
       >
         {options.map((option) => (
-          <MenuItem
-            key={option}
-            onClick={handleClose}>
-            {option.icon}{"  "}{option.name}
+          <MenuItem key={option.id} onClick={handleClose}>
+            {option.icon}
+            {"  "}
+            {option.name}
           </MenuItem>
         ))}
       </Menu>
     </div>
   );
-}
-export default LongMenu
+};
+export default LongMenu;

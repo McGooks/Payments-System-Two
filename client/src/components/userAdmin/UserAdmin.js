@@ -1,18 +1,21 @@
 import React, { useContext, Fragment, useEffect } from "react";
 //Context
-import AlertContext from "../../context/alert/alertContext";
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
+import AuthContext from "../../context/auth/authContext"
 //Components
 import { Grid } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import Chip from "@material-ui/core/Chip";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
+import { useSnackbar } from "notistack";
 import CustomToolbar from "../layouts/CustomToolbar";
 
 const UserAdmin = () => {
   const userAdminContext = useContext(UserAdminContext);
-  const alertContext = useContext(AlertContext);
+  const authContext = useContext(AuthContext)
+  const { user } = authContext;
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const {
     users,
     getUsers,
@@ -23,7 +26,6 @@ const UserAdmin = () => {
     setDialogOpen,
     setCurrent,
   } = userAdminContext;
-  const { setAlert } = alertContext;
 
   // const openEditDialog = (dataIndex) => {
   //   setDialogOpen();
@@ -33,8 +35,10 @@ const UserAdmin = () => {
 
   useEffect(() => {
     getUsers();
-    if (error === "You cannot delete your own record") {
-      setAlert(error, "danger");
+    if (error) {
+      enqueueSnackbar(`You cannot delete your own record`, {
+        variant: "error",
+      });
       clearErrors();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,7 +53,7 @@ const UserAdmin = () => {
     e.preventDefault();
     setDialogOpen();
     setCurrent(users[dataIndex]._id);
-    console.log("Handled Click", setCurrent(users[dataIndex]))
+    console.log("Handled Click", setCurrent(users[dataIndex]));
   }
 
   const CustomChip = ({ label, onDelete }) => {
@@ -86,12 +90,24 @@ const UserAdmin = () => {
     draggableColumns: {
       enabled: true,
     },
-    customToolbar: () => {
-      return <CustomToolbar />;
-    },
+    // customToolbar: () => {
+    //   return <CustomToolbar />;
+    // },
     onRowsDelete: (rows) => {
       const projectsToDelete = rows.data.map((d) => users[d.dataIndex]);
-      projectsToDelete.map((a) => deleteUser(a._id));
+      projectsToDelete.map((a) => {
+        if (a._id === user._id) {
+            enqueueSnackbar(`You cannot delete your own record`, {
+              variant: "error",
+            });
+            clearErrors();
+        } else {
+        enqueueSnackbar(`User ${a.firstName} ${a.lastName} (${a.QUBID}) deleted`, {
+          variant: "success",
+        });
+        deleteUser(a._id);
+      }
+      });
     },
   };
 
@@ -167,7 +183,7 @@ const UserAdmin = () => {
       },
     },
     {
-      name: "Edit",
+      name: "",
       options: {
         filter: false,
         sort: false,

@@ -67,21 +67,36 @@ router.post(
 //@desc     Update User User
 //@access   PRIVATE
 router.put("/:id", auth, async (req, res) => {
-  const { name, email, phone, type } = req.body;
+  const {
+    dob,
+    email,
+    firstName,
+    lastName,
+    QUBID,
+    role,
+    status,
+  } = req.body;
   //build user object
   const userFields = {};
-  if (name) userFields.name = name;
+  if (dob) userFields.dob = dob;
   if (email) userFields.email = email;
-  if (phone) userFields.phone = phone;
-  if (type) userFields.type = type;
+  if (firstName) userFields.firstName = firstName;
+  if (lastName) userFields.lastName = lastName;
+  if (QUBID) userFields.QUBID = QUBID;
+  if (role) userFields.role = role;
+  if (status) userFields.status = status
+  userFields.updatedById = req.user.id
+  userFields.updatedAt = Date.now()
 
   try {
     let user = await User.findById(req.params.id); // find user by ID
     if (!user) return res.status(404).json({ msg: "user not found" });
-    // //ensure user owns user
-    // if (user.user.toString() !== req.user.id) {
-    //   return res.status(401).json({ msg: "Not Authorised" });
-    // }
+    console.log(req.user.id, "User ID Text")
+    console.log(user._id.toString(), "User to String Text")
+    // ensure user is not current user
+    if (user._id.toString() === req.user.id) {
+      return res.status(401).json({ msg: "Users cannot edit their own records" });
+    }
     user = await User.findByIdAndUpdate(
       req.params.id,
       { $set: userFields },
@@ -109,9 +124,9 @@ router.delete("/:id", auth, async (req, res) => {
     }
     await User.findByIdAndRemove(
       req.params.id,
-      res.json({ msg: "User Removed" })
+      res.status(200).json({ msg: "User Removed" }),
     );
-  } catch (error) {
+  } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
   }
