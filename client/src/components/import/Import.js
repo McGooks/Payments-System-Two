@@ -1,10 +1,10 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
-import AuthContext from "../../context/auth/authContext"
+import AuthContext from "../../context/auth/authContext";
 //UI
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid } from "@material-ui/core";
+import { Grid, Card, CardHeader } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import EditIcon from "@material-ui/icons/Edit";
 import Upload from "@material-ui/icons/Backup";
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 const Import = () => {
   const classes = useStyles();
   const userAdminContext = useContext(UserAdminContext);
-  const authContext = useContext(AuthContext)
+  const authContext = useContext(AuthContext);
   const { user } = authContext;
   const {
     importUsers,
@@ -51,66 +51,65 @@ const Import = () => {
     setCurrent,
   } = userAdminContext;
 
-  console.log(getImportUsers)
+  useEffect(() => {
+    getImportUsers();
+  }, []);
 
   const [filestate, setFilestate] = useState({
     file: "",
   });
+  const [jsonFile, setJsonFileState] = useState([]);
+  console.log("reading from state", jsonFile);
+
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
   const fileUploader = useRef(null);
 
   const handleClick = (e) => {
     fileUploader.current.focus();
   };
 
-  const filePathset = (e) => {
+  const onChange = (e) => {
     e.stopPropagation();
     e.preventDefault();
     var file = e.target.files[0];
+    readFile(file);
+    setFilestate({ file });
     enqueueSnackbar(`File ${file.name} is ready to be imported`, {
       variant: "success",
     });
-    setFilestate({ file });
   };
 
-  const readFile = () => {
-    var f = filestate.file;
-    var name = f.name;
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      // evt = on_file_select event
-      /* Parse data */
-      const bstr = evt.target.result;
-      const wb = XLSX.read(bstr, { type: "binary" });
-      /* Get first worksheet */
-      const wsname = wb.SheetNames[0];
-      const ws = wb.Sheets[wsname];
-      /* Convert array of arrays */
-      const data = XLSX.utils.sheet_to_csv(ws, { header: 1 });
-      /* Update state */
-      let importUserString = convertToJson(data); // shows data in json format
-      console.log("HITTING STRING", importUserString)
-    };
-    reader.readAsBinaryString(f);
-    console.log("F >>>>>>", f)
+  const readFile = (file) => {
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+        resolve(data);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+    promise.then((d) => {
+      console.log(d);
+      setJsonFileState(d);
+    });
   };
 
-  const convertToJson = (csv) => {
-    var lines = csv.split("\n");
-    var result = [];
-    var headers = lines[0].split(",");
-    for (var i = 1; i < lines.length; i++) {
-      var obj = {};
-      var currentline = lines[i].split(",");
-      for (var j = 0; j < headers.length; j++) {
-        obj[headers[j]] = currentline[j];
-      }
-      result.push(obj);
-    }
-    //return result; //JavaScript object
-    return JSON.stringify(result); //JSON
+  const onSubmit = (e) => {
+    e.preventDefault();
+    jsonFile.map((d) => addUser(d));
+    enqueueSnackbar(`User Added`, {
+      variant: "success",
+    });
+    setJsonFileState([])
   };
-  
   const options = {
     filter: true,
     filterType: "dropdown",
@@ -261,72 +260,78 @@ const Import = () => {
   return (
     <>
       <div className={classes.root}>
-        <div>
-          <input
-            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-            className={classes.input}
-            id="contained-button-file"
-            type="file"
-            ref={fileUploader}
-            onChange={filePathset}
+        <Card className={classes.root}>
+          <CardHeader
+            title="Multi-User Import"
+            subheader="Please use the excel template provided"
           />
-          <label htmlFor="contained-button-file">
-            <Button
+
+          <div>
+            <input
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              className={classes.input}
+              id="contained-button-file"
+              type="file"
+              ref={fileUploader}
+              onChange={onChange}
+            />
+            <label htmlFor="contained-button-file">
+              <Button
+                component="span"
+                size="large"
+                className={classes.button}
+                color="secondary"
+                variant="contained"
+                startIcon={<Upload />}
+                onClick={handleClick}
+              >
+                Select File to Upload
+              </Button>
+            </label>
+            <TextField
+              className={classes.textField}
               component="span"
-              size="large"
-              className={classes.button}
-              color="secondary"
-              variant="contained"
-              startIcon={<Upload />}
-              onClick={handleClick}
-            >
-              Select File to Upload
-            </Button>
-          </label>
-          <TextField
-            className={classes.textField}
-            component="span"
-            disabled
-            id="filename"
-            type="text"
-            name="filename"
-            value={filestate.file.name}
-          />
-        </div>
+              disabled
+              id="filename"
+              type="text"
+              name="filename"
+              value={filestate.file.name}
+            />
+          </div>
+        </Card>
         <div>
-          <Button
-            component="span"
-            size="large"
-            className={classes.button}
-            color="secondary"
-            variant="contained"
-            startIcon={<PublishIcon />}
-            onClick={readFile}
-          >
-            Publish File
-          </Button>
-        </div>
-        <div>
-        <div>
-          {importUsers !== null && !loading ? (
-            <Grid container spacing={4}>
-              <Grid item xs={12}>
-                <MUIDataTable
-                  title="Users"
-                  data={importUsers}
-                  columns={columns}
-                  options={options}
-                  // components={{
-                  //   TableFilterList: CustomFilterList,
-                  // }}
-                />
+          {jsonFile !== null && !loading ? (
+            <>
+              <Grid container spacing={4}>
+                <Grid item xs={12}>
+                  <MUIDataTable
+                    data={jsonFile}
+                    columns={columns}
+                    options={options}
+                    // components={{
+                    //   TableFilterList: CustomFilterList,
+                    // }}
+                  />
+                </Grid>
               </Grid>
-            </Grid>
+              <div>
+                <Button
+                  component="span"
+                  size="large"
+                  className={classes.button}
+                  color="secondary"
+                  variant="contained"
+                  startIcon={<PublishIcon />}
+                  onClick={onSubmit}
+                >
+                  Publish File
+                </Button>
+              </div>
+            </>
           ) : (
             <ProgressIndicator />
           )}
         </div>
-      </div>
       </div>
     </>
   );
