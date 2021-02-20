@@ -17,26 +17,26 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     width: "100%",
   },
-  button:{
-    backgroundColor: 'rgb(214, 0, 13)',
+  button: {
+    backgroundColor: "rgb(214, 0, 13)",
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
-  }
+  },
 }));
 
 const Login = (props) => {
   const classes = useStyles();
   const authContext = useContext(AuthContext);
-
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { login, error, clearErrors, isAuthenticated } = authContext;
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (isAuthenticated) {
       props.history.push("/");
     }
+    console.log(error);
     if (error) {
-      enqueueSnackbar(`Invalid User Credentials`, {
+      enqueueSnackbar(error, {
         variant: "error",
       });
       clearErrors();
@@ -59,10 +59,11 @@ const Login = (props) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (email === "" || password === "") {
-      enqueueSnackbar(`Please complete all fields`, {
-        variant: "warning",
+    if (error) {
+      enqueueSnackbar(error, {
+        variant: "error",
       });
+      clearErrors();
     } else {
       login({
         email,
@@ -79,7 +80,6 @@ const Login = (props) => {
         <div>
           <TextField
             className={classes.textFieldFull}
-            required
             id="email"
             type="email"
             name="email"
@@ -93,7 +93,6 @@ const Login = (props) => {
         <div>
           <TextField
             className={classes.textFieldFull}
-            required
             id="password"
             type="password"
             name="password"
@@ -104,7 +103,14 @@ const Login = (props) => {
             variant="outlined"
           />
         </div>
-        <Button size="large" fullWidth={true} className={classes.button} onClick={onSubmit} color="secondary" variant="contained">
+        <Button
+          size="large"
+          fullWidth={true}
+          className={classes.button}
+          onClick={onSubmit}
+          color="secondary"
+          variant="contained"
+        >
           Login
         </Button>
       </form>

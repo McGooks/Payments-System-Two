@@ -14,11 +14,15 @@ const PaymentsSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
-  project: {
+  projectCode: {
     type: String,
     required: true,
   },
-  subanalysis: {
+  projectName: {
+    type: String,
+    required: true,
+  },
+  subAnalysis: {
     type: String,
   },
   amount: {
@@ -33,15 +37,19 @@ const PaymentsSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  date: {
+  addedByUserDate: {
     type: Date,
     default: Date.now,
   },
-  type: {
-    type: String,
-    default: "import",
-  },
   addedByUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+  },
+  updatedByUserDate: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedByUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
   },

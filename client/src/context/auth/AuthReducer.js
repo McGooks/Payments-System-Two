@@ -44,14 +44,14 @@ export default (state, action) => {
         error: action.payload,
       };
 
-    case PASSWORD_RESET_EMAIL_SUCCESS: 
-    return {
-      ...state,
-    }
+    case PASSWORD_RESET_EMAIL_SUCCESS:
+      return {
+        ...state,
+      };
     case PASSWORD_RESET_EMAIL_FAIL:
       return {
         ...state,
-      }
+      };
     case CLEAR_ERRORS:
       return {
         ...state,

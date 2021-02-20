@@ -21,8 +21,6 @@ const PaymentPendingAuthValueKPI = () => {
     getStatData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  console.log("Stats",stats)
   return (
     <>
       {stats !== null && !loading ? (

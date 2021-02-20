@@ -18,26 +18,23 @@ const UserSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  key :{
+    type :String
+  },
   dob: {
     type: String,
-    default: "",
   },
   email: {
     type: String,
     required: true,
     unique: true,
   },
-  emailVerificationToken: {
-    type: String,
-    default: "",
-  },
-  emailVerificationTokenExpiresAt: {
-    type: Date,
-    default: () => Date.now() + 7*24*60*60*1000,
-  },
   emailVerified: {
     type: Boolean,
     default: false,
+  },
+  emailVerifiedDate: {
+    type: Date,
   },
   userImg: {
     data: Buffer,

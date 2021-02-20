@@ -35,49 +35,49 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Import = () => {
+const Import = (props) => {
   const classes = useStyles();
   const userAdminContext = useContext(UserAdminContext);
-  const authContext = useContext(AuthContext);
-  const { user } = authContext;
-  const {
-    importUsers,
-    getImportUsers,
-    addUser,
-    loading,
-    error,
-    clearErrors,
-    setDialogOpen,
-    setCurrent,
-  } = userAdminContext;
-
-  useEffect(() => {
-    getImportUsers();
-  }, []);
+  const { addUser, error, clearErrors } = userAdminContext;
 
   const [filestate, setFilestate] = useState({
     file: "",
   });
   const [jsonFile, setJsonFileState] = useState([]);
-  console.log("reading from state", jsonFile);
-
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
   const fileUploader = useRef(null);
 
   const handleClick = (e) => {
     fileUploader.current.focus();
   };
 
+  useEffect(() => {
+    console.log(error);
+    if (error) {
+      enqueueSnackbar(error, {
+        variant: "error",
+      });
+      clearErrors();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
+
   const onChange = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    var file = e.target.files[0];
-    readFile(file);
-    setFilestate({ file });
-    enqueueSnackbar(`File ${file.name} is ready to be imported`, {
-      variant: "success",
-    });
+    try {
+      e.stopPropagation();
+      e.preventDefault();
+      var file = e.target.files[0];
+      readFile(file);
+      setFilestate({ file });
+      enqueueSnackbar(`File ${file.name} is ready to be imported`, {
+        variant: "success",
+      });
+    } catch (err) {
+      console.error(err.message);
+      enqueueSnackbar(`File ${file.name} cannot be imported`, {
+        variant: "error",
+      });
+    }
   };
 
   const readFile = (file) => {
@@ -102,13 +102,32 @@ const Import = () => {
     });
   };
 
+  const makeid = (length) => {
+    var result = "";
+    var characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
-    jsonFile.map((d) => addUser(d));
-    enqueueSnackbar(`User Added`, {
-      variant: "success",
+    try {
+    jsonFile.map((d) => {
+      let makeRandomPassword = { password: makeid(10) };
+      let userWithAddedRandomPassword = Object.assign(d, makeRandomPassword);
+        addUser(userWithAddedRandomPassword);
+      })
+      setJsonFileState([]);
+  } catch (err) {
+    console.error(err.message);
+    enqueueSnackbar(error, {
+      variant: "error",
     });
-    setJsonFileState([])
+  };
   };
   const options = {
     filter: true,
@@ -129,24 +148,11 @@ const Import = () => {
     draggableColumns: {
       enabled: true,
     },
-    // customToolbar: () => {
-    //   return <CustomToolbar />;
-    // },
-    // onRowsDelete: (rows) => {
-    //   const projectsToDelete = rows.data.map((d) => importUsers[d.dataIndex]);
-    //   projectsToDelete.map((a) => {
-    //     if (a._id === user._id) {
-    //         enqueueSnackbar(`You cannot delete your own record`, {
-    //           variant: "error",
-    //         });
-    //         clearErrors();
-    //     } else {
-    //     enqueueSnackbar(`User ${a.firstName} ${a.lastName} (${a.QUBID}) deleted`, {
-    //       variant: "success",
-    //     });
-    //   }
-    //   });
-    // },
+    onRowsDelete: (rows) => {
+      const usersToDelete = rows.data.map((d) => jsonFile[d.dataIndex]);
+      const newState = jsonFile.filter((item) => !usersToDelete.includes(item));
+      setJsonFileState(newState);
+    },
   };
 
   const columns = [
@@ -300,7 +306,7 @@ const Import = () => {
           </div>
         </Card>
         <div>
-          {jsonFile !== null && !loading ? (
+          {jsonFile !== null ? (
             <>
               <Grid container spacing={4}>
                 <Grid item xs={12}>

@@ -1,7 +1,7 @@
 import React, { useContext, Fragment, useEffect } from "react";
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
-import AuthContext from "../../context/auth/authContext"
+import AuthContext from "../../context/auth/authContext";
 //Components
 import { Grid } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
@@ -13,7 +13,7 @@ import { useSnackbar } from "notistack";
 
 const UserAdmin = () => {
   const userAdminContext = useContext(UserAdminContext);
-  const authContext = useContext(AuthContext)
+  const authContext = useContext(AuthContext);
   const { user } = authContext;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const {
@@ -93,20 +93,42 @@ const UserAdmin = () => {
     //   return <CustomToolbar />;
     // },
     onRowsDelete: (rows) => {
-      const projectsToDelete = rows.data.map((d) => users[d.dataIndex]);
-      projectsToDelete.map((a) => {
-        if (a._id === user._id) {
+      console.log("Console log of", rows.data.length);
+      if (rows.data.length <= 10) {
+        const usersToDelete = rows.data.map((d) => users[d.dataIndex]);
+        usersToDelete.map((a) => {
+          if (a._id === user._id) {
             enqueueSnackbar(`You cannot delete your own record`, {
               variant: "error",
             });
             clearErrors();
-        } else {
-        enqueueSnackbar(`User ${a.firstName} ${a.lastName} (${a.QUBID}) deleted`, {
-          variant: "success",
+          } else {
+            enqueueSnackbar(
+              `User ${a.firstName} ${a.lastName} (${a.QUBID}) deleted`,
+              {
+                variant: "success",
+              }
+            );
+            deleteUser(a._id);
+          }
         });
-        deleteUser(a._id);
+      } else {
+        userAdminContext.loading = true;
+        console.log(loading);
+        const usersToDelete = rows.data.map((d) => users[d.dataIndex]);
+        usersToDelete.map((a) => {
+          if (a._id === user._id) {
+            enqueueSnackbar(`You cannot delete your own record`, {
+              variant: "error",
+            });
+            clearErrors();
+          } else {
+            deleteUser(a._id);
+          }
+        });
+        userAdminContext.loading = false;
+        console.log(loading);
       }
-      });
     },
   };
 

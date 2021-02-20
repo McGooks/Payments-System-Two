@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
   textField: {
     margin: theme.spacing(1),
-    width: "26ch",
+    width: "47%",
   },
   textLabel: {
     marginLeft: theme.spacing(1),
@@ -47,7 +47,10 @@ const useStyles = makeStyles((theme) => ({
   },
   textFieldFull: {
     margin: theme.spacing(1),
-    width: "54ch",
+    width: "97%",
+  },
+  text: {
+    textAlign: "center",
   },
 }));
 
@@ -61,6 +64,7 @@ const UserAdminAddModal = () => {
     updateUser,
     setDialogClosed,
     toggleDialog,
+    error,
   } = userAdminContext;
 
   useEffect(() => {
@@ -70,20 +74,18 @@ const UserAdminAddModal = () => {
     } else {
       setUser({
         dob: "2000-01-01",
-        email: "",
-        emailVerificationToken: "",
-        emailVerificationTokenExpiresAt: "",
+        email: "glennyboi1@me.com",
         emailVerified: false,
         userImg: "",
-        firstName: "",
-        lastName: "",
-        password: "",
-        password1: "",
+        firstName: "Louise",
+        lastName: "Marshall",
+        password: "123456",
+        password1: "123456",
         passwordResetToken: "",
         passwordResetTokenExpiresAt: "",
         payment: "",
         payment1: "",
-        QUBID: "",
+        QUBID: "10000001",
         role: "User",
         status: "Pending",
       });
@@ -146,26 +148,29 @@ const UserAdminAddModal = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (current === null) {
-      if (password !== password1) {
-        enqueueSnackbar(`Password Error! Check Passwords Match`, {
-          variant: "error",
-        });
+    if (!error) {
+      if (current === null) {
+        if (password !== password1) {
+          enqueueSnackbar(`Password Error! Check Passwords Match`, {
+            variant: "error",
+          });
+        } else {
+          addUser(user);
+          onCloseDialog();
+        }
       } else {
-        addUser(user);
+        updateUser(user);
         onCloseDialog();
-        enqueueSnackbar(`User Added`, {
+        enqueueSnackbar(`User Updated`, {
           variant: "success",
         });
       }
+      clearAll();
     } else {
-      updateUser(user);
-      onCloseDialog();
-      enqueueSnackbar(`User Updated`, {
-        variant: "success",
+      enqueueSnackbar(error, {
+        variant: "error",
       });
     }
-    clearAll();
   };
 
   const clearAll = () => {
@@ -187,11 +192,11 @@ const UserAdminAddModal = () => {
 
         <DialogContent>
           {current ? (
-            <DialogContentText>
+            <DialogContentText className={classes.text}>
               To edit a new user please update the fields fields below
             </DialogContentText>
           ) : (
-            <DialogContentText>
+            <DialogContentText className={classes.text}>
               To add a new user please complete all fields below
             </DialogContentText>
           )}
@@ -256,7 +261,7 @@ const UserAdminAddModal = () => {
                 label="QUB ID"
                 variant="outlined"
               />
-              <TextField
+              {current ? ( <TextField
                 className={classes.textField}
                 select
                 variant="outlined"
@@ -271,7 +276,16 @@ const UserAdminAddModal = () => {
                     {option.label}
                   </MenuItem>
                 ))}
-              </TextField>
+              </TextField>) : ( <TextField
+                className={classes.textField}
+                disabled
+                variant="outlined"
+                id="status"
+                name="status"
+                label="Select Status"
+                value="Pending"
+                onChange={onChange}
+              />) }
               <TextField
                 className={classes.textField}
                 select
@@ -324,31 +338,45 @@ const UserAdminAddModal = () => {
                 )}
               </div>
             </div>
-          </form>
-          <DialogActions>
             {current ? (
               <>
-                <Button onClick={passwordReset} color="primary">
-                  Password Reset
-                </Button>
-                <Button onClick={onCloseDialog} color="primary">
-                  Cancel
-                </Button>
-                <Button onClick={onSubmit} color="primary">
-                  Update
-                </Button>
+                <DialogActions>
+                  <Button
+                    onClick={passwordReset}
+                    variant="outlined"
+                    color="primary"
+                  >
+                    Password Reset
+                  </Button>
+                  <Button
+                    onClick={onCloseDialog}
+                    variant="outlined"
+                    color="primary"
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={onSubmit} variant="outlined" color="primary">
+                    Update
+                  </Button>
+                </DialogActions>
               </>
             ) : (
               <>
-                <Button onClick={onCloseDialog} color="primary">
-                  Cancel
-                </Button>
-                <Button onClick={onSubmit} color="primary">
-                  Submit
-                </Button>
+                <DialogActions>
+                  <Button
+                    onClick={onCloseDialog}
+                    variant="outlined"
+                    color="primary"
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={onSubmit} variant="outlined" color="primary">
+                    Submit
+                  </Button>
+                </DialogActions>
               </>
             )}
-          </DialogActions>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

@@ -42,12 +42,14 @@ const AuthState = (props) => {
         payload: res.data,
       });
     } catch (error) {
-      dispatch({ type: AUTH_ERROR });
+      dispatch({
+        type: AUTH_ERROR,
+        payload: error.response.data.msg[0].msg,
+      });
     }
   };
 
   //REGISTER USER
-
   const register = async (formData) => {
     const config = {
       headers: {
@@ -65,10 +67,49 @@ const AuthState = (props) => {
     } catch (error) {
       dispatch({
         type: REGISTER_FAIL,
-        payload: error.response.data.msg,
+        payload: error.response.data.msg[0].msg,
       });
     }
   };
+
+  const verifyEmail = async (token) => {
+    const config = {
+      headers: { "Content-Type": "application/json" },
+    };
+    try {
+      const res = await axios.put(`/api/users/confirm-email/${token}`, null, config);
+      dispatch({ type: REGISTER_SUCCESS, payload: res.data });
+      loadUser();
+    } catch (error) {
+      dispatch({
+        type: REGISTER_FAIL,
+        payload: error.response.data.msg[0].msg,
+      });
+    }
+  };
+
+  // //REGISTER USER
+  // const accountActivate = async (formData) => {
+  //   const config = {
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   };
+
+  //   try {
+  //     const res = await axios.post("/api/users/signup", formData, config);
+  //     dispatch({
+  //       type: REGISTER_SUCCESS,
+  //       payload: res.data,
+  //     });
+  //     loadUser();
+  //   } catch (error) {
+  //     dispatch({
+  //       type: REGISTER_FAIL,
+  //       payload: error.response.data.msg[0].msg,
+  //     });
+  //   }
+  // };
 
   //LOGIN USER
 
@@ -78,7 +119,6 @@ const AuthState = (props) => {
         "Content-Type": "application/json",
       },
     };
-
     try {
       const res = await axios.post("/api/auth", formData, config);
       dispatch({
@@ -89,12 +129,10 @@ const AuthState = (props) => {
     } catch (error) {
       dispatch({
         type: LOGIN_FAIL,
-        payload: error.response.data.msg,
+        payload: error.response.data.msg[0].msg,
       });
     }
   };
-
-  
 
   //LOGOUT
 
@@ -121,6 +159,7 @@ const AuthState = (props) => {
         login,
         logout,
         clearErrors,
+        verifyEmail,
       }}
     >
       {props.children}

@@ -14,13 +14,12 @@ import {
   CLEAR_ERRORS,
   OPEN_DIALOG,
   CLOSE_DIALOG,
-  GET_IMPORT_USERS
 } from "../types";
 
 const UserAdminState = (props) => {
   const initialState = {
+    importedUsersAdded: false,
     loading: true,
-    importUsers: null,
     users: null,
     current: null,
     error: null,
@@ -35,7 +34,10 @@ const UserAdminState = (props) => {
       const res = await axios.get("/api/userAdmin");
       dispatch({ type: GET_USERS, payload: res.data });
     } catch (error) {
-      dispatch({ type: USER_ERROR, payload: error.response.data.msg });
+      dispatch({
+        type: USER_ERROR,
+        payload: error.response.data.msg[0].msg,
+      });
     }
   };
 
@@ -50,7 +52,10 @@ const UserAdminState = (props) => {
       const res = await axios.post("api/userAdmin", user, config);
       dispatch({ type: ADD_USER, payload: res.data });
     } catch (error) {
-      dispatch({ type: USER_ERROR, payload: error.response.data.msg });
+      dispatch({
+        type: USER_ERROR,
+        payload: error.response.data.msg[0].msg,
+      });
     }
   };
 
@@ -60,12 +65,14 @@ const UserAdminState = (props) => {
       await axios.delete(`api/userAdmin/${id}`);
       dispatch({ type: DELETE_USER, payload: id });
     } catch (error) {
-      dispatch({ type: USER_ERROR, payload: error.response.data.msg });
+      dispatch({
+        type: USER_ERROR,
+        payload: error.response.data.msg[0].msg,
+      });
     }
   };
 
-  //Update User
-
+  //Update User Record
   const updateUser = async (user) => {
     const config = {
       headers: {
@@ -76,15 +83,12 @@ const UserAdminState = (props) => {
       const res = await axios.put(`api/userAdmin/${user._id}`, user, config);
       dispatch({ type: UPDATE_USER, payload: res.data });
     } catch (error) {
-      dispatch({ type: USER_ERROR, payload: error.response.msg });
+      dispatch({
+        type: USER_ERROR,
+        payload: error.response.data.msg[0].msg,
+      });
     }
   };
-
-  //Import Users from File
-
-  const getImportUsers = (importUsers) => {
-    dispatch({ type: GET_IMPORT_USERS, payload: importUsers });
-  }
 
   //Set Current User
   const setCurrent = (user) => {
@@ -114,7 +118,7 @@ const UserAdminState = (props) => {
   return (
     <UserAdminContext.Provider
       value={{
-        importUsers: state.importUsers,
+        importedUsersAdded: state.importedUsersAdded,
         users: state.users,
         toggleDialog: state.toggleDialog,
         loading: state.loading,
@@ -129,7 +133,6 @@ const UserAdminState = (props) => {
         clearErrors,
         setDialogOpen,
         setDialogClosed,
-        getImportUsers,
       }}
     >
       {props.children}

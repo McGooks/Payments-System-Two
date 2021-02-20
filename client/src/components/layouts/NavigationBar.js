@@ -56,7 +56,7 @@ NavigationBar.propTypes = {
   icon: PropTypes.string,
 };
 NavigationBar.defaultProps = {
-  title: " Demonstrator Payment Manager",
+  title: " DemPay",
   icon: "fas fa-handshake",
 };
 export default NavigationBar;

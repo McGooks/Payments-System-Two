@@ -1,24 +1,28 @@
-import React, { useEffect } from 'react';
-import { useUserDispatch, verifyEmail } from "../../context/UserContext";
-import { useLocation, useHistory } from 'react-router-dom';
-const Verify = () => {
+import React, { useState, useEffect, useContext } from "react";
+import { Link, useLocation, useParams } from 'react-router-dom';
+import AuthContext from "../../context/auth/authContext";
+//Components
+import { useSnackbar } from "notistack";
 
-    const userDispatch = useUserDispatch();
-    const location = useLocation();
-    const history = useHistory();
+const Verify = (props) => {
+  const {token} = useParams()
+  const authContext = useContext(AuthContext);
+  const { verifyEmail } = authContext;
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  
 
-    useEffect(() => {
-      const params = new URLSearchParams(location.search);
-      const token = params.get('token');
-      if (token) {
-        verifyEmail(token, history)(userDispatch)
-      }
-    }, []);
 
-    return (
-      <></>
-    )
-
-}
+  useEffect(() => {
+    verifyEmail(token)
+    enqueueSnackbar(`Email address confirmed, please log in`, {
+      variant: "success",
+    })
+    props.history.push("/login")
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.history]);
+  return (<>
+  <p>Thank you for verifying your email address</p>
+  </>);
+};
 
 export default Verify;

@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect } from "react";
 
 import "./App.css";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 //Authentication
 import SetAuthToken from "./utils/SetAuthToken";
 //Authenticated Pages
@@ -10,9 +10,12 @@ import UserAdmin from "./components/pages/UserAdmin";
 import Payments from "./components/pages/Payments";
 import About from "./components/pages/About";
 import Import from "./components/pages/Import";
+
 //Public Pages
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
+import Verify from "./components/auth/Verify"
+
 //Components
 import NavigationBar from "./components/layouts/NavigationBar";
 import PrivateRoute from "./components/routing/PrivateRoute";
@@ -23,16 +26,12 @@ import UserAdminState from "./context/userAdmin/UserAdminState";
 import StatsState from "./context/stats/StatsState";
 import AuthState from "./context/auth/AuthState";
 
-import Notification from "materialize-css/dist/js/materialize.min.js";
-
 if (localStorage.token) {
   SetAuthToken(localStorage.token);
 }
 
 const App = () => {
-  useEffect(() => {
-    Notification.AutoInit();
-  });
+  useEffect(() => {});
 
   return (
     <AuthState>
@@ -51,19 +50,17 @@ const App = () => {
                         path="/userAdmin"
                         component={UserAdmin}
                       />
-                      <PrivateRoute
-                        exact
-                        path="/import"
-                        component={Import}
-                      />
+                      <PrivateRoute exact path="/import" component={Import} />
                       <PrivateRoute
                         exact
                         path="/payments"
                         component={Payments}
                       />
+                      <Route exact path="/users/confirm-email/:token" component={Verify}/>
                       <Route exact path="/about" component={About} />
                       <Route exact path="/register" component={Register} />
                       <Route exact path="/login" component={Login} />
+                      <Redirect from="*" to="/"/>
                     </Switch>
                   </div>
                 </Fragment>

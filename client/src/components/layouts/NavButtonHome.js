@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme) => ({
 const actions = [
   { id: 1, icon: (<Link to="/userAdmin"><GroupIcon /></Link>), name: "User Management" },
   { id: 2, icon: (<Link to="/payments"><Payments /></Link>), name: "Payments" },
-  { id: 3, icon: <Reports />, name: "Report Manager" },
-  { id: 4, icon: <Admin />, name: "Admin" },
+  { id: 3, icon: (<Link to="#"><Reports /></Link>), name: "Report Manager" },
+  { id: 4, icon: (<Link to="#"><Admin /></Link>), name: "Admin" },
   { id: 5, icon: (<Link to="/about"><InfoIcon /></Link>), name: "About" },
 ];
 
@@ -46,7 +46,7 @@ const NavButtonHome = () => {
   return (
     <div className={classes.root}>
       <SpeedDial
-        ariaLabel="SpeedDial example"
+        ariaLabel="Home Navigation Control"
         className={classes.speedDial}
         icon={<MenuIcon />}
         onClose={handleClose}
