@@ -4,13 +4,13 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 
-//MVC
 const config = require("config");
 const User = require("../models/User");
 const auth = require("../middleware/auth");
+
 //Mail Gun
 const mailgun = require("mailgun-js");
-const DOMAIN = "sandboxd69201c6ab584996925385ff0ba51de3.mailgun.org";
+const DOMAIN = config.get("mailgun_DOMAIN");
 const mg = mailgun({ apiKey: config.get("mailgun_APIKEY"), domain: DOMAIN });
 
 //@route    POST api/users
@@ -401,22 +401,33 @@ router.put("/confirm-email/:token", async (req, res) => {
               .status(400)
               .json({ msg: [{ msg: "This token has expired" }] });
           }
-          const { email } = decodedToken;
-          return email;
+
+          return decodedToken;
         }
       );
-      const email = decode;
+      const { email, iat, exp } = decode;
 
       const userFields = {};
+      userFields.emailTokenIssued = iat;
+      userFields.emailTokenExpiry = exp;
       userFields.emailVerified = true;
-      userFields.status = "Active"
+      userFields.status = "Active";
       userFields.emailVerifiedDate = Date.now();
       userFields.updatedAt = Date.now();
 
       try {
         let UpdatedUser = await User.findOne({ email }); // find user by email address
-        if(UpdatedUser.emailVerified) {
-          return res.status(404).json({ msg: [{ msg: "This email address has already been confirmed, please log in" }] });
+        if (UpdatedUser.emailVerified) {
+          return res
+            .status(404)
+            .json({
+              msg: [
+                {
+                  msg:
+                    "This email address has already been confirmed, please log in",
+                },
+              ],
+            });
         }
         const updatedUserId = UpdatedUser.id; // Extract User ID
         if (!UpdatedUser) {
@@ -427,7 +438,7 @@ router.put("/confirm-email/:token", async (req, res) => {
             { $set: userFields },
             { new: true }
           ); // find user by ID address
-          res.json(NewUpdatedUser); // Return 
+          res.json(NewUpdatedUser); // Return
         }
       } catch (err) {
         console.error(err.message);

@@ -23,6 +23,9 @@ export const FILTER_USERS = "FILTER_USERS";
 export const CLEAR_USERS = "CLEAR_USERS";
 export const USER_ERROR = "USER_ERROR";
 export const GET_IMPORT_USERS = "GET_IMPORT_USERS";
+export const GET_UK_TOWNS = "GET_UK_TOWNS";
+//user Framework Reducer
+export const GET_USER = "GET_USERS";
 //KPI & Charts Framework Reducer
 export const GET_STATS = "GET_STATS";
 export const STATS_ERROR = "STATS_ERROR";

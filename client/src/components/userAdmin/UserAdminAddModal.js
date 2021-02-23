@@ -73,21 +73,45 @@ const UserAdminAddModal = () => {
       console.log("Current being set from Modal", current);
     } else {
       setUser({
+        address: {
+          street: ".",
+          city: ".",
+          county: ".",
+          country: ".",
+          postcode: ".",
+        },
+        contact: {
+          mobile: "",
+          landline: "",
+        },
+
+        bankName: "",
+        branchName: "",
+        sortCode: "100000",
+        accNumber: "10000000",
+        buildingSocietyNumber: "",
+
         dob: "2000-01-01",
         email: "glennyboi1@me.com",
+        emailTokenIssued: "",
+        emailTokenExpiry: "",
         emailVerified: false,
-        userImg: "",
-        firstName: "Louise",
+        emailVerifiedDate: "",
+        firstName: "Louisa",
         lastName: "Marshall",
+        nino: "",
         password: "123456",
         password1: "123456",
         passwordResetToken: "",
         passwordResetTokenExpiresAt: "",
+        pronoun: "",
         payment: "",
         payment1: "",
-        QUBID: "10000001",
+        QUBID: "10000000",
+        qubSchool: "",
         role: "User",
         status: "Pending",
+        title: "",
       });
     }
   }, [userAdminContext, current]);
@@ -124,6 +148,11 @@ const UserAdminAddModal = () => {
     QUBID,
     role,
     status,
+    bankName,
+    branchName,
+    sortcode,
+    accNumber,
+    buildingSocietyNumber,
   } = user;
 
   const onChange = (e) => {
@@ -261,31 +290,35 @@ const UserAdminAddModal = () => {
                 label="QUB ID"
                 variant="outlined"
               />
-              {current ? ( <TextField
-                className={classes.textField}
-                select
-                variant="outlined"
-                id="status"
-                name="status"
-                label="Select Status"
-                value={status}
-                onChange={onChange}
-              >
-                {statusMenu.map((option) => (
-                  <MenuItem key={option.id} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>) : ( <TextField
-                className={classes.textField}
-                disabled
-                variant="outlined"
-                id="status"
-                name="status"
-                label="Select Status"
-                value="Pending"
-                onChange={onChange}
-              />) }
+              {current ? (
+                <TextField
+                  className={classes.textField}
+                  select
+                  variant="outlined"
+                  id="status"
+                  name="status"
+                  label="Select Status"
+                  value={status}
+                  onChange={onChange}
+                >
+                  {statusMenu.map((option) => (
+                    <MenuItem key={option.id} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              ) : (
+                <TextField
+                  className={classes.textField}
+                  disabled
+                  variant="outlined"
+                  id="status"
+                  name="status"
+                  label="Select Status"
+                  value="Pending"
+                  onChange={onChange}
+                />
+              )}
               <TextField
                 className={classes.textField}
                 select

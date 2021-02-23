@@ -3,6 +3,7 @@ import axios from "axios";
 import AuthContext from "./authContext";
 import AuthReducer from "./AuthReducer";
 import SetAuthToken from "../../utils/SetAuthToken";
+import { useSnackbar } from "notistack";
 
 import {
   REGISTER_SUCCESS,
@@ -25,7 +26,7 @@ const AuthState = (props) => {
     user: null,
     error: null,
   };
-
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [state, dispatch] = useReducer(AuthReducer, initialState);
 
   //LOAD USER
@@ -34,7 +35,6 @@ const AuthState = (props) => {
     if (localStorage.token) {
       SetAuthToken(localStorage.token);
     }
-
     try {
       const res = await axios.get("/api/auth");
       dispatch({
@@ -44,8 +44,7 @@ const AuthState = (props) => {
     } catch (error) {
       dispatch({
         type: AUTH_ERROR,
-        payload: error.response.data.msg[0].msg,
-      });
+      })
     }
   };
 
@@ -63,11 +62,16 @@ const AuthState = (props) => {
         type: REGISTER_SUCCESS,
         payload: res.data,
       });
+      enqueueSnackbar(`New User Registered`, {
+        variant: "success",
+      });
       loadUser();
     } catch (error) {
       dispatch({
         type: REGISTER_FAIL,
-        payload: error.response.data.msg[0].msg,
+        payload: enqueueSnackbar(error.response.data.msg[0].msg, {
+          variant: "error",
+        }),
       });
     }
   };
@@ -77,8 +81,15 @@ const AuthState = (props) => {
       headers: { "Content-Type": "application/json" },
     };
     try {
-      const res = await axios.put(`/api/users/confirm-email/${token}`, null, config);
+      const res = await axios.put(
+        `/api/users/confirm-email/${token}`,
+        null,
+        config
+      );
       dispatch({ type: REGISTER_SUCCESS, payload: res.data });
+      enqueueSnackbar("Email address confirmed, please log in", {
+        variant: "success",
+      });
       loadUser();
     } catch (error) {
       dispatch({
@@ -87,29 +98,6 @@ const AuthState = (props) => {
       });
     }
   };
-
-  // //REGISTER USER
-  // const accountActivate = async (formData) => {
-  //   const config = {
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   };
-
-  //   try {
-  //     const res = await axios.post("/api/users/signup", formData, config);
-  //     dispatch({
-  //       type: REGISTER_SUCCESS,
-  //       payload: res.data,
-  //     });
-  //     loadUser();
-  //   } catch (error) {
-  //     dispatch({
-  //       type: REGISTER_FAIL,
-  //       payload: error.response.data.msg[0].msg,
-  //     });
-  //   }
-  // };
 
   //LOGIN USER
 
@@ -127,10 +115,11 @@ const AuthState = (props) => {
       });
       loadUser();
     } catch (error) {
+      console.error(error)
       dispatch({
         type: LOGIN_FAIL,
         payload: error.response.data.msg[0].msg,
-      });
+      })
     }
   };
 

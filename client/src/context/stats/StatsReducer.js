@@ -15,6 +15,7 @@ export default (state, action) => {
         ...state,
         stats: action.payload,
         loading: false,
+        error: null
       };
     }
     case STATS_ERROR: {

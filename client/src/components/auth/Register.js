@@ -17,13 +17,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     width: "100%",
   },
-  button:{
-    backgroundColor: 'rgb(214, 0, 13)',
+  button: {
+    backgroundColor: "rgb(214, 0, 13)",
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
-  }
+  },
 }));
-
 
 const Register = (props) => {
   const classes = useStyles();
@@ -31,18 +30,20 @@ const Register = (props) => {
   const { register, error, clearErrors, isAuthenticated } = authContext;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-
   useEffect(() => {
     if (isAuthenticated) {
       props.history.push("/");
     }
     if (error) {
-      enqueueSnackbar(`User already exists, please contact system administrator`, {
-        variant: "error",
-      })
+      enqueueSnackbar(
+        error,
+        {
+          variant: "error",
+        }
+      );
       clearErrors();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, isAuthenticated, props.history]);
 
   const [user, setUser] = useState({
@@ -65,11 +66,11 @@ const Register = (props) => {
     if (QUBID === "" || email === "" || password === "") {
       enqueueSnackbar(`Please complete all fields`, {
         variant: "warning",
-      })
+      });
     } else if (password !== password2) {
       enqueueSnackbar(`Passwords do not match`, {
         variant: "error",
-      })
+      });
     } else {
       register({
         QUBID,
@@ -84,34 +85,36 @@ const Register = (props) => {
         Account <span className="text-primary">Register</span>
       </h1>
       <form onSubmit={onSubmit}>
-      <div>
         <div>
-          <TextField
-            className={classes.textFieldFull}
-            required
-            id="email"
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={email}
-            onChange={onChange}
-            label="Email"
-            variant="outlined"
-            autocomplete="username"
-          />
-        </div>
-        <TextField
-            className={classes.textFieldFull}
-            required
-            id="QUBID"
-            type="text"
-            name="QUBID"
-            value={QUBID}
-            onChange={onChange}
-            placeholder="QUB ID Number"
-            label="QUB ID"
-            variant="outlined"
-          />
+        <div>
+            <TextField
+              className={classes.textFieldFull}
+              required
+              id="QUBID"
+              type="text"
+              name="QUBID"
+              value={QUBID}
+              onChange={onChange}
+              placeholder="QUB ID Number"
+              label="QUB ID"
+              variant="outlined"
+            />
+          </div>
+          <div>
+            <TextField
+              className={classes.textFieldFull}
+              required
+              id="email"
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={email}
+              onChange={onChange}
+              label="Email"
+              variant="outlined"
+              autoComplete="username"
+            />
+          </div>
         </div>
         <div>
           <TextField
@@ -125,7 +128,7 @@ const Register = (props) => {
             onChange={onChange}
             label="Password"
             variant="outlined"
-            autocomplete="current-password"
+            autoComplete="current-password"
             minLength="6"
           />
         </div>
@@ -144,7 +147,14 @@ const Register = (props) => {
             minLength="6"
           />
         </div>
-        <Button size="large" fullWidth={true} className={classes.button} onClick={onSubmit} color="secondary" variant="contained">
+        <Button
+          size="large"
+          fullWidth={true}
+          className={classes.button}
+          onClick={onSubmit}
+          color="secondary"
+          variant="contained"
+        >
           Register
         </Button>
       </form>

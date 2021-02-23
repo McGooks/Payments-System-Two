@@ -4,12 +4,15 @@ import UserAdminContext from "../../context/userAdmin/userAdminContext";
 import AuthContext from "../../context/auth/authContext";
 //Components
 import { Grid } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
+import PersonIcon from "@material-ui/icons/Person";
 import Chip from "@material-ui/core/Chip";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
 // import CustomToolbar from "../layouts/CustomToolbar";
+
 
 const UserAdmin = () => {
   const userAdminContext = useContext(UserAdminContext);
@@ -26,6 +29,7 @@ const UserAdmin = () => {
     setDialogOpen,
     setCurrent,
   } = userAdminContext;
+  const history = useHistory();
 
   // const openEditDialog = (dataIndex) => {
   //   setDialogOpen();
@@ -48,11 +52,17 @@ const UserAdmin = () => {
     return <h4>Please add a user</h4>; // if user list is empty
   }
 
-  function handleClick(e, dataIndex) {
+  const openDialog = (e, dataIndex) => {
     e.preventDefault();
     setDialogOpen();
     setCurrent(users[dataIndex]._id);
     console.log("Handled Click", setCurrent(users[dataIndex]));
+  }
+  
+
+  const editProfile = (e,dataIndex) => {
+   let path = `/user/${users[dataIndex]._id}`
+   history.push(path)
   }
 
   const CustomChip = ({ label, onDelete }) => {
@@ -214,7 +224,25 @@ const UserAdmin = () => {
           return (
             <EditIcon
               onClick={(e) => {
-                handleClick(e, dataIndex);
+                openDialog(e, dataIndex);
+              }}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: "",
+      options: {
+        filter: false,
+        sort: false,
+        empty: true,
+        download: false,
+        customBodyRenderLite: (dataIndex) => {
+          return (
+            <PersonIcon
+              onClick={(e) => {
+                editProfile(e, dataIndex);
               }}
             />
           );

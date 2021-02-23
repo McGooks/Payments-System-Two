@@ -102,7 +102,7 @@ const Import = (props) => {
     });
   };
 
-  const makeid = (length) => {
+  const makePassword = (length) => {
     var result = "";
     var characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -117,7 +117,7 @@ const Import = (props) => {
     e.preventDefault();
     try {
     jsonFile.map((d) => {
-      let makeRandomPassword = { password: makeid(10) };
+      let makeRandomPassword = { password: makePassword(10) };
       let userWithAddedRandomPassword = Object.assign(d, makeRandomPassword);
         addUser(userWithAddedRandomPassword);
       })

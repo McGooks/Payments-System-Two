@@ -6,6 +6,7 @@ const { check, validationResult } = require("express-validator");
 
 const auth = require("../middleware/auth");
 const User = require("../models/User");
+const UserNSPDetail = require("../models/UserNSPDetails");
 const config = require("config");
 
 //Mail Gun
@@ -13,23 +14,21 @@ const mailgun = require("mailgun-js");
 const DOMAIN = config.get("mailgun_DOMAIN");
 const mg = mailgun({ apiKey: config.get("mailgun_APIKEY"), domain: DOMAIN });
 
-//@route    GET api/userAdmin
-//@desc     Get all users
+//@route    GET api/user/:id
+//@desc     Get user
 //@access   Private
-router.get("/", auth, async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   try {
-    const user = await User.find().sort({
-      date: -1,
-    });
+    const user = await User.findById(req.params.id);
+    console.log("Console log on user",user)
     res.json(user);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
-    res.status(500).json({ msg: "Unable to get users" });
+    res.status(500).json({ msg: "Unable to get user" });
   }
 });
 
-//@route    POST api/userAdmin
+//@route    POST api/user
 //@desc     Add new User
 //@access   PRIVATE
 router.post(
@@ -57,7 +56,6 @@ router.post(
       QUBID,
       role,
       status,
-
     } = req.body;
     try {
       let newUser = await User.findOne({ email });
@@ -297,11 +295,24 @@ router.post(
   }
 );
 
-//@route    PUT api/userAdmin/:id
+//@route    PUT api/user/edit/:id
 //@desc     Update User
 //@access   PRIVATE
-router.put("/:id", auth, async (req, res) => {
-  const { dob, email, firstName, lastName, QUBID, role, status } = req.body;
+router.put("/edit/:id", auth, async (req, res) => {
+  const {
+    dob,
+    email,
+    firstName,
+    lastName,
+    QUBID,
+    role,
+    status,
+    bankName,
+    branchName,
+    sortCode,
+    accNumber,
+    buildingSocietyNumber,
+  } = req.body;
   //build user object
   const userFields = {};
   if (dob) userFields.dob = dob;
@@ -311,6 +322,7 @@ router.put("/:id", auth, async (req, res) => {
   if (QUBID) userFields.QUBID = QUBID;
   if (role) userFields.role = role;
   if (status) userFields.status = status;
+  if (bankName) userFields.bank.bankName = bankName;
   userFields.updatedById = req.user.id;
   userFields.updatedAt = Date.now();
 
@@ -338,7 +350,7 @@ router.put("/:id", auth, async (req, res) => {
   }
 });
 
-//@route    DELETE api/userAdmin/:id
+//@route    DELETE api/user/:id
 //@desc     Delete User
 //@access   PRIVATE
 router.delete("/:id", auth, async (req, res) => {
