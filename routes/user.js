@@ -6,7 +6,7 @@ const { check, validationResult } = require("express-validator");
 
 const auth = require("../middleware/auth");
 const User = require("../models/User");
-const UserNSPDetail = require("../models/UserNSPDetails");
+const UserTaxDeclaration = require("../models/UserTaxDeclaration");
 const config = require("config");
 
 //Mail Gun

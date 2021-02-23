@@ -4,7 +4,11 @@ const section1Res = ["A", "B", "C"];
 const section2Res = [1, 2];
 const section3ResQ4 = [1, 2];
 
-const UserNSPDetailsSchema = mongoose.Schema({
+const UserTaxDeclarationSchema = mongoose.Schema({
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -65,5 +69,5 @@ const UserNSPDetailsSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("UserNSPDetails", UserNSPDetailsSchema);
+module.exports = mongoose.model("UserTaxDeclaration", UserTaxDeclarationSchema);
 

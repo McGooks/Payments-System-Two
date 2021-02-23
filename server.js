@@ -18,6 +18,7 @@ app.use("/api/user", require("./routes/user"))
 app.use("/api/userAdmin", require("./routes/userAdmin"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/auth", require("./routes/auth"));
+
 //Serve static assets in production
 if(process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
