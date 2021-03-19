@@ -4,21 +4,21 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
-
 const auth = require("../middleware/auth");
 const User = require("../models/User");
 
 //@route    GET api/auth
 //@desc     Get logged in user
 //@access   Private
-router.get("/", auth, async (req, res) => {
+router.get("/", auth, async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     res.json(user);
   } catch (err) {
     console.error(err.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).json({ error: err });
   }
+  next();
 });
 
 //@route    POST api/auth
@@ -27,26 +27,29 @@ router.get("/", auth, async (req, res) => {
 router.post(
   "/",
   [
-    check("email", "A valid email address is required").not().isEmpty(),
+    check("email", "Please insert an email address").not().isEmpty(),
     check("email", "A valid email address is required").isEmail(),
     check("password", "A valid password is required").not().isEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
+    console.log(errors.mapped())
     if (!errors.isEmpty()) {
-      return res.status(400).json({ msg: errors.array() });
+      res.status(400).json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
     const { email, password } = req.body;
     try {
       let user = await User.findOne({ email }); // find user email and return in user.id
       if (!user) {
-        res.status(400).json({ msg: [{ msg: "User account not found, please register an account" }] }); // if user does not exist throw error
+        res.status(400).json({
+          error: "User account not found, please register an account",
+        }); // if user does not exist throw error
       }
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         res
           .status(400)
-          .json({ msg: [{ msg: "The password you have entered is invalid" }] }); // if user password does not match exist throw error
+          .json({ error: "The password you have entered is invalid"}); // if user password does not match exist throw error
       }
       // set payload variable for jwt sign (token)
       const payload = {
@@ -68,7 +71,7 @@ router.post(
       );
     } catch (err) {
       console.error(err.message);
-      res.status(500).json({ msg: [{ msg: "Server Error" }] });
+      res.status(500).json({ error: err });
     }
   }
 );

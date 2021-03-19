@@ -11,6 +11,7 @@ import PaymentsAuthValueYTDKPI from "../../components/charts/PaymentsAuthValueYT
 // Charts
 import PaymentsTrend from "../../components/charts/PaymentsTrend";
 import DemoChart from "../../components/charts/DemoChart";
+import Tab1 from "../../components/charts/TabTest"
 //Navigation
 import NavButtonHome from "../../components/layouts/NavButtonHome";
 //State
@@ -45,7 +46,7 @@ const Home = () => {
 
   useEffect(() => {
     loadUser();
-    console.log(user);
+    console.log("user object after loadUser",user);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -82,19 +83,20 @@ const Home = () => {
             <PaymentPendingAuthValueKPI key={3} />
           </Grid>
           <Grid item xs={12} md sm={6}>
-            <PaymentsAuthValueKPI />
+            <PaymentsAuthValueKPI key={4} />
           </Grid>
           <Grid item xs={12} md sm={6}>
-            <PaymentsAuthValueYTDKPI />
+            <PaymentsAuthValueYTDKPI key={5}/>
           </Grid>
         </Grid>
         <Grid container spacing={4}>
           <Grid item md={6} xs={12}>
-            <PaymentsTrend />
+            <PaymentsTrend key={6} />
           </Grid>
           <Grid item md={6} xs={12}>
-            <DemoChart />
+            <DemoChart key={7} />
           </Grid>
+          
         </Grid>{" "}
       </>
     ) : (

@@ -31,7 +31,7 @@ const ContactState = (props) => {
       const res = await axios.get("api/userAdmin");
       dispatch({ type: GET_CONTACTS, payload: res.data });
     } catch (error) {
-      dispatch({ type: CONTACT_ERROR, payload: error.response.msg });
+      dispatch({ type: CONTACT_ERROR, payload: error.response });
     }
   };
 
@@ -47,7 +47,7 @@ const ContactState = (props) => {
       const res = await axios.post("api/userAdmin", contact, config);
       dispatch({ type: ADD_CONTACT, payload: res.data });
     } catch (error) {
-      dispatch({ type: CONTACT_ERROR, payload: error.response.msg });
+      dispatch({ type: CONTACT_ERROR, payload: error.response });
     }
   };
 
@@ -57,7 +57,7 @@ const ContactState = (props) => {
       await axios.delete(`api/userAdmin/${id}`);
       dispatch({ type: DELETE_CONTACT, payload: id });
     } catch (error) {
-      dispatch({ type: CONTACT_ERROR, payload: error.response.msg });
+      dispatch({ type: CONTACT_ERROR, payload: error.response });
     }
   };
 

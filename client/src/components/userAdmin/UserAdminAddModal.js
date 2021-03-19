@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
+import { schoolMenu, statusMenu, roleMenu } from "../../utils/dropdowns";
 import { useSnackbar } from "notistack";
 //UI
 import Button from "@material-ui/core/Button";
@@ -13,22 +14,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { makeStyles } from "@material-ui/core/styles";
-
-const statusMenu = [
-  { id: 1, value: "Pending", label: "Pending" },
-  { id: 2, value: "Active", label: "Active" },
-  { id: 3, value: "Disabled", label: "Disabled" },
-  { id: 4, value: "Expired", label: "Expired" },
-];
-
-const roleMenu = [
-  { id: 1, value: "User", label: "User" },
-  { id: 2, value: "Admin", label: "Admin" },
-  { id: 3, value: "Module Owner", label: "Module Owner" },
-  { id: 4, value: "School Management", label: "School Management" },
-  { id: 5, value: "Clerical", label: "Clerical" },
-  { id: 6, value: "Adhoc", label: "Adhoc" },
-];
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,34 +55,40 @@ const UserAdminAddModal = () => {
   useEffect(() => {
     if (current !== null) {
       setUser(current);
-      console.log("Current being set from Modal", current);
+      console.log("Current is set", current);
     } else {
       setUser({
-        address: {
-          street: ".",
-          city: ".",
-          county: ".",
-          country: ".",
-          postcode: ".",
-        },
-        contact: {
-          mobile: "",
-          landline: "",
-        },
-
-        bankName: "",
-        branchName: "",
-        sortCode: "100000",
-        accNumber: "10000000",
-        buildingSocietyNumber: "",
-
-        dob: "2000-01-01",
+        address: [
+          {
+            street: "",
+            city: "",
+            county: "",
+            country: "",
+            postcode: "",
+          },
+        ],
+        contact: [
+          {
+            mobile: "",
+            landline: "",
+          },
+        ],
+        bank: [
+          {
+            bankName: "",
+            branchName: "",
+            sortCode: "",
+            accNumber: "",
+            buildingSocietyNumber: "",
+          },
+        ],
+        dob: "1985-06-14",
         email: "glennyboi1@me.com",
         emailTokenIssued: "",
         emailTokenExpiry: "",
         emailVerified: false,
         emailVerifiedDate: "",
-        firstName: "Louisa",
+        firstName: "Louise",
         lastName: "Marshall",
         nino: "",
         password: "123456",
@@ -108,10 +99,22 @@ const UserAdminAddModal = () => {
         payment: "",
         payment1: "",
         QUBID: "10000000",
-        qubSchool: "",
+        qubSchool: "Electronics, Electrical Engineering and Computer Science",
         role: "User",
         status: "Pending",
         title: "",
+        taxDeclaration: [
+          {
+            employeeStatements_section1: "A",
+            employeeStatements_section2: "1",
+            employeeStatements_section3q1: "false",
+            employeeStatements_section3q2: "false",
+            employeeStatements_section3q3: "false",
+            employeeStatements_section3q4: "1",
+            employeeStatements_section3q5: "false",
+            signed: false,
+          },
+        ],
       });
     }
   }, [userAdminContext, current]);
@@ -136,6 +139,7 @@ const UserAdminAddModal = () => {
     QUBID: "",
     role: "User",
     status: "Pending",
+    qubSchool: "",
   });
 
   const {
@@ -148,11 +152,7 @@ const UserAdminAddModal = () => {
     QUBID,
     role,
     status,
-    bankName,
-    branchName,
-    sortcode,
-    accNumber,
-    buildingSocietyNumber,
+    qubSchool,
   } = user;
 
   const onChange = (e) => {
@@ -336,6 +336,22 @@ const UserAdminAddModal = () => {
                 ))}
               </TextField>
               <div>
+                <TextField
+                  className={classes.textFieldFull}
+                  select
+                  variant="outlined"
+                  id="qubSchool"
+                  name="qubSchool"
+                  label="Select A School"
+                  value={qubSchool}
+                  onChange={onChange}
+                >
+                  {schoolMenu.map((option) => (
+                    <MenuItem key={option.id} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
                 {current ? (
                   ""
                 ) : (

@@ -1,6 +1,8 @@
 //Payments Framework Reducer
 export const GET_PAYMENTS = "GET_PAYMENTS";
+export const GET_USER_PAYMENTS = "GET_USER_PAYMENTS";
 export const ADD_PAYMENT = "ADD_PAYMENT";
+export const ADD_USER_PAYMENT = "ADD_USER_PAYMENT";
 export const DELETE_PAYMENT = "DELETE_PAYMENT";
 export const UPDATE_PAYMENT = "UPDATE_PAYMENT";
 export const FILTER_PAYMENTS = "FILTER_PAYMENTS";
@@ -13,17 +15,18 @@ export const DELETE_CONTACT = "DELETE_CONTACT";
 export const UPDATE_CONTACT = "UPDATE_CONTACT";
 export const FILTER_CONTACTS = "FILTER_CONTACTS";
 export const CLEAR_CONTACTS = "CLEAR_CONTACTS";
+export const CLEAR_FILTER = "CLEAR_FILTER";
 export const CONTACT_ERROR = "CONTACT_ERROR";
 //userAdmin Framework Reducer
 export const GET_USERS = "GET_USERS";
+export const GET_ACTIVE_USERS = "GET_ACTIVE_USERS";
 export const ADD_USER = "ADD_USER";
 export const DELETE_USER = "DELETE_USER";
 export const UPDATE_USER = "UPDATE_USER";
 export const FILTER_USERS = "FILTER_USERS";
 export const CLEAR_USERS = "CLEAR_USERS";
+export const CLEAR_USER = "CLEAR_USER";
 export const USER_ERROR = "USER_ERROR";
-export const GET_IMPORT_USERS = "GET_IMPORT_USERS";
-export const GET_UK_TOWNS = "GET_UK_TOWNS";
 //user Framework Reducer
 export const GET_USER = "GET_USERS";
 //KPI & Charts Framework Reducer
@@ -46,6 +49,5 @@ export const LOGOUT = "LOGOUT";
 //General Reducer
 export const SET_CURRENT = "SET_CURRENT";
 export const CLEAR_CURRENT = "CLEAR_CURRENT";
-export const CLEAR_FILTER = "CLEAR_FILTER";
 export const OPEN_DIALOG = "OPEN_DIALOG";
 export const CLOSE_DIALOG = "CLOSE_DIALOG";

@@ -19,7 +19,7 @@ const StatsState = (props) => {
       let res = await axios.get("/api/stats");
       dispatch({ type: GET_STATS, payload: res.data });
     } catch (error) {
-      dispatch({ type: STATS_ERROR, payload: error.response.data.msg[0].msg });
+      dispatch({ type: STATS_ERROR, payload: error.response.data.error });
     }
   };
   return (

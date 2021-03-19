@@ -36,16 +36,16 @@ const NavButtonHome = () => {
   useEffect(() => {
     if (user !== null) {
       setUserID(user._id);
-      console.log(user._id)
+      console.log(user._id);
     } else {
       setUserID({
-       _id: ""
+        _id: "",
       });
     }
   }, [authContext, user]);
 
   const [userID, setUserID] = useState({
-    _id: ""
+    _id: "",
   });
 
   let actions;
@@ -109,6 +109,15 @@ const NavButtonHome = () => {
               </Link>
             ),
             name: "My Profile",
+          },
+          {
+            id: 2,
+            icon: (
+              <Link to={`user/${userID}/payments`}>
+                <Payments />
+              </Link>
+            ),
+            name: "Payments",
           },
           {
             id: 5,

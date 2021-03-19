@@ -38,7 +38,6 @@ const PaymentTrend = () => {
           padding: 1,
         }}
     >
-        
       <Chart data={data} series={{type: "bar"}} axes={axes} />
       
     </div>

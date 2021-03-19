@@ -18,10 +18,31 @@ const mg = mailgun({ apiKey: config.get("mailgun_APIKEY"), domain: DOMAIN });
 //@access   Private
 router.get("/", auth, async (req, res) => {
   try {
-    const user = await User.find().sort({
-      date: -1,
-    });
+    const user = await User.find()
+      .sort({
+        date: -1,
+      })
+      .select(["-password"]);
     res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+    res.status(500).json({ msg: "Unable to get users" });
+  }
+});
+
+//@route    GET api/userAdmin/active
+//@desc     Get all ACTIVE users
+//@access   Private
+router.get("/active", auth, async (req, res) => {
+  try {
+    const activeUser = await User.find({ status: "Active" })
+      .sort({
+        firstName: 1,
+        lastName: 1
+      })
+      .select(["firstName", "lastName", "QUBID"]);
+    res.json(activeUser);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -46,10 +67,17 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res
+        .status(400)
+        .json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
+    console.log(req.body);
     const {
+      address,
+      contact,
+      bank,
       dob,
+      taxDeclaration,
       email,
       firstName,
       lastName,
@@ -57,13 +85,13 @@ router.post(
       QUBID,
       role,
       status,
-
+      qubSchool,
     } = req.body;
     try {
       let newUser = await User.findOne({ email });
       if (newUser) {
         let jsonResponse = "User " + newUser.email + " already exists";
-        res.status(400).json({ msg: [{ msg: jsonResponse }] }); // if user already exists throw error
+        res.status(400).json({ error: jsonResponse }); // if user already exists throw error
       } else {
         const emailToken = jwt.sign(
           { QUBID, email, password },
@@ -272,8 +300,12 @@ router.post(
 </html>
         `,
         };
-        mg.messages().send(data); // Send Email
+        // mg.messages().send(data); // Send Email
         newUser = new User({
+          address,
+          contact,
+          bank,
+          taxDeclaration,
           dob,
           email,
           firstName,
@@ -282,12 +314,16 @@ router.post(
           QUBID,
           role,
           status,
+          qubSchool,
           createdById: req.user.id,
         });
         const salt = await bcrypt.genSalt(10); // Password salt
         newUser.password = await bcrypt.hash(password, salt); // Pass in password and hash
+        console.log(newUser);
         const user = await newUser.save();
         res.json(user);
+        await newUser.save();
+        console.log(newUser);
         console.log("this is coming from the user admin submission", user);
       }
     } catch (err) {
@@ -301,7 +337,16 @@ router.post(
 //@desc     Update User
 //@access   PRIVATE
 router.put("/:id", auth, async (req, res) => {
-  const { dob, email, firstName, lastName, QUBID, role, status } = req.body;
+  const {
+    dob,
+    email,
+    firstName,
+    lastName,
+    QUBID,
+    role,
+    status,
+    qubSchool,
+  } = req.body;
   //build user object
   const userFields = {};
   if (dob) userFields.dob = dob;
@@ -310,7 +355,14 @@ router.put("/:id", auth, async (req, res) => {
   if (lastName) userFields.lastName = lastName;
   if (QUBID) userFields.QUBID = QUBID;
   if (role) userFields.role = role;
-  if (status) userFields.status = status;
+  if (status === "Active") {
+    userFields.status = status;
+    userFields.emailVerified = true;
+    userFields.emailVerifiedDate = Date.now();
+  } else {
+    userFields.status = status;
+  }
+  if (qubSchool) userFields.qubSchool = qubSchool;
   userFields.updatedById = req.user.id;
   userFields.updatedAt = Date.now();
 
@@ -341,6 +393,26 @@ router.put("/:id", auth, async (req, res) => {
 //@route    DELETE api/userAdmin/:id
 //@desc     Delete User
 //@access   PRIVATE
+// router.delete("/:id", auth, async (req, res) => {
+//   try {
+//     console.log(req.user.id, "my user ID");
+//     console.log(req.params.id, "id being passed from the table");
+//     let user = await User.findById(req.params.id); // find user by ID
+//     if (!user) return res.status(404).json({ msg: "user not found" });
+//     if (req.params.id === req.user.id) {
+//       return res.status(401).json({ msg: "You cannot delete your own record" });
+//     }
+//     await User.findByIdAndRemove(req.params.id,)
+//     res.status(200).json({ msg: "User Removed" })
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// });
+
+//@route    DELETE api/userAdmin/:id
+//@desc     Delete User
+//@access   PRIVATE
 router.delete("/:id", auth, async (req, res) => {
   try {
     console.log(req.user.id, "my user ID");
@@ -350,10 +422,9 @@ router.delete("/:id", auth, async (req, res) => {
     if (req.params.id === req.user.id) {
       return res.status(401).json({ msg: "You cannot delete your own record" });
     }
-    await User.findByIdAndRemove(
-      req.params.id,
-      res.status(200).json({ msg: "User Removed" })
-    );
+    // await User.findByIdAndRemove(req.params.id,)
+    await User.findByIdAndRemove(req.params.id);
+    res.status(200).json({ msg: "User Removed" });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");

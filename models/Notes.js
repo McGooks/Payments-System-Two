@@ -80,10 +80,10 @@ const PaymentsSchema = Schema({
     type: Schema.Types.ObjectId,
     ref: "users",
   },
-  // notes: {
-  //   type: Schema.Types.ObjectId,
-  //   ref: "notes",
-  // }
+  notes: {
+    type: Schema.Types.ObjectId,
+    ref: "notes",
+  }
 });
 
 const Payments = mongoose.model("payments", PaymentsSchema);

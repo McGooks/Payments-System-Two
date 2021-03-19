@@ -3,10 +3,8 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
-
 const auth = require("../middleware/auth");
 const User = require("../models/User");
-const UserTaxDeclaration = require("../models/UserTaxDeclaration");
 const config = require("config");
 
 //Mail Gun
@@ -19,13 +17,33 @@ const mg = mailgun({ apiKey: config.get("mailgun_APIKEY"), domain: DOMAIN });
 //@access   Private
 router.get("/:id", auth, async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    console.log("Console log on user",user)
-    res.json(user);
+    const user = await User.findById(req.params.id)
+      .select("-password")
+      .populate("contact")
+      .populate("address")
+      .populate("bank")
+      .populate("taxDeclaration");
+    console.log("Console log from GET user req by ID:", user);
+    res.status(200).json(user);
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ msg: "Unable to get user" });
+    res.status(500).json({ error: err });
   }
+});
+
+//@route    GET api/user/:id/payments
+//@desc     Get All user payments
+//@access   Private
+router.get("/:id/payments", auth, async (req, res) => {
+  userPayments = await User.findById(req.params.id)
+    .select("_id")
+    .populate("payments")
+    .then((payments) => res.status(200).send(payments))
+    .catch((err) => {
+      console.error(err.message);
+      res.status(500).json({ error: err });
+      console.log("Console log from GET user req by ID:", userPayments);
+    });
 });
 
 //@route    POST api/user
@@ -45,7 +63,9 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res
+        .status(400)
+        .json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
     const {
       dob,
@@ -60,8 +80,7 @@ router.post(
     try {
       let newUser = await User.findOne({ email });
       if (newUser) {
-        let jsonResponse = "User " + newUser.email + " already exists";
-        res.status(400).json({ msg: [{ msg: jsonResponse }] }); // if user already exists throw error
+        res.status(400).json({ error: `User ${newUser.email} already exists` }); // if user already exists throw error
       } else {
         const emailToken = jwt.sign(
           { QUBID, email, password },
@@ -285,65 +304,48 @@ router.post(
         const salt = await bcrypt.genSalt(10); // Password salt
         newUser.password = await bcrypt.hash(password, salt); // Pass in password and hash
         const user = await newUser.save();
-        res.json(user);
-        console.log("this is coming from the user admin submission", user);
+        res.status(200).json(user);
+        console.log("this is coming from the user submission", user);
       }
     } catch (err) {
       console.error(err.message);
-      res.status(500).json({ msg: "Unable to add new user" });
+      res.status(500).json({ error: err });
     }
   }
 );
 
-//@route    PUT api/user/edit/:id
-//@desc     Update User
+//@route    PUT api/user/:id
+//@desc     Update User Details
 //@access   PRIVATE
-router.put("/edit/:id", auth, async (req, res) => {
-  const {
-    dob,
-    email,
-    firstName,
-    lastName,
-    QUBID,
-    role,
-    status,
-    bankName,
-    branchName,
-    sortCode,
-    accNumber,
-    buildingSocietyNumber,
-  } = req.body;
-  //build user object
-  const userFields = {};
-  if (dob) userFields.dob = dob;
-  if (email) userFields.email = email;
-  if (firstName) userFields.firstName = firstName;
-  if (lastName) userFields.lastName = lastName;
-  if (QUBID) userFields.QUBID = QUBID;
-  if (role) userFields.role = role;
-  if (status) userFields.status = status;
-  if (bankName) userFields.bank.bankName = bankName;
+router.put("/:id", auth, async (req, res) => {
+  console.log("the request body is:", req.body);
+  const userFields = req.body;
+  console.log("userFields is:", userFields);
+  //build User objects
+  userFields.contact[0].updatedAt = Date.now();
+  userFields.address[0].updatedAt = Date.now();
+  userFields.bank[0].updatedAt = Date.now();
+  userFields.taxDeclaration[0].updatedAt = Date.now();
   userFields.updatedById = req.user.id;
   userFields.updatedAt = Date.now();
-
+  console.log("Updated userFields is:", userFields);
   try {
     let user = await User.findById(req.params.id); // find user by ID
-    if (!user)
-      return res.status(404).json({ msg: [{ msg: "User not found" }] });
+    if (!user) return res.status(404).json({ error: "User not found" });
     console.log(req.user.id, "User ID Text");
     console.log(user._id.toString(), "User to String Text");
     // ensure user is not current user
     if (user._id.toString() === req.user.id) {
       return res
         .status(401)
-        .json({ msg: [{ msg: "Users cannot edit their own records" }] });
+        .json({ error: "Users cannot edit their own records" });
     }
     user = await User.findByIdAndUpdate(
       req.params.id,
       { $set: userFields },
       { new: true }
     );
-    res.json(user);
+    res.status(200).json(user);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: "Unable to update user" });
@@ -371,5 +373,6 @@ router.delete("/:id", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
 
 module.exports = router;

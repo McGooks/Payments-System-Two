@@ -44,7 +44,8 @@ const AuthState = (props) => {
     } catch (error) {
       dispatch({
         type: AUTH_ERROR,
-      })
+        payload: error.response.data.error,
+      });
     }
   };
 
@@ -55,9 +56,8 @@ const AuthState = (props) => {
         "Content-Type": "application/json",
       },
     };
-
     try {
-      const res = await axios.post("/api/users", formData, config);
+      const res = await axios.post("/api/users/register", formData, config);
       dispatch({
         type: REGISTER_SUCCESS,
         payload: res.data,
@@ -69,13 +69,12 @@ const AuthState = (props) => {
     } catch (error) {
       dispatch({
         type: REGISTER_FAIL,
-        payload: enqueueSnackbar(error.response.data.msg[0].msg, {
-          variant: "error",
-        }),
+        payload: error.response.data.error,
       });
     }
   };
 
+  //VErify Email 
   const verifyEmail = async (token) => {
     const config = {
       headers: { "Content-Type": "application/json" },
@@ -94,7 +93,7 @@ const AuthState = (props) => {
     } catch (error) {
       dispatch({
         type: REGISTER_FAIL,
-        payload: error.response.data.msg[0].msg,
+        payload: error.response.data.error,
       });
     }
   };
@@ -115,11 +114,11 @@ const AuthState = (props) => {
       });
       loadUser();
     } catch (error) {
-      console.error(error)
+      console.error(error);
       dispatch({
         type: LOGIN_FAIL,
-        payload: error.response.data.msg[0].msg,
-      })
+        payload: error.response.data.error,
+      });
     }
   };
 

@@ -13,7 +13,9 @@ import SetAuthToken from "./utils/SetAuthToken";
 import Home from "./components/pages/Home";
 import UserAdmin from "./components/pages/UserAdmin";
 import User from "./components/pages/User";
+import UserPayments from "./components/pages/UserPayments";
 import Payments from "./components/pages/Payments";
+import PaymentsCreate from "./components/pages/PaymentsCreate";
 import About from "./components/pages/About";
 import Import from "./components/pages/Import";
 
@@ -30,6 +32,7 @@ import { SnackbarProvider } from "notistack";
 import ContactState from "./context/contact/ContactState";
 import UserState from "./context/user/UserState";
 import UserAdminState from "./context/userAdmin/UserAdminState";
+import PaymentState from "./context/payment/PaymentState";
 import StatsState from "./context/stats/StatsState";
 import AuthState from "./context/auth/AuthState";
 
@@ -45,45 +48,66 @@ const App = () => {
       <AuthState>
         <ContactState>
           <UserState>
-          <StatsState>
-            <UserAdminState>
-              <Router>
-                <Fragment>
-                  <NavigationBar />
-                  <div className="container">
-                    <Switch>
-                      <PrivateRoute exact path="/" component={Home} />
-                      <PrivateRoute
-                        exact
-                        path="/userAdmin"
-                        component={UserAdmin}
-                      />
-                      <PrivateRoute exact path="/import" component={Import} />
-                      <PrivateRoute
-                        exact
-                        path="/payments"
-                        component={Payments}
-                      />
-                      <PrivateRoute
-                        exact
-                        path="/user/:id"
-                        component={User}
-                      />
-                      <Route
-                        exact
-                        path="/users/confirm-email/:token"
-                        component={Verify}
-                      />
-                      <Route exact path="/about" component={About} />
-                      <Route exact path="/register" component={Register} />
-                      <Route exact path="/login" component={Login} />
-                      <Redirect from="*" to="/" />
-                    </Switch>
-                  </div>
-                </Fragment>
-              </Router>
-            </UserAdminState>
-          </StatsState>
+            <StatsState>
+              <UserAdminState>
+                <PaymentState>
+                  <Router>
+                    <Fragment>
+                      <NavigationBar />
+                      <div className="container">
+                        <Switch>
+                          <PrivateRoute exact path="/" component={Home} />
+                          <PrivateRoute
+                            exact
+                            path="/userAdmin"
+                            component={UserAdmin}
+                          />
+                          <PrivateRoute
+                            exact
+                            path="/import"
+                            component={Import}
+                          />
+                          <PrivateRoute
+                            exact
+                            path="/payments"
+                            component={Payments}
+                          />
+                           <PrivateRoute
+                            exact
+                            path="/payments/new"
+                            component={PaymentsCreate}
+                          />
+                          <PrivateRoute
+                            exact
+                            path="/user/:id/payments"
+                            component={UserPayments}
+                          />
+                          <PrivateRoute
+                            exact
+                            path="/user/:id"
+                            component={User}
+                          />
+
+                          <Route
+                            exact
+                            path="/users/confirm-email/:token"
+                            component={Verify}
+                          />
+                          <Route exact path="/about" component={About} />
+                          <Route
+                            exact
+                            path="/users/register"
+                            component={Register}
+                          />
+                          <Route exact path="/login" component={Login} />
+                          <Redirect from="*" to="/" />
+                        </Switch>
+                      </div>
+                    </Fragment>
+                  </Router>
+                </PaymentState>
+              </UserAdminState>
+            </StatsState>
           </UserState>
         </ContactState>
       </AuthState>

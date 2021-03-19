@@ -2,16 +2,21 @@ import React, { Fragment, useContext } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import AuthContext from "../../context/auth/authContext";
-import ContactContext from "../../context/contact/contactContext";
+import UserAdminContext from "../../context/userAdmin/userAdminContext";
+import UserContext from "../../context/user/userContext";
+
 
 function NavigationBar({ title, icon }) {
   const authContext = useContext(AuthContext);
-  const contactContext = useContext(ContactContext);
+  const userAdminContext = useContext(UserAdminContext);
+  const userContext = useContext(UserContext);
   const { isAuthenticated, logout } = authContext;
-  const { clearContacts } = contactContext;
+  const { clearUserAccount } = userContext;
+  const { clearUserAdmin } = userAdminContext;
 
   const onLogout = () => {
-    clearContacts();
+    clearUserAdmin();
+    clearUserAccount()
     logout();
   };
 
@@ -29,7 +34,7 @@ function NavigationBar({ title, icon }) {
   const unAuthLinks = (
     <Fragment>
       <li>
-        <Link to="/register">Register</Link>
+        <Link to="/users/register">Register</Link>
       </li>
       <li>
         <Link to="/login">Login</Link>

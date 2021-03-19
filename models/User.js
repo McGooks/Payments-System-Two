@@ -1,4 +1,9 @@
 const mongoose = require("mongoose");
+const AddressSchema = require("./schemas/Address")
+const BankSchema = require("./schemas/Bank")
+const ContactDetailsSchema = require("./schemas/ContactDetails")
+const UserTaxDeclarationSchema = require("./schemas/UserTaxDeclaration")
+
 const role = [
   "User",
   "Admin",
@@ -10,52 +15,9 @@ const role = [
 const status = ["Pending", "Active", "Disabled", "Expired"];
 const titlesArray = ["Mr", "Mrs", "Miss", "Dr", "Ms", "Prof"];
 const UserSchema = mongoose.Schema({
-  address: {
-    street: {
-      type: String,
-    },
-    city: {
-      type: String,
-    },
-    county: {
-      type: String,
-    },
-    country: {
-      type: String,
-    },
-    postcode: {
-      type: String,
-    },
-  },
-  bank: {
-    bankName: {
-      type: String,
-    },
-    branchName: {
-      type: String,
-    },
-    sortCode: {
-      type: Number,
-      min: 100000,
-      max: 999999,
-    },
-    accNumber: {
-      type: Number,
-      min: 10000000,
-      max: 99999999,
-    },
-    buildingSocietyNumber: {
-      type: Number,
-    },
-  },
-  contact: {
-    mobile: {
-      type: String,
-    },
-    landline: {
-      type: String,
-    },
-  },
+  address: [AddressSchema],
+  bank: [BankSchema],
+  contact: [ContactDetailsSchema],
   createdAt: {
     type: Date,
     default: Date.now,
@@ -124,12 +86,12 @@ const UserSchema = mongoose.Schema({
   pronoun: {
     type: String,
   },
-  payment: {
-    type: Number,
-  },
-  payment1: {
-    type: Number,
-  },
+  payments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "payments",
+    },
+  ],
   QUBID: {
     type: Number,
     required: true,
@@ -161,10 +123,7 @@ const UserSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
   },
-  UserNSPID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "UserNSPDetails",
-  },
+  taxDeclaration: [UserTaxDeclarationSchema],
 });
 
 UserSchema.virtual("Name").get(function () {
@@ -181,4 +140,9 @@ function isValidTimestamp(date) {
   return new Date(date).getTime() > 0;
 }
 
-module.exports = mongoose.model("user", UserSchema);
+UserSchema.pre("remove", function (next) {
+  const Payments = mongoose.model("payments");
+  Payments.remove({ _id: { $in: this.payments } }).then(() => next()); //iterates through the payments and finds all ID's "in" the model and removes
+});
+const User = mongoose.model("user", UserSchema);
+module.exports = User

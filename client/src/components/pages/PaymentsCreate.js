@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from "react";
 //Navigation
-import NavButtonPayments from "../../components/layouts/NavButtonPayments"
+import NavButtonPayments from "../layouts/NavButtonPayments"
 //Components
-import Payments from "../../components/payments/Payments"
+import CreatePayments from "../payments/CreatePayments"
 //State
 import AuthContext from "../../context/auth/authContext";
 
@@ -17,7 +17,7 @@ const Home = () => {
   return (
     <>
       <NavButtonPayments />
-      <Payments/>
+      <CreatePayments />
     <div className="grid-1">
     </div>
     </>

@@ -1,50 +1,73 @@
 import React, { useContext, Fragment, useEffect } from "react";
+import { useLocation, useHistory, useParams, Link } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
 //Context
-import UserAdminContext from "../../context/userAdmin/userAdminContext";
 import UserContext from "../../context/user/userContext";
 import AuthContext from "../../context/auth/authContext";
+import PaymentContext from "../../context/payment/paymentContext";
+
 //Components
-import { Grid,Typography } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
+import { Grid, Paper, Chip, Button, Typography } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import PersonIcon from "@material-ui/icons/Person";
-import Chip from "@material-ui/core/Chip";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
+import clsx from "clsx";
 // import CustomToolbar from "../layouts/CustomToolbar";
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: "right",
+    color: theme.palette.text.secondary,
+  },
+  right: {
+    textAlign: "right",
+  },
+  left: {
+    textAlign: "left",
+  },
+}));
 
-const UserAdmin = () => {
-  const userAdminContext = useContext(UserAdminContext);
+const Payments = () => {
+  const classes = useStyles();
   const userContext = useContext(UserContext);
   const authContext = useContext(AuthContext);
+  const paymentContext = useContext(PaymentContext);
   const { user, loadUser } = authContext;
   // eslint-disable-next-line no-unused-vars
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { id } = useParams();
   const {
-    users,
-    getUsers,
-    deleteUser,
+    payments,
+    getPayments,
     loading,
     error,
     clearErrors,
     setDialogOpen,
     setCurrent,
-  } = userAdminContext;
+    deletePayment,
+  } = paymentContext;
 
   const history = useHistory();
 
   // const openEditDialog = (dataIndex) => {
   //   setDialogOpen();
-  //   setCurrent(users[dataIndex]._id);
+  //   setCurrent(payments[dataIndex]._id);
   //   console.log("Current is set to: ", current);
   // };
 
   useEffect(() => {
-    getUsers();
-    console.log("console log, user ", user)
-    if(user.role !== "Admin") history.push("/")
+    getPayments();
+    console.log("console log, user payments ", payments);
+    // if(user.role !== "Admin") history.push("/")
     if (error) {
       enqueueSnackbar(error, {
         variant: "error",
@@ -54,24 +77,23 @@ const UserAdmin = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (users !== null && users.length === 0 && !loading) {
-    return <h4>Please add a user</h4>; // if user list is empty
+  if (payments !== null && payments.length === 0 && !loading) {
+    return <h4>You have no payments recorded</h4>; // if user list is empty
   }
 
   const openDialog = (e, dataIndex) => {
     e.preventDefault();
     setDialogOpen();
-    setCurrent(users[dataIndex]._id);
-    console.log("Handled Click", setCurrent(users[dataIndex]));
-  }
-  
+    setCurrent(payments[dataIndex]._id);
+    console.log("Handled Click", setCurrent(payments[dataIndex]));
+  };
 
   const editProfile = (e, dataIndex) => {
-    userContext.setCurrent(users[dataIndex])
-    console.log("UserContext SetCurrent set to:", users[dataIndex]._id );
-   let path = `/user/${users[dataIndex]._id}`
-   history.push(path)
-  }
+    userContext.setCurrent(payments[dataIndex]);
+    console.log("UserContext SetCurrent set to:", payments[dataIndex]._id);
+    let path = `/user/${payments[dataIndex]._id}`;
+    history.push(path);
+  };
 
   const CustomChip = ({ label, onDelete }) => {
     return (
@@ -92,7 +114,7 @@ const UserAdmin = () => {
     filter: true,
     filterType: "dropdown",
     sortOrder: {
-      name: "QUBID",
+      name: "paymentPeriodNum",
       direction: "asc",
     },
     downloadOptions: {
@@ -107,14 +129,15 @@ const UserAdmin = () => {
     draggableColumns: {
       enabled: true,
     },
+    selectableRowsHideCheckboxes: false,
     // customToolbar: () => {
     //   return <CustomToolbar />;
     // },
     onRowsDelete: (rows) => {
       console.log("Console log of", rows.data.length);
       if (rows.data.length <= 10) {
-        const usersToDelete = rows.data.map((d) => users[d.dataIndex]);
-        usersToDelete.forEach((a) => {
+        const paymentsToDelete = rows.data.map((d) => payments[d.dataIndex]);
+        paymentsToDelete.forEach((a) => {
           if (a._id === user._id) {
             enqueueSnackbar(`You cannot delete your own record`, {
               variant: "error",
@@ -127,24 +150,24 @@ const UserAdmin = () => {
                 variant: "success",
               }
             );
-            deleteUser(a._id);
+            deletePayment(a._id);
           }
         });
       } else {
-        userAdminContext.loading = true;
+        paymentContext.loading = true;
         console.log(loading);
-        const usersToDelete = rows.data.map((d) => users[d.dataIndex]);
-        usersToDelete.forEach((a) => {
+        const paymentsToDelete = rows.data.map((d) => payments[d.dataIndex]);
+        paymentsToDelete.forEach((a) => {
           if (a._id === user._id) {
             enqueueSnackbar(`You cannot delete your own record`, {
               variant: "error",
             });
             clearErrors();
           } else {
-            deleteUser(a._id);
+            deletePayment(a._id);
           }
         });
-        userAdminContext.loading = false;
+        paymentContext.loading = false;
         console.log(loading);
       }
     },
@@ -162,6 +185,26 @@ const UserAdmin = () => {
       },
     },
     {
+      name: "paymentPeriodNum",
+      label: "Month",
+      options: {
+        filter: false,
+        display: false,
+        download: false,
+        sort: true,
+      },
+    },
+    {
+      name: "paymentPeriod",
+      label: "Month",
+      options: {
+        filter: false,
+        display: true,
+        download: true,
+        sort: true,
+      },
+    },
+    {
       name: "QUBID",
       label: "QUBID",
       options: {
@@ -172,8 +215,8 @@ const UserAdmin = () => {
       },
     },
     {
-      name: "firstName",
-      label: "First Name",
+      name: "academicYear",
+      label: "Year",
       options: {
         filter: false,
         display: true,
@@ -182,8 +225,8 @@ const UserAdmin = () => {
       },
     },
     {
-      name: "lastName",
-      label: "Last Name",
+      name: "account",
+      label: "Account",
       options: {
         filter: false,
         display: true,
@@ -191,18 +234,9 @@ const UserAdmin = () => {
         sort: true,
       },
     },
+
     {
-      name: "email",
-      label: "Email",
-      options: {
-        filter: false,
-        display: true,
-        download: true,
-        sort: true,
-      },
-    },
-    {
-      name: "role",
+      name: "deliveredBy",
       label: "Role",
       options: {
         filter: true,
@@ -212,7 +246,20 @@ const UserAdmin = () => {
       },
     },
     {
-      name: "status",
+      name: "amount",
+      label: "Amount",
+      options: {
+        filter: true,
+        display: true,
+        download: true,
+        sort: false,
+        customBodyRender: (value) => {
+          return `£${value}`;
+        },
+      },
+    },
+    {
+      name: "paymentStatus",
       label: "Status",
       options: {
         filter: true,
@@ -290,17 +337,46 @@ const UserAdmin = () => {
     <Fragment>
       <div>
         <div>
-          {users !== null && !loading ? (
-            <Grid container spacing={4}>
+          {payments !== null && !loading ? (
+            <Grid container spacing={1}>
+              <Grid item xs={12}>
+                <Paper className={classes.paper}>
+                  <Grid container spacing={1}>
+                    <Grid
+                      item
+                      xs={6}
+                      className={clsx(classes.root, classes.left)}
+                    >
+                      <Button variant="contained" color="secondary">
+                        Reject All Pending
+                      </Button>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={6}
+                      className={clsx(classes.root, classes.right)}
+                    >
+                      <Button variant="contained" component={Link} to="/payments/new"color="success">
+                        Add Payment
+                      </Button>
+                      <Button variant="contained" color="primary">
+                        Approve All Pending
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Grid>
               <Grid item xs={12}>
                 <MUIDataTable
-                  title={<div>
-                    <Typography variant="h5">User Account Admin</Typography>
-                    <Typography variant="caption">
-                      Update basic user account information
-                    </Typography>
-                  </div>}
-                  data={users}
+                  title={
+                    <div>
+                      <Typography variant="h5">User Payments</Typography>
+                      <Typography variant="caption">
+                        To approve payments individually, please select a row
+                      </Typography>
+                    </div>
+                  }
+                  data={payments}
                   columns={columns}
                   options={options}
                   components={{
@@ -318,4 +394,4 @@ const UserAdmin = () => {
   );
 };
 
-export default UserAdmin;
+export default Payments;

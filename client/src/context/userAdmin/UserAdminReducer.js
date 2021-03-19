@@ -1,18 +1,17 @@
 /* eslint-disable import/no-anonymous-default-export */
 import {
   GET_USERS,
+  GET_ACTIVE_USERS,
   ADD_USER,
   DELETE_USER,
   SET_CURRENT,
   CLEAR_CURRENT,
   UPDATE_USER,
-  FILTER_USERS,
-  CLEAR_FILTER,
   CLEAR_ERRORS,
   USER_ERROR,
   CLEAR_USERS,
   OPEN_DIALOG,
-  CLOSE_DIALOG
+  CLOSE_DIALOG,
 } from "../types";
 
 export default (state, action) => {
@@ -22,6 +21,13 @@ export default (state, action) => {
         ...state,
         users: action.payload,
         importedUsersAdded: false,
+        loading: false,
+      };
+    }
+    case GET_ACTIVE_USERS: {
+      return {
+        ...state,
+        activeUsers: action.payload,
         loading: false,
       };
     }
@@ -53,9 +59,9 @@ export default (state, action) => {
       return {
         ...state,
         users: null,
-        filtered: null,
         error: null,
         current: null,
+        activeUsers: null,
       };
     }
     case SET_CURRENT: {
@@ -68,21 +74,6 @@ export default (state, action) => {
       return {
         ...state,
         current: null,
-      };
-    }
-    case FILTER_USERS: {
-      return {
-        ...state,
-        filtered: state.users.filter((user) => {
-          const regex = new RegExp(`${action.payload}`, "gi"); //GI = Global Insensitive Search
-          return user.firstName.match(regex) || user.email.match(regex);
-        }),
-      };
-    }
-    case CLEAR_FILTER: {
-      return {
-        ...state,
-        filtered: null,
       };
     }
     case CLEAR_ERRORS:

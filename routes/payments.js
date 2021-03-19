@@ -3,61 +3,82 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const { check, validationResult } = require("express-validator");
 const Payment = require("../models/Payments");
+const User = require("../models/User");
 
 //@route    GET api/payments
-//@desc     Get all users payments
+//@desc     Get all payments for all users
 //@access   Private
 router.get("/", auth, async (req, res) => {
   try {
     const payments = await Payment.find().sort({
       date: -1,
-    });
+    })
     res.json(payments);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({error: err.message });
   }
 });
 
-//@route    POST api/payments
+//@route    POST api/payments/add
 //@desc     Add new Payment
 //@access   PRIVATE
 router.post(
-  "/",
-  [auth, [check("nsp_number", "NSP Number is required").not().isEmpty()]],
+  "/new",
+  [auth, [check("QUBID", "QUBID Number is required").not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res
+        .status(400)
+        .json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
     const {
-      nsp_number,
+      user,
+      QUBID,
       account,
-      project,
+      projectCode,
+      projectName,
       subanalysis,
       amount,
       student_cohort,
       cohort_id,
       type,
+      paymentStatus,
+      deliveredBy,
+      school,
+      academicYear,
+      paymentPeriod,
+      paymentPeriodNum,
     } = req.body;
     try {
       const newPayment = new Payment({
-        // nsp_ID: req.NSUser.id,
-        nsp_number,
+        user,
+        QUBID,
         account,
-        project,
+        projectCode,
+        projectName,
         subanalysis,
         amount,
         student_cohort,
         cohort_id,
         type,
+        paymentStatus,
+        deliveredBy,
+        school,
+        academicYear,
+        paymentPeriod,
+        paymentPeriodNum,
         addedByUser: req.user.id,
       });
+      let updateUser = await User.findById({ _id: user });
+      updateUser.payments.push(newPayment);
+      const userUpdate = await updateUser.save();
       const payment = await newPayment.save();
-      res.json(payment);
+      res.status(200).json(payment)
     } catch (err) {
       console.error(err.message);
-      res.status(500).send("Server Error");
+      res.status(500).send({ error: err.message });
     }
   }
 );

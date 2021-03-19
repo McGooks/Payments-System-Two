@@ -13,11 +13,11 @@ const mailgun = require("mailgun-js");
 const DOMAIN = config.get("mailgun_DOMAIN");
 const mg = mailgun({ apiKey: config.get("mailgun_APIKEY"), domain: DOMAIN });
 
-//@route    POST api/users
+//@route    POST api/users/register
 //@desc     Register a user
 //@access   Public
 router.post(
-  "/",
+  "/register",
   [
     check("QUBID", "Please insert your QUB ID")
       .isLength({ min: 8 })
@@ -33,16 +33,17 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ msg: errors.array() });
+      return res
+        .status(400)
+        .json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
     const { QUBID, email, password } = req.body;
     try {
       let user = await User.findOne({ QUBID }); // find user
+      console.log(user);
       if (user) {
         res.status(400).json({
-          msg: [
-            { msg: "User already exists, please user system administrator" },
-          ],
+          error: "User already exists, please user system administrator",
         }); // if user already exists throw error
       }
       // Create new User object with name, email and password
@@ -266,121 +267,34 @@ router.post(
             </html>
         `,
       };
-      mg.messages().send(data, function (err) {
-        if (err) {
-          console.log("The following error occurred: ", err);
-        } else {
-          console.log("Email successfully sent to: " + email);
-        }
-      }); // Send Email
+      // mg.messages().send(data, function (err) {
+      //   if (err) {
+      //     console.log("The following error occurred: ", err);
+      //   } else {
+      //     console.log("Email successfully sent to: " + email);
+      //   }
+      // }); // Send Email
     } catch (err) {
       console.error(err.message);
-      res.status(500).send("Server Error");
+      res.status(500).json({ error: err.message });
     }
   }
 );
-
-//@route    POST api/users/signup
-//@desc     Sign Up a user
-//@access   Public
-// router.post(
-//   "/signup",
-//   [
-//     check("QUBID", "Please insert your QUB ID")
-//       .isLength({ min: 8 })
-//       .not()
-//       .isEmpty(),
-//     check("email", "Please insert a valid email").isEmail(),
-//     check(
-//       "password",
-//       "Please enter a password with at least 6 characters"
-//     ).isLength({ min: 6 }),
-//   ],
-//   async (req, res) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
-//     const { QUBID, email, password } = req.body;
-//     try {
-//       let user = await User.findOne({ QUBID }); // find user
-//       if (user) {
-//         res.status(400).json({
-//           msg: "User already exists, please contact the system administrator",
-//         }); // if user already exists throw error
-//       }
-//       const token = jwt.sign(
-//         { QUBID, email, password },
-//         config.get("JWT_ACC_ACTIVATE"),
-//         { expiresIn: 360000 }
-//       );
-//       const data = {
-//         from: "Excited User <noreply@dempay.com>",
-//         to: email,
-//         subject: "Account Activation Link",
-//         html: `
-//         <h2> Please click on the link below to activate your account</h2>
-//         <p>${config.get("CLIENT_URL")}/users/email-activate/${token}</P
-//         `,
-//       };
-//       mg.messages().send(data, function (error, body) {
-//         if (error) {
-//           return res.json({
-//             msg: err.message,
-//           });
-//         }
-//         return res.json({
-//           msg:
-//             "Activation Email has been sent, please click to activate your account",
-//         });
-//       });
-
-//       // Create new User object with name, email and password
-//       user = new User({
-//         QUBID,
-//         email,
-//         password,
-//       });
-//       const salt = await bcrypt.genSalt(10); // Password salt
-//       user.password = await bcrypt.hash(password, salt); // Pass in password and hash
-//       await user.save();
-//       // set payload variable for the token jwt sign
-//       const payload = {
-//         user: {
-//           id: user.id,
-//         },
-//       };
-//       // on sign pass in payload and also token to expire in secs
-//       jwt.sign(
-//         payload,
-//         config.get("jwtSecret"),
-//         {
-//           expiresIn: 360000,
-//         },
-//         (err, token) => {
-//           if (err) throw err;
-//           res.json({ token });
-//         }
-//       );
-//     } catch (err) {
-//       console.error(err.message);
-//       res.status(500).send("Server Error");
-//     }
-//   }
-// );
 
 //@route    GET api/users
 //@desc     Get all users
 //@access   Private
 router.get("/", auth, async (req, res) => {
   try {
-    const users = await User.find().sort({
-      date: -1,
-    });
+    const users = await User.find()
+      .sort({
+        date: -1,
+      })
+      .select("-password");
     res.json(users);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: err.message });
   }
 });
 
@@ -397,9 +311,7 @@ router.put("/confirm-email/:token", async (req, res) => {
         config.get("JWT_ACC_ACTIVATE"),
         function (err, decodedToken) {
           if (err) {
-            return res
-              .status(400)
-              .json({ msg: [{ msg: "This token has expired" }] });
+            return res.status(400).json({ error: "This token has expired" });
           }
 
           return decodedToken;
@@ -418,20 +330,14 @@ router.put("/confirm-email/:token", async (req, res) => {
       try {
         let UpdatedUser = await User.findOne({ email }); // find user by email address
         if (UpdatedUser.emailVerified) {
-          return res
-            .status(404)
-            .json({
-              msg: [
-                {
-                  msg:
-                    "This email address has already been confirmed, please log in",
-                },
-              ],
-            });
+          return res.status(404).json({
+            error:
+              "This email address has already been confirmed, please log in",
+          });
         }
         const updatedUserId = UpdatedUser.id; // Extract User ID
         if (!UpdatedUser) {
-          return res.status(404).json({ msg: [{ msg: "User not found" }] });
+          return res.status(404).json({ error: "User not found" });
         } else {
           NewUpdatedUser = await User.findByIdAndUpdate(
             updatedUserId,
@@ -442,16 +348,14 @@ router.put("/confirm-email/:token", async (req, res) => {
         }
       } catch (err) {
         console.error(err.message);
-        res
-          .status(500)
-          .json({ msg: [{ msg: "User record cannot be verified" }] });
+        res.status(500).json({ error: "User record cannot be verified" });
       }
     } else {
-      return res.json({ msg: [{ msg: "An error occurred here" }] });
+      return res.json({ error: "An error occurred here" });
     }
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: err.message });
   }
 });
 
@@ -464,7 +368,9 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res
+        .status(400)
+        .json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
     const { QUBID, firstName, lastName, email, role } = req.body;
     try {
@@ -481,7 +387,7 @@ router.post(
       res.json(user);
     } catch (err) {
       console.error(err.message);
-      res.status(500).send("Server Error");
+      res.status(500).send({ error: err.message });
     }
   }
 );
@@ -497,11 +403,11 @@ router.put("/:id", auth, async (req, res) => {
   if (firstName) userFields.firstName = firstName;
   if (lastName) userFields.lastName = lastName;
   if (email) userFields.email = email;
-  if (role) userFields.phone = role;
+  if (role) userFields.role = role;
 
   try {
     let user = await User.findById(req.params.id); // find user by ID
-    if (!user) return res.status(404).json({ msg: "user not found" });
+    if (!user) return res.status(404).json({ error: "user not found" });
     user = await User.findByIdAndUpdate(
       req.params.id,
       { $set: userFields },
@@ -510,7 +416,7 @@ router.put("/:id", auth, async (req, res) => {
     res.json(user);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: err.message });
   }
 });
 
@@ -520,14 +426,14 @@ router.put("/:id", auth, async (req, res) => {
 router.delete("/:id", auth, async (req, res) => {
   try {
     let user = await User.findById(req.params.id); // find user by ID
-    if (!user) return res.status(404).json({ msg: "user not found" });
+    if (!user) return res.status(404).json({ error: "user not found" });
     await User.findByIdAndRemove(
       req.params.id,
-      res.json({ msg: "User Removed" })
+      res.json({ error: "User Removed" })
     );
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: err.message });
   }
 });
 

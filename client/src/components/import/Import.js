@@ -117,7 +117,46 @@ const Import = (props) => {
     e.preventDefault();
     try {
     jsonFile.map((d) => {
-      let makeRandomPassword = { password: makePassword(10) };
+      let makeRandomPassword = {
+        address: [
+          {
+            street: "",
+            city: "",
+            county: "",
+            country: "",
+            postcode: "",
+          },
+        ],
+        contact: [
+          {
+            mobile: "",
+            landline: "",
+          },
+        ],
+        bank: [
+          {
+            bankName: "",
+            branchName: "",
+            sortCode: "",
+            accNumber: "",
+            buildingSocietyNumber: "",
+          },
+        ],
+        status: "Pending",
+        password: makePassword(10),
+        taxDeclaration: [
+          {
+            employeeStatements_section1: "A",
+            employeeStatements_section2: "1",
+            employeeStatements_section3q1: "false",
+            employeeStatements_section3q2: "false",
+            employeeStatements_section3q3: "false",
+            employeeStatements_section3q4: "1",
+            employeeStatements_section3q5: "false",
+            signed: false,
+          },
+        ],
+      };
       let userWithAddedRandomPassword = Object.assign(d, makeRandomPassword);
         addUser(userWithAddedRandomPassword);
       })
@@ -214,6 +253,7 @@ const Import = (props) => {
         display: true,
         download: true,
         sort: false,
+        customBodyRenderLite: (value) => value = "Pending"
       },
     },
     // {
