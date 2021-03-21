@@ -1,4 +1,10 @@
-import React, { useContext, Fragment, useEffect, useState } from "react";
+import React, {
+  useContext,
+  Fragment,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import { useLocation, useHistory, useParams } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -27,6 +33,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Input,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Table from "@material-ui/core/Table";
@@ -40,7 +47,11 @@ import { useSnackbar } from "notistack";
 import clsx from "clsx";
 // import CustomToolbar from "../layouts/CustomToolbar";
 
-const TAX_RATE = 0.07;
+const TAX_RATE = -0.20;
+const AC1_RATE = 14.73;
+const AC2_RATE = 17.57;
+const BANDA_RATE = 15.01;
+const BANDB_RATE = 20.01;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,6 +79,13 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(-1),
     },
   },
+  inputField: {
+    textAlign: "center",
+  },
+  inputCenter: {
+    textAlign: "center",
+    color: "black",
+  },
 }));
 
 function ccyFormat(num) {
@@ -83,8 +101,8 @@ function createRow(desc, qty, unit) {
   return { desc, qty, unit, price };
 }
 
-function subtotal(items) {
-  return items.map(({ price }) => price).reduce((sum, i) => sum + i, 0);
+function subtotal(totals) {
+  return totals.map(({ payment }) => payment).reduce((sum, i) => sum + i, 0);
 }
 
 const rows = [
@@ -92,10 +110,6 @@ const rows = [
   createRow("Paper (Case)", 10, 45.99),
   createRow("Waste Basket", 2, 17.99),
 ];
-
-const invoiceSubtotal = subtotal(rows);
-const invoiceTaxes = TAX_RATE * invoiceSubtotal;
-const invoiceTotal = invoiceTaxes + invoiceSubtotal;
 
 const CreatePayment = () => {
   const classes = useStyles();
@@ -135,7 +149,7 @@ const CreatePayment = () => {
         },
       ]);
     }
-    console.log(activeUsers);
+    // console.log("activeUsers", activeUsers);
     // if(user.role !== "Admin") history.push("/")
     if (error) {
       enqueueSnackbar(error, {
@@ -164,6 +178,163 @@ const CreatePayment = () => {
     paymentStatus: "Pending",
   });
 
+  const [paymentCalc, setPaymentCalc] = useState({
+    lecture: [
+      {
+        activity: "Prep - 1st delivery",
+        paymentGrade: "",
+        paymentRate: 0.0,
+        time: 0,
+        count: 0,
+        totalhrs: 0.1,
+        payment: 0.0,
+      },
+      {
+        activity: "Prep - Repeat in same week (one repeat only)",
+        paymentGrade: "",
+        paymentRate: 0.0,
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+      {
+        activity: "Delivery",
+        paymentGrade: "",
+        paymentRate: 0.0,
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+    ],
+    seminar: [
+      {
+        activity: "Prep - 1st delivery (1hr)",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+      {
+        activity: "Prep - 1st delivery (2hrs)",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+      {
+        activity: "Prep - Repeat in same week (one repeat only)",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+      {
+        activity: "Delivery",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+    ],
+    lab: [
+      {
+        activity: "Prep - 1st delivery (0.5hrs)",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+      {
+        activity: "Prep - 1st delivery (1hr)",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+      {
+        activity: "Prep - Repeat in same week (one repeat only)",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+      {
+        activity: "Delivery",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+    ],
+    fieldTrip: [
+      {
+        activity: "Number of contact hours",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+    ],
+    office: [
+      {
+        activity: "0.5 hours per seminar group per week",
+        paymentGrade: "",
+        time: 0.5,
+        count: 1,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+    ],
+    marking: [
+      {
+        activity: "Exam / Non Exam / Coursework",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+      {
+        activity: "Exam / Non Exam / Coursework",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+      {
+        activity: "Oral Exam",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+    ],
+    training: [
+      {
+        activity: "Number of hours",
+        paymentGrade: "",
+        time: 0,
+        count: 0,
+        totalhrs: 0.0,
+        payment: 0.0,
+      },
+    ],
+  });
+  // console.log("paymentCalc", paymentCalc);
+
   const reset = () => {
     payment.user = "";
     setPayment({
@@ -191,25 +362,38 @@ const CreatePayment = () => {
     setIsDisabled(false);
   };
   const [hourlyRates, setHourlyRates] = useState({
-    rate1: 14.73,
-    rate2: 17.57,
+    rate1: AC1_RATE,
+    rate2: AC2_RATE,
   });
 
   const [isDisabled, setIsDisabled] = useState(false);
   const [userSelect, setUserSelect] = useState([]);
+  const [grade, setGrade] = useState({
+    grade1: "AC1",
+    grade2: "AC2",
+  });
 
-  const onChange = (e, i) => {
+  const onChange = (e, i, g, r) => {
+    let rate = "";
     switch (i) {
       case 1:
         if (e.target.value === "TA") {
           setHourlyRates({
-            rate1: ccyFormat(14.73),
-            rate2: ccyFormat(17.57),
+            rate1: ccyFormat(AC1_RATE),
+            rate2: ccyFormat(AC2_RATE),
+          });
+          setGrade({
+            grade1: "AC1",
+            grade2: "AC2",
           });
         } else {
           setHourlyRates({
-            rate1: ccyFormat(15),
-            rate2: ccyFormat(20),
+            rate1: ccyFormat(BANDA_RATE),
+            rate2: ccyFormat(BANDB_RATE),
+          });
+          setGrade({
+            grade1: "Band A",
+            grade2: "Band B",
           });
         }
         setPayment({
@@ -223,14 +407,29 @@ const CreatePayment = () => {
           [e.target.name]: e.target.value,
         });
         break;
-      // case 3:
-      //   data.contact[0][e.target.name] = e.target.value;
-      //   setData({ ...data });
-      //   break;
-      // case 4:
-      //   data.taxDeclaration[0][e.target.name] = e.target.value;
-      //   setData({ ...data });
-      //   break;
+      case 3:
+        r[e.target.name] = parseFloat(e.target.value);
+        r.paymentGrade = g;
+        if (r.paymentGrade === grade.grade1) {
+          rate = hourlyRates.rate1;
+        } else {
+          rate = hourlyRates.rate2;
+        }
+        r.totalhrs = parseFloat(r.count * r.time);
+        r.payment = parseFloat(r.totalhrs * rate);
+        setPaymentCalc({ ...paymentCalc });
+        break;
+      case 4:
+        r[e.target.name] = parseFloat(e.target.value);
+        r.paymentGrade = g;
+        if (r.paymentGrade === grade.grade1) {
+          rate = hourlyRates.rate1;
+        } else {
+          rate = hourlyRates.rate2;
+        }
+        r.payment = parseFloat(r.totalhrs * rate);
+        setPaymentCalc({ ...paymentCalc });
+        break;
       default:
         setPayment({
           ...payment,
@@ -238,7 +437,6 @@ const CreatePayment = () => {
         });
     }
   };
-  console.log(payment);
 
   if (payments !== null && payments.length === 0 && !loading) {
     return <h4>You have no payments recorded</h4>; // if user list is empty
@@ -258,6 +456,16 @@ const CreatePayment = () => {
     history.push(path);
   };
 
+  const invoiceSubtotal =
+    subtotal(paymentCalc.training) +
+    subtotal(paymentCalc.marking) +
+    subtotal(paymentCalc.office) +
+    subtotal(paymentCalc.fieldTrip) +
+    subtotal(paymentCalc.lab) +
+    subtotal(paymentCalc.seminar) +
+    subtotal(paymentCalc.lecture);
+  const invoiceTaxes = TAX_RATE * invoiceSubtotal;
+  const invoiceTotal = invoiceTaxes + invoiceSubtotal;
   return (
     <Fragment>
       <div>
@@ -497,74 +705,74 @@ const CreatePayment = () => {
                     </Grid>
                   </AccordionDetails>
                 </Accordion>
-                <Accordion>
+                <Accordion expanded>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel2a-content"
                     id="panel2a-header"
                   >
-                    <Typography variant="h5">Enter Payment Details</Typography>
+                    <Grid container spacing={1}>
+                      <Grid
+                        item
+                        xs={6}
+                        className={clsx(classes.root, classes.left)}
+                      >
+                        <Typography variant="h5">
+                          Enter Payment Details
+                        </Typography>
+                      </Grid>
+                      <Grid
+                        item
+                        xs={3}
+                        className={clsx(classes.root, classes.left)}
+                      >
+                        <TextField
+                          fullWidth
+                          disabled
+                          size="small"
+                          className={classes.textField}
+                          variant="outlined"
+                          id="rate1"
+                          name="rate1"
+                          label={`${grade.grade1} Rate`}
+                          value={hourlyRates.rate1}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                £
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </Grid>
+                      <Grid
+                        item
+                        xs={3}
+                        className={clsx(classes.root, classes.left)}
+                      >
+                        <TextField
+                          fullWidth
+                          disabled
+                          size="small"
+                          className={classes.textField}
+                          variant="outlined"
+                          id="rate2"
+                          name="rate2"
+                          label={`${grade.grade2} Rate`}
+                          value={hourlyRates.rate2}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                £
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </Grid>
+                    </Grid>
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid item xs={12}>
-                      <Grid container spacing={1}>
-                        <Grid
-                          item
-                          xs={3}
-                          className={clsx(classes.root, classes.left)}
-                        >
-                          <TextField
-                            fullWidth
-                            disabled
-                            className={classes.textField}
-                            variant="outlined"
-                            id="rate1"
-                            name="rate1"
-                            label={
-                              payment.deliveredBy === "TA" &&
-                              payment.deliveredBy !== ""
-                                ? "AC1 Rate"
-                                : "Band 1 Rate"
-                            }
-                            value={hourlyRates.rate1}
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  £
-                                </InputAdornment>
-                              ),
-                            }}
-                          />
-                        </Grid>
-                        <Grid
-                          item
-                          xs={3}
-                          className={clsx(classes.root, classes.left)}
-                        >
-                          <TextField
-                            fullWidth
-                            disabled
-                            className={classes.textField}
-                            variant="outlined"
-                            id="rate2"
-                            name="rate2"
-                            label={
-                              payment.deliveredBy === "TA" &&
-                              payment.deliveredBy !== ""
-                                ? "AC2 Rate"
-                                : "Band 2 Rate"
-                            }
-                            value={hourlyRates.rate2}
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  £
-                                </InputAdornment>
-                              ),
-                            }}
-                          />
-                        </Grid>
-                      </Grid>
                       <TableContainer component={Paper}>
                         <Table
                           className={classes.table}
@@ -576,7 +784,9 @@ const CreatePayment = () => {
                               <TableCell align="left" colSpan={2}>
                                 Activity
                               </TableCell>
-                              <TableCell align="center">Payment Grade</TableCell>
+                              <TableCell align="center">
+                                Payment Grade
+                              </TableCell>
                               <TableCell align="center">
                                 Delivery/ Completion time (hrs)
                               </TableCell>
@@ -601,166 +811,1179 @@ const CreatePayment = () => {
                             <TableRow key={1}>
                               <TableCell rowSpan={3}>Lecture</TableCell>
                               <TableCell align="left">
-                                Prep - 1st delivery
+                                {paymentCalc.lecture[0].activity}
                               </TableCell>
-                              <TableCell align="center">AC2</TableCell>
                               <TableCell align="center">
-                                <TextField
+                                {grade.grade2}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
                                   type="number"
                                   size="small"
                                   margin="dense"
-                                  className={classes.textField}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
                                   variant="filled"
-                                  id="amount"
-                                  name="amount"
-                                  value={payment.amount}
-                                  onChange={(e) => onChange(e)}
+                                  id="time"
+                                  name="time"
+                                  value={paymentCalc.lecture[0].time}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.lecture[0]
+                                    )
+                                  }
                                 />
                               </TableCell>
                               <TableCell align="center">
-                                <TextField
+                                <Input
                                   type="number"
                                   size="small"
                                   margin="dense"
-                                  className={classes.textField}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
                                   variant="filled"
-                                  id="amount"
-                                  name="amount"
-                                  value={payment.amount}
-                                  onChange={(e) => onChange(e)}
+                                  id="count"
+                                  name="count"
+                                  value={paymentCalc.lecture[0].count}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.lecture[0]
+                                    )
+                                  }
                                 />
                               </TableCell>
                               <TableCell align="center">
-                                <TextField
+                                <Input
+                                  disabled
                                   type="number"
                                   size="small"
                                   margin="dense"
-                                  className={classes.textField}
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
                                   variant="filled"
-                                  id="amount"
-                                  name="amount"
-                                  value={payment.amount}
-                                  onChange={(e) => onChange(e)}
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={
+                                    paymentCalc.lecture[0].count *
+                                    paymentCalc.lecture[0].time
+                                  }
+                                  onChangeCapture={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.lecture[0]
+                                    )
+                                  }
                                 />
                               </TableCell>
-                              <TableCell align="center">0.00</TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.lecture[0].payment
+                              )}`}</TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell align="left">
-                                Prep - Repeat in same week (one repeat only)
+                                {paymentCalc.lecture[1].activity}
                               </TableCell>
-                              <TableCell align="center">AC2</TableCell>
                               <TableCell align="center">
-                                <TextField
+                                {grade.grade2}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
                                   type="number"
                                   size="small"
                                   margin="dense"
-                                  className={classes.textField}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
                                   variant="filled"
-                                  id="amount"
-                                  name="amount"
-                                  value={payment.amount}
-                                  onChange={(e) => onChange(e)}
+                                  id="time"
+                                  name="time"
+                                  value={paymentCalc.lecture[1].time}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.lecture[1]
+                                    )
+                                  }
                                 />
                               </TableCell>
                               <TableCell align="center">
-                                <TextField
+                                <Input
                                   type="number"
                                   size="small"
                                   margin="dense"
-                                  className={classes.textField}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
                                   variant="filled"
-                                  id="amount"
-                                  name="amount"
-                                  value={payment.amount}
-                                  onChange={(e) => onChange(e)}
+                                  id="count"
+                                  name="count"
+                                  value={paymentCalc.lecture[1].count}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.lecture[1]
+                                    )
+                                  }
                                 />
                               </TableCell>
                               <TableCell align="center">
-                                <TextField
+                                <Input
+                                  disabled
                                   type="number"
                                   size="small"
                                   margin="dense"
-                                  className={classes.textField}
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
                                   variant="filled"
-                                  id="amount"
-                                  name="amount"
-                                  value={payment.amount}
-                                  onChange={(e) => onChange(e)}
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={
+                                    paymentCalc.lecture[1].count *
+                                    paymentCalc.lecture[1].time
+                                  }
+                                  onChangeCapture={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.lecture[1]
+                                    )
+                                  }
                                 />
                               </TableCell>
-                              <TableCell align="center">0.00</TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.lecture[1].payment
+                              )}`}</TableCell>
                             </TableRow>
                             <TableRow>
-                              <TableCell align="left">Delivery</TableCell>
-                              <TableCell align="center">AC2</TableCell>
+                              <TableCell align="left">
+                                {paymentCalc.lecture[2].activity}
+                              </TableCell>
                               <TableCell align="center">
-                                <TextField
+                                {grade.grade2}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
                                   type="number"
                                   size="small"
                                   margin="dense"
-                                  className={classes.textField}
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
                                   variant="filled"
-                                  id="amount"
-                                  name="amount"
-                                  value={payment.amount}
-                                  onChange={(e) => onChange(e)}
+                                  id="time"
+                                  name="time"
+                                  value={null}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.lecture[2]
+                                    )
+                                  }
                                 />
                               </TableCell>
                               <TableCell align="center">
-                                <TextField
+                                <Input
+                                  disabled
                                   type="number"
                                   size="small"
                                   margin="dense"
-                                  className={classes.textField}
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
                                   variant="filled"
-                                  id="amount"
-                                  name="amount"
-                                  value={payment.amount}
-                                  onChange={(e) => onChange(e)}
+                                  id="count"
+                                  name="count"
+                                  value={null}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.lecture[2]
+                                    )
+                                  }
                                 />
                               </TableCell>
                               <TableCell align="center">
-                                <TextField
+                                <Input
                                   type="number"
                                   size="small"
                                   margin="dense"
-                                  className={classes.textField}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
                                   variant="filled"
-                                  id="amount"
-                                  name="amount"
-                                  value={payment.amount}
-                                  onChange={(e) => onChange(e)}
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={paymentCalc.lecture[2].totalhrs}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      4,
+                                      grade.grade2,
+                                      paymentCalc.lecture[2]
+                                    )
+                                  }
                                 />
                               </TableCell>
-                              <TableCell align="center">0.00</TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.lecture[2].payment
+                              )}`}</TableCell>
                             </TableRow>
                             <TableRow selected={true}>
                               <TableCell colSpan={6} align="left">
-                              Total Lectures
+                                Total Lectures
                               </TableCell>
-                              <TableCell align="center">0.00</TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                subtotal(paymentCalc.lecture)
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow key={2}>
+                              <TableCell rowSpan={4}>
+                                Seminar / Tutorial / Oral Classes
+                              </TableCell>
+                              <TableCell align="left">
+                                {paymentCalc.seminar[0].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade2}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="time"
+                                  name="time"
+                                  value={paymentCalc.seminar[0].time}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.seminar[0]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="count"
+                                  name="count"
+                                  value={paymentCalc.seminar[0].count}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.seminar[0]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={
+                                    paymentCalc.seminar[0].count *
+                                    paymentCalc.seminar[0].time
+                                  }
+                                  onChangeCapture={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.seminar[0]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.seminar[0].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell align="left">
+                                {paymentCalc.seminar[1].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade2}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="time"
+                                  name="time"
+                                  value={paymentCalc.seminar[1].time}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.seminar[1]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="count"
+                                  name="count"
+                                  value={paymentCalc.seminar[1].count}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.seminar[1]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={
+                                    paymentCalc.seminar[1].count *
+                                    paymentCalc.seminar[1].time
+                                  }
+                                  onChangeCapture={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.seminar[1]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.seminar[1].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell align="left">
+                                {paymentCalc.seminar[2].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade2}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="time"
+                                  name="time"
+                                  value={paymentCalc.seminar[2].time}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.seminar[2]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="count"
+                                  name="count"
+                                  value={paymentCalc.seminar[2].count}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.seminar[2]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={
+                                    paymentCalc.seminar[2].count *
+                                    paymentCalc.seminar[2].time
+                                  }
+                                  onChangeCapture={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.seminar[2]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.seminar[2].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell align="left">
+                                {paymentCalc.seminar[3].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade2}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="time"
+                                  name="time"
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="count"
+                                  name="count"
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={paymentCalc.seminar[3].totalhrs}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      4,
+                                      grade.grade2,
+                                      paymentCalc.seminar[3]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.seminar[3].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow selected={true}>
+                              <TableCell colSpan={6} align="left">
+                                Total Seminar/Tutorial/Oral Classes
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                subtotal(paymentCalc.seminar)
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow key={2}>
+                              <TableCell rowSpan={4}>
+                                Lab Supervision / Demonstrating
+                              </TableCell>
+                              <TableCell align="left">
+                                {paymentCalc.lab[0].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade1}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="time"
+                                  name="time"
+                                  value={paymentCalc.lab[0].time}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade1,
+                                      paymentCalc.lab[0]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="count"
+                                  name="count"
+                                  value={paymentCalc.lab[0].count}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade1,
+                                      paymentCalc.lab[0]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={
+                                    paymentCalc.lab[0].count *
+                                    paymentCalc.lab[0].time
+                                  }
+                                  onChangeCapture={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade1,
+                                      paymentCalc.lab[0]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.lab[0].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell align="left">
+                                {paymentCalc.lab[1].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade1}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="time"
+                                  name="time"
+                                  value={paymentCalc.lab[1].time}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade1,
+                                      paymentCalc.lab[1]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="count"
+                                  name="count"
+                                  value={paymentCalc.lab[1].count}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade1,
+                                      paymentCalc.lab[1]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={
+                                    paymentCalc.lab[1].count *
+                                    paymentCalc.lab[1].time
+                                  }
+                                  onChangeCapture={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade1,
+                                      paymentCalc.lab[1]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.lab[1].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell align="left">
+                                {paymentCalc.lab[2].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade1}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="time"
+                                  name="time"
+                                  value={paymentCalc.lab[2].time}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade1,
+                                      paymentCalc.lab[2]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="count"
+                                  name="count"
+                                  value={paymentCalc.lab[2].count}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade1,
+                                      paymentCalc.lab[2]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={
+                                    paymentCalc.lab[2].count *
+                                    paymentCalc.lab[2].time
+                                  }
+                                  onChangeCapture={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade1,
+                                      paymentCalc.lab[2]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.lab[2].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell align="left">
+                                {paymentCalc.lab[3].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade1}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="time"
+                                  name="time"
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="count"
+                                  name="count"
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={paymentCalc.lab[3].totalhrs}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      4,
+                                      grade.grade1,
+                                      paymentCalc.lab[3]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.lab[3].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow selected={true}>
+                              <TableCell colSpan={6} align="left">
+                                Total Lab Supervision/Demonstrating
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                subtotal(paymentCalc.lab)
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow key={3}>
+                              <TableCell>Field Trip Assistance</TableCell>
+                              <TableCell align="left">
+                                {paymentCalc.fieldTrip[0].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade1}
+                              </TableCell>
+                              <TableCell />
+                              <TableCell />
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={paymentCalc.fieldTrip[0].totalhrs}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      4,
+                                      grade.grade1,
+                                      paymentCalc.fieldTrip[0]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.fieldTrip[0].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow selected={true}>
+                              <TableCell colSpan={6} align="left">
+                                Total Field Trip Assistance
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                subtotal(paymentCalc.fieldTrip)
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow key={3}>
+                              <TableCell>Office Hours</TableCell>
+                              <TableCell align="left">
+                                {paymentCalc.office[0].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade1}
+                              </TableCell>
+                              <TableCell />
+                              <TableCell />
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={
+                                    paymentCalc.office[0].count *
+                                    paymentCalc.office[0].time
+                                  }
+                                  onChangeCapture={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade1,
+                                      paymentCalc.office[0]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.office[0].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow selected={true}>
+                              <TableCell colSpan={6} align="left">
+                                Total Office Hours
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                subtotal(paymentCalc.office)
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow key={4}>
+                              <TableCell rowSpan={3}>Marking</TableCell>
+                              <TableCell align="left">
+                                {paymentCalc.marking[0].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade1}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="time"
+                                  name="time"
+                                  value={paymentCalc.marking[0].time}
+                                  onChangeCapture={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade1,
+                                      paymentCalc.marking[0]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell />
+                              <TableCell />
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.marking[0].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell align="left">
+                                {paymentCalc.marking[0].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade2}
+                              </TableCell>
+                              <TableCell align="center">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="time"
+                                  name="time"
+                                  value={paymentCalc.marking[1].time}
+                                  onChangeCapture={(e) =>
+                                    onChange(
+                                      e,
+                                      3,
+                                      grade.grade2,
+                                      paymentCalc.marking[1]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell />
+                              <TableCell />
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.marking[1].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell align="left">
+                                {paymentCalc.marking[2].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade2}
+                              </TableCell>
+                              <TableCell />
+                              <TableCell />
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={paymentCalc.marking[2].totalhrs}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      4,
+                                      grade.grade2,
+                                      paymentCalc.marking[2]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.marking[2].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow selected={true}>
+                              <TableCell colSpan={6} align="left">
+                                Total Marking
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                subtotal(paymentCalc.marking)
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow key={5}>
+                              <TableCell>Training</TableCell>
+                              <TableCell align="left">
+                                {paymentCalc.training[0].activity}
+                              </TableCell>
+                              <TableCell align="center">
+                                {grade.grade1}
+                              </TableCell>
+                              <TableCell />
+                              <TableCell />
+                              <TableCell align="center">
+                                <Input
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  id="totalhrs"
+                                  name="totalhrs"
+                                  value={paymentCalc.training[0].totalhrs}
+                                  onChange={(e) =>
+                                    onChange(
+                                      e,
+                                      4,
+                                      grade.grade1,
+                                      paymentCalc.training[0]
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                paymentCalc.training[0].payment
+                              )}`}</TableCell>
+                            </TableRow>
+                            <TableRow selected={true}>
+                              <TableCell colSpan={6} align="left">
+                                Total Training
+                              </TableCell>
+                              <TableCell align="center">{`£ ${ccyFormat(
+                                subtotal(paymentCalc.training)
+                              )}`}</TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell rowSpan={3} />
-                              <TableCell colSpan={2}>Subtotal</TableCell>
+                              <TableCell />
+                              <TableCell />
+                              <TableCell colSpan={3}>Subtotal</TableCell>
                               <TableCell align="right">
-                                {ccyFormat(invoiceSubtotal)}
+                                {`£ ${ccyFormat(invoiceSubtotal)}`}
                               </TableCell>
                             </TableRow>
                             <TableRow>
+                              <TableCell />
+                              <TableCell />
                               <TableCell>Tax</TableCell>
                               <TableCell align="right">{`${(
                                 TAX_RATE * 100
                               ).toFixed(0)} %`}</TableCell>
+                              <TableCell />
                               <TableCell align="right">
-                                {ccyFormat(invoiceTaxes)}
+                                {`£ ${ccyFormat(invoiceTaxes)}`}
                               </TableCell>
                             </TableRow>
                             <TableRow>
-                              <TableCell colSpan={2}>Total</TableCell>
+                              <TableCell />
+                              <TableCell />
+                              <TableCell colSpan={3}>Total</TableCell>
                               <TableCell align="right">
-                                {ccyFormat(invoiceTotal)}
+                                {`£ ${ccyFormat(invoiceTotal)}`}
                               </TableCell>
                             </TableRow>
                           </TableBody>
