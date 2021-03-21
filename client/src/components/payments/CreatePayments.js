@@ -1,12 +1,6 @@
-import React, {
-  useContext,
-  Fragment,
-  useEffect,
-  useState,
-  useMemo,
-} from "react";
-import { useLocation, useHistory, useParams } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useContext, Fragment, useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import {
   deliveryCategory,
   semester,
@@ -34,7 +28,9 @@ import {
   AccordionSummary,
   AccordionDetails,
   Input,
+  Tooltip,
 } from "@material-ui/core";
+import InfoIcon from "@material-ui/icons/Info";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -45,13 +41,22 @@ import TableRow from "@material-ui/core/TableRow";
 import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
 import clsx from "clsx";
+import MarkingRange from "../layouts/MarkingRange";
 // import CustomToolbar from "../layouts/CustomToolbar";
 
-const TAX_RATE = -0.20;
+const TAX_RATE = -0.2;
 const AC1_RATE = 14.73;
 const AC2_RATE = 17.57;
 const BANDA_RATE = 15.01;
 const BANDB_RATE = 20.01;
+const MHC_A = 6;
+const MHC_B = 3;
+const MHC_C1 = 3;
+const MHC_C2 = 2;
+const MHC_C3 = 1.5;
+const MHC_C4 = 0.75;
+const MHC_C5 = 0.5;
+const MHC_D = 1.5;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -88,28 +93,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const HtmlTooltip = withStyles((theme) => ({
+  tooltip: {
+    backgroundColor: "#f5f5f9",
+    color: "rgba(0, 0, 0, 0.87)",
+    maxWidth: 1000,
+    fontSize: theme.typography.pxToRem(0.1),
+    border: "1px solid #dadde9",
+  },
+}))(Tooltip);
+
 function ccyFormat(num) {
   return `${num.toFixed(2)}`;
-}
-
-function priceRow(qty, unit) {
-  return qty * unit;
-}
-
-function createRow(desc, qty, unit) {
-  const price = priceRow(qty, unit);
-  return { desc, qty, unit, price };
 }
 
 function subtotal(totals) {
   return totals.map(({ payment }) => payment).reduce((sum, i) => sum + i, 0);
 }
 
-const rows = [
-  createRow("Paperclips (Box)", 100, 1.15),
-  createRow("Paper (Case)", 10, 45.99),
-  createRow("Waste Basket", 2, 17.99),
-];
+function totalPaidHours(totals) {
+  return totals.reduce((sum, i) => sum + i.totalPaidHours, 0)
+}
 
 const CreatePayment = () => {
   const classes = useStyles();
@@ -164,9 +168,10 @@ const CreatePayment = () => {
     deliveredBy: "TA",
     school: "",
     academicYear: "2020/2021",
-    paymentPeriod: "",
-    paymentPeriodNum: "",
-    semester: "Semester 1",
+    paymentPeriod: null,
+    paymentPeriodYear: null,
+    paymentPeriodNum: null,
+    semester: "1",
     QUBID: "",
     account: "",
     projectCode: "",
@@ -177,6 +182,76 @@ const CreatePayment = () => {
     cohort_id: "00",
     paymentStatus: "Pending",
   });
+  console.log("payment", payment);
+
+  const [markingCalc, setMarkingCalc] = useState([
+    {
+      range: "A",
+      numOfStudents: 0,
+      numOfCWPcsPerStudent: 0,
+      OralExamHours: 0,
+      total: 0,
+      totalPaidHours: 0.0,
+    },
+    {
+      range: "B",
+      numOfStudents: 0,
+      numOfCWPcsPerStudent: 0,
+      OralExamHours: 0,
+      total: 0,
+      totalPaidHours: 0.0,
+    },
+    {
+      range: "C-1",
+      numOfStudents: 0,
+      numOfCWPcsPerStudent: 0,
+      OralExamHours: 0,
+      total: 0,
+      totalPaidHours: 0.0,
+    },
+    {
+      range: "C-2",
+      numOfStudents: 0,
+      numOfCWPcsPerStudent: 0,
+      OralExamHours: 0,
+      total: 0,
+      totalPaidHours: 0.0,
+    },
+    {
+      range: "C-3",
+      numOfStudents: 0,
+      numOfCWPcsPerStudent: 0,
+      OralExamHours: 0,
+      total: 0,
+      totalPaidHours: 0.0,
+    },
+    {
+      range: "C-4",
+      numOfStudents: 0,
+      numOfCWPcsPerStudent: 0,
+      OralExamHours: 0,
+      total: 0,
+      totalPaidHours: 0.0,
+    },
+    {
+      range: "C-5",
+      numOfStudents: 0,
+      numOfCWPcsPerStudent: 0,
+      OralExamHours: 0,
+      total: 0,
+      totalPaidHours: 0.0,
+    },
+    {
+      range: "D",
+      numOfStudents: 0,
+      numOfCWPcsPerStudent: 0,
+      OralExamHours: 0,
+      total: 0,
+      totalPaidHours: 0.0,
+    },
+  ]);
+
+  console.log("markingCalc", markingCalc);
 
   const [paymentCalc, setPaymentCalc] = useState({
     lecture: [
@@ -333,26 +408,27 @@ const CreatePayment = () => {
       },
     ],
   });
-  // console.log("paymentCalc", paymentCalc);
+  console.log("paymentCalc", paymentCalc);
 
   const reset = () => {
     payment.user = "";
     setPayment({
       user: "",
-      deliveredBy: "",
+      deliveredBy: "TA",
       school: "",
-      academicYear: "",
+      academicYear: "2020/2021",
       paymentPeriod: "",
       paymentPeriodNum: "",
-      semester: "",
+      paymentPeriodYear: "",
+      semester: "1",
       QUBID: "",
       account: "",
       projectCode: "",
       projectName: "",
       subAnalysis: "",
-      amount: "",
+      amount: 0.0,
       student_cohort: true,
-      cohort_id: "",
+      cohort_id: "00",
       paymentStatus: "Pending",
     });
     setHourlyRates({
@@ -360,6 +436,162 @@ const CreatePayment = () => {
       rate2: 17.57,
     });
     setIsDisabled(false);
+    setExpanded(true);
+    setPaymentCalc({
+      lecture: [
+        {
+          activity: "Prep - 1st delivery",
+          paymentGrade: "",
+          paymentRate: 0.0,
+          time: 0,
+          count: 0,
+          totalhrs: 0.1,
+          payment: 0.0,
+        },
+        {
+          activity: "Prep - Repeat in same week (one repeat only)",
+          paymentGrade: "",
+          paymentRate: 0.0,
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+        {
+          activity: "Delivery",
+          paymentGrade: "",
+          paymentRate: 0.0,
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+      ],
+      seminar: [
+        {
+          activity: "Prep - 1st delivery (1hr)",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+        {
+          activity: "Prep - 1st delivery (2hrs)",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+        {
+          activity: "Prep - Repeat in same week (one repeat only)",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+        {
+          activity: "Delivery",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+      ],
+      lab: [
+        {
+          activity: "Prep - 1st delivery (0.5hrs)",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+        {
+          activity: "Prep - 1st delivery (1hr)",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+        {
+          activity: "Prep - Repeat in same week (one repeat only)",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+        {
+          activity: "Delivery",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+      ],
+      fieldTrip: [
+        {
+          activity: "Number of contact hours",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+      ],
+      office: [
+        {
+          activity: "0.5 hours per seminar group per week",
+          paymentGrade: "",
+          time: 0.5,
+          count: 1,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+      ],
+      marking: [
+        {
+          activity: "Exam / Non Exam / Coursework",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+        {
+          activity: "Exam / Non Exam / Coursework",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+        {
+          activity: "Oral Exam",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+      ],
+      training: [
+        {
+          activity: "Number of hours",
+          paymentGrade: "",
+          time: 0,
+          count: 0,
+          totalhrs: 0.0,
+          payment: 0.0,
+        },
+      ],
+    });
   };
   const [hourlyRates, setHourlyRates] = useState({
     rate1: AC1_RATE,
@@ -367,13 +599,14 @@ const CreatePayment = () => {
   });
 
   const [isDisabled, setIsDisabled] = useState(false);
+  const [isExpanded, setExpanded] = useState(true);
   const [userSelect, setUserSelect] = useState([]);
   const [grade, setGrade] = useState({
     grade1: "AC1",
     grade2: "AC2",
   });
 
-  const onChange = (e, i, g, r) => {
+  const onChange = (e, i, g, r, rng) => {
     let rate = "";
     switch (i) {
       case 1:
@@ -430,6 +663,95 @@ const CreatePayment = () => {
         r.payment = parseFloat(r.totalhrs * rate);
         setPaymentCalc({ ...paymentCalc });
         break;
+      case 5:
+        switch (rng) {
+          case "A":
+            markingCalc[r][e.target.name] = parseInt(e.target.value);
+            markingCalc[r].total = parseInt(
+              markingCalc[r].numOfStudents * markingCalc[r].numOfCWPcsPerStudent
+            );
+            markingCalc[r].totalPaidHours = 
+              parseFloat(ccyFormat(markingCalc[r].total / MHC_A)
+            );
+            setPaymentCalc({ ...paymentCalc });
+            break;
+          case "B":
+            markingCalc[r][e.target.name] = parseInt(e.target.value);
+            markingCalc[r].total = parseInt(
+              markingCalc[r].numOfStudents * markingCalc[r].numOfCWPcsPerStudent
+            );
+            markingCalc[r].totalPaidHours = 
+              parseFloat(ccyFormat(markingCalc[r].total / MHC_B)
+            );
+            setPaymentCalc({ ...paymentCalc });
+            break;
+          case "C-1":
+            markingCalc[r][e.target.name] = parseInt(e.target.value);
+            markingCalc[r].total = parseInt(
+              markingCalc[r].numOfStudents * markingCalc[r].numOfCWPcsPerStudent
+            );
+            markingCalc[r].totalPaidHours = 
+              parseFloat(ccyFormat(markingCalc[r].total / MHC_C1)
+            );
+            setPaymentCalc({ ...paymentCalc });
+            break;
+          case "C-2":
+            markingCalc[r][e.target.name] = parseInt(e.target.value);
+            markingCalc[r].total = parseInt(
+              markingCalc[r].numOfStudents * markingCalc[r].numOfCWPcsPerStudent
+            );
+            markingCalc[r].totalPaidHours = 
+              parseFloat(ccyFormat(markingCalc[r].total / MHC_C2)
+            );
+            setPaymentCalc({ ...paymentCalc });
+            break;
+          case "C-3":
+            markingCalc[r][e.target.name] = parseInt(e.target.value);
+            markingCalc[r].total = parseInt(
+              markingCalc[r].numOfStudents * markingCalc[r].numOfCWPcsPerStudent
+            );
+            markingCalc[r].totalPaidHours = 
+              parseFloat(ccyFormat(markingCalc[r].total / MHC_C3)
+            );
+            setPaymentCalc({ ...paymentCalc });
+            break;
+          case "C-4":
+            markingCalc[r][e.target.name] = parseInt(e.target.value);
+            markingCalc[r].total = parseInt(
+              markingCalc[r].numOfStudents * markingCalc[r].numOfCWPcsPerStudent
+            );
+            markingCalc[r].totalPaidHours = 
+              parseFloat(ccyFormat(markingCalc[r].total / MHC_C4)
+            );
+            setPaymentCalc({ ...paymentCalc });
+            break;
+          case "C-5":
+            markingCalc[r][e.target.name] = parseInt(e.target.value);
+            markingCalc[r].total = parseInt(
+              markingCalc[r].numOfStudents * markingCalc[r].numOfCWPcsPerStudent
+            );
+            markingCalc[r].totalPaidHours = 
+              parseFloat(ccyFormat(markingCalc[r].total / MHC_C5)
+            );
+            setPaymentCalc({ ...paymentCalc });
+            break;
+          case "D":
+            markingCalc[r][e.target.name] = parseInt(e.target.value);
+            markingCalc[r].total = parseFloat(
+              markingCalc[r].OralExamHours * MHC_D
+            );
+            markingCalc[r].totalPaidHours = 
+              parseFloat(ccyFormat(markingCalc[r].total)
+            );
+            setPaymentCalc({ ...paymentCalc });
+            break;
+          default:
+            setPayment({
+              ...payment,
+              [e.target.name]: e.target.value,
+            });
+        }
+        break;
       default:
         setPayment({
           ...payment,
@@ -456,6 +778,11 @@ const CreatePayment = () => {
     history.push(path);
   };
 
+  const continuePayment = () => {
+    setIsDisabled(true);
+    setExpanded(false);
+  };
+
   const invoiceSubtotal =
     subtotal(paymentCalc.training) +
     subtotal(paymentCalc.marking) +
@@ -464,6 +791,7 @@ const CreatePayment = () => {
     subtotal(paymentCalc.lab) +
     subtotal(paymentCalc.seminar) +
     subtotal(paymentCalc.lecture);
+  const totPaidHours = totalPaidHours(markingCalc)
   const invoiceTaxes = TAX_RATE * invoiceSubtotal;
   const invoiceTotal = invoiceTaxes + invoiceSubtotal;
   return (
@@ -484,7 +812,7 @@ const CreatePayment = () => {
                         <Typography variant="h5">Add New Payment</Typography>
                         <Typography variant="caption">
                           Teaching Support Framework - Contract and Payment
-                          Calculator. Please use for marking calculations only
+                          Calculator
                         </Typography>
                       </div>
                     </Grid>
@@ -508,13 +836,25 @@ const CreatePayment = () => {
                 </Paper>
               </Grid>
               <Grid item xs={12}>
-                <Accordion>
+                <Accordion
+                  defaultExpanded
+                  expanded={isExpanded}
+                  disabled={isDisabled}
+                >
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                   >
-                    <Typography variant="h5">Set Payment</Typography>
+                    <Grid container spacing={1}>
+                      <Grid
+                        item
+                        xs={6}
+                        className={clsx(classes.root, classes.left)}
+                      >
+                        <Typography variant="h5">Set Payment</Typography>
+                      </Grid>
+                    </Grid>
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid item xs={12}>
@@ -603,12 +943,12 @@ const CreatePayment = () => {
                             variant="outlined"
                             id="paymentPeriod"
                             name="paymentPeriod"
-                            label="Payment Period"
+                            label="Payment Month"
                             value={payment.paymentPeriod}
-                            onChange={(e) => onChange(e)}
+                            onChange={(e) => onChange(e, 2)}
                           >
                             {monthWords.map((option) => (
-                              <MenuItem key={option.id} value={option.value}>
+                              <MenuItem key={option.id} value={option.id}>
                                 {option.label}
                               </MenuItem>
                             ))}
@@ -624,11 +964,11 @@ const CreatePayment = () => {
                             className={classes.textField}
                             select
                             variant="outlined"
-                            id="paymentPeriodNum"
-                            name="paymentPeriodNum"
-                            label="Payment Period"
-                            value={payment.paymentPeriod}
-                            onChange={(e) => onChange(e)}
+                            id="paymentPeriodYear"
+                            name="paymentPeriodYear"
+                            label="Payment Year"
+                            value={payment.paymentPeriodYear}
+                            onChange={(e) => onChange(e, 2)}
                           >
                             {yearsDD.map((option) => (
                               <MenuItem key={option.value} value={option.value}>
@@ -701,11 +1041,280 @@ const CreatePayment = () => {
                             onChange={(e) => onChange(e)}
                           ></TextField>
                         </Grid>
+                        <Grid
+                          item
+                          xs={6}
+                          className={clsx(classes.root, classes.right)}
+                        >
+                          <Button
+                            disabled={isDisabled}
+                            variant="contained"
+                            onClick={continuePayment}
+                            color="primary"
+                          >
+                            Continue
+                          </Button>
+                        </Grid>
                       </Grid>
                     </Grid>
                   </AccordionDetails>
                 </Accordion>
-                <Accordion expanded>
+                <Accordion expanded={!isExpanded} disabled={!isDisabled}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon/>}
+                    aria-controls="panel2a-content"
+                    id="panel2a-header"
+                  >
+                    <Grid container spacing={1}>
+                      <Grid
+                        item
+                        xs={6}
+                        className={clsx(classes.root, classes.left)}
+                      >
+                        <Typography variant="h5">
+                          {"Marking & Office Hours"}
+                        </Typography>
+                      </Grid>
+                      <Grid
+                        item
+                        xs={6}
+                        className={clsx(classes.root, classes.right)}
+                      >
+                        <HtmlTooltip
+                          placement="bottom-end"
+                          title={
+                            <React.Fragment>
+                              <MarkingRange />
+                            </React.Fragment>
+                          }
+                        >
+                          <InfoIcon></InfoIcon>
+                        </HtmlTooltip>
+                      </Grid>
+                    </Grid>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Grid item xs={12}>
+                      <TableContainer component={Paper}>
+                        <Table
+                          className={classes.table}
+                          aria-label="spanning table"
+                          size="small"
+                        >
+                          <TableHead>
+                            <TableRow>
+                              <TableCell align="left" colSpan={3}>
+                                Marking hours Calculation (Exam / Non Exam /
+                                Coursework)
+                              </TableCell>
+                              <TableCell />
+                              <TableCell />
+                              <TableCell />
+                            </TableRow>
+                            <TableRow>
+                              <TableCell align="left">Range</TableCell>
+                              <TableCell align="left">No of Students</TableCell>
+                              <TableCell align="left">
+                                No of Pieces of Coursework per Student
+                              </TableCell>
+                              <TableCell align="left">
+                                Oral Exam Contact Hours
+                              </TableCell>
+                              <TableCell align="left">Total</TableCell>
+                              <TableCell align="left">
+                                Total Paid hours
+                              </TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {markingCalc.map((row, i) => (
+                              <TableRow key={i}>
+                                <TableCell align="left">{row.range}</TableCell>
+                                {console.log(row, i)}
+                                {row.range === "D" ? (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      id="time"
+                                      name="time"
+                                    />
+                                  </TableCell>
+                                ) : (
+                                  <TableCell align="left">
+                                    <Input
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      id="numOfStudents"
+                                      name="numOfStudents"
+                                      value={row.numOfStudents}
+                                      onChange={(e) =>
+                                        onChange(e, 5, null, i, row.range)
+                                      }
+                                    />
+                                  </TableCell>
+                                )}
+                                {row.range === "D" ? (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      id="time"
+                                      name="time"
+                                    />
+                                  </TableCell>
+                                ) : (
+                                  <TableCell align="left">
+                                    <Input
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      id="numOfCWPcsPerStudent"
+                                      name="numOfCWPcsPerStudent"
+                                      value={row.numOfCWPcsPerStudent}
+                                      onChange={(e) =>
+                                        onChange(e, 5, null, i, row.range)
+                                      }
+                                    />
+                                  </TableCell>
+                                )}
+                                {row.range !== "D" ? (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      id="time"
+                                      name="time"
+                                    />
+                                  </TableCell>
+                                ) : (
+                                  <TableCell align="left">
+                                    <Input
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      id="OralExamHours"
+                                      name="OralExamHours"
+                                      value={row.OralExamHours}
+                                      onChange={(e) =>
+                                        onChange(e, 5, null, i, row.range)
+                                      }
+                                    />
+                                  </TableCell>
+                                )}
+                                {row.range !== "D" ? (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      id="total"
+                                      name="total"
+                                      value={
+                                        row.numOfCWPcsPerStudent *
+                                        row.numOfStudents
+                                      }
+                                      onChangeCapture={(e) =>
+                                        onChange(e, 5, null, i, row.range)
+                                      }
+                                    />
+                                  </TableCell>
+                                ) : (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      id="total"
+                                      name="total"
+                                      value={row.OralExamHours}
+                                      onChangeCapture={(e) =>
+                                        onChange(e, 5, null, i, row.range)
+                                      }
+                                    />
+                                  </TableCell>
+                                )}
+
+                                <TableCell align="center">
+                                  <Input
+                                    disabled
+                                    type="number"
+                                    size="small"
+                                    margin="dense"
+                                    disableUnderline={true}
+                                    classes={{
+                                      input: classes.inputCenter,
+                                    }}
+                                    variant="filled"
+                                    id="totalhrs"
+                                    name="totalhrs"
+                                    value={row.totalPaidHours}
+                                    onChangeCapture={(e) =>
+                                      onChange(e, 5, null, i, row.range)
+                                    }
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                            <TableRow selected={true}>
+                              <TableCell colSpan={5} align="right">
+                                Total Paid Hours
+                              </TableCell>
+                              <TableCell align="center">{parseFloat(ccyFormat(totPaidHours))}</TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Grid>
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion disabled={!isDisabled}>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel2a-content"
@@ -1991,17 +2600,6 @@ const CreatePayment = () => {
                       </TableContainer>
                     </Grid>
                   </AccordionDetails>
-                </Accordion>
-                <Accordion disabled>
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel3a-content"
-                    id="panel3a-header"
-                  >
-                    <Typography className={classes.heading}>
-                      Disabled Accordion
-                    </Typography>
-                  </AccordionSummary>
                 </Accordion>
               </Grid>
             </Grid>
