@@ -62,7 +62,6 @@ const UserAdmin = () => {
     e.preventDefault();
     setDialogOpen();
     setCurrent(users[dataIndex]._id);
-    console.log("Handled Click", setCurrent(users[dataIndex]));
   }
   
 
