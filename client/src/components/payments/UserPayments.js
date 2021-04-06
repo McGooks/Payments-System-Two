@@ -6,7 +6,7 @@ import AuthContext from "../../context/auth/authContext";
 import PaymentContext from "../../context/payment/paymentContext";
 
 //Components
-import { Grid } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import PersonIcon from "@material-ui/icons/Person";
 import Chip from "@material-ui/core/Chip";
@@ -236,8 +236,8 @@ const UserAdmin = () => {
         download: true,
         sort: false,
         customBodyRender: (value) => {
-          return `£${value}`
-        }
+          return `£${value}`;
+        },
       },
     },
     {
@@ -323,7 +323,14 @@ const UserAdmin = () => {
             <Grid container spacing={4}>
               <Grid item xs={12}>
                 <MUIDataTable
-                  title="My Payments"
+                  title={
+                    <div>
+                      <Typography variant="h5">User Account Admin</Typography>
+                      <Typography variant="caption">
+                        Update basic user account information
+                      </Typography>
+                    </div>
+                  }
                   data={userPayments}
                   columns={columns}
                   options={options}

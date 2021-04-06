@@ -1,31 +1,23 @@
-import React, {
-  useContext,
-  useEffect,
-} from "react";
-import UserContext from "../../context/user/userContext";
-import { useParams, useHistory } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
 //State
 import AuthContext from "../../context/auth/authContext";
 //Components
 import NavButtonUserMgmtImport from "../layouts/NavButtonUserMgmtImport";
 import UserProfile from "../user/User";
 
-const User = () => {
+const User = (props) => {
   const authContext = useContext(AuthContext);
-  const { loadUser } = authContext
-  const history = useHistory();
+  const { loadUser, user, isAdmin } = authContext;
 
   useEffect(() => {
-    const user = loadUser();
-    // if(user.role !== "Admin") history.push("/")
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadUser();
   }, []);
 
   return (
-      <div>
+    <div>
       <NavButtonUserMgmtImport />
-      <UserProfile/>
-      </div>
+      <UserProfile activeUser={user} isAdmin={isAdmin}/>
+    </div>
   );
 };
 

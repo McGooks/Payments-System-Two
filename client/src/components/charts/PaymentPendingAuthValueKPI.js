@@ -5,9 +5,12 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import ProgressIndicator from "../layouts/Spinner";
 
+function ccyFormat(num) {
+  return `${num.toFixed(2)}`;
+}
+
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 345,
     height: "100%",
     whiteSpace: "pre-line",
   },
@@ -21,17 +24,22 @@ const PaymentPendingAuthValueKPI = () => {
     getStatData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <>
-      {stats !== null && !loading ? (
+      {loading ? (
+        <ProgressIndicator />
+      ) : stats && stats[3].statsPaymentPendingAuth.length ? (
         <Card className={classes.root}>
           <CardHeader
-            title={`£${stats[3].statsPaymentPendingAuth[0].total}`}
-            subheader={"Pending Authorisation"}
+            title={`£${ccyFormat(stats[3].statsPaymentPendingAuth[0].total)}`}
+            subheader={"Pending\n Approval"}
           />
         </Card>
       ) : (
-        <ProgressIndicator />
+        <Card className={classes.root}>
+          <CardHeader title={`£0.00`} subheader={"Pending Authorisation"} />
+        </Card>
       )}
     </>
   );

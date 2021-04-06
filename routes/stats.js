@@ -1,49 +1,206 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
-const Stat = require("../models/User");
+const Stat = require("../models/Payments");
+const User = require("../models/User");
+
+function pad(num, size) {
+  return ("0" + num).substr(-size);
+}
+
+let month = new Date().getMonth() + 1;
+currentPeriod = parseInt(
+  new Date().getFullYear().toString() + pad(month.toString(), 2)
+);
+
+function getAcademicYear() {
+  let year = new Date().getFullYear();
+  let lastyear = new Date().getFullYear() - 1;
+  let range = [];
+  let lastrange = [];
+  let academicYear = [];
+  lastrange.push(lastyear);
+  range.push(year);
+  for (var i = 1; i < 2; i++) {
+    lastrange.push(lastyear + i);
+    range.push(year + i);
+    academicYear.push(lastrange[i - 1] + "/" + lastrange[i].toString());
+  }
+  return academicYear[0];
+}
+let CurrentAcaYear = getAcademicYear();
+
+function getPrevAcademicYear() {
+  let year = new Date().getFullYear() - 1;
+  let lastyear = new Date().getFullYear() - 2;
+  let range = [];
+  let lastrange = [];
+  let academicYear = [];
+  lastrange.push(lastyear);
+  range.push(year);
+  for (var i = 1; i < 2; i++) {
+    lastrange.push(lastyear + i);
+    range.push(year + i);
+    academicYear.push(lastrange[i - 1] + "/" + lastrange[i].toString());
+  }
+  return academicYear[0];
+}
+let PrevAcaYear = getPrevAcademicYear();
+console.log(PrevAcaYear)
+
 
 //@route    GET api/stats/
 //@desc     Get stats
 //@access   Private
 router.get("/", auth, async (req, res) => {
   try {
-    const statsActive = await Stat.countDocuments({ status: "Active" });
-    const statsPending = await Stat.countDocuments({ status: "Pending" });
+    const statsActive = await User.countDocuments({ status: "Active" });
+    const statsPending = await Stat.countDocuments({
+      paymentStatus: "Pending",
+    });
     const statsExpired = await Stat.countDocuments({ status: "Expired" });
     const statsPaymentPendingAuth = await Stat.aggregate([
-      {$match: { status: 'Pending' }},
+      { $match: { paymentStatus: "Pending" } },
       {
         $group: {
-          _id: "$status",
-          total: { $sum: "$payment" },
+          _id: "$paymentStatus",
+          total: { $sum: "$amount" },
         },
       },
     ]);
     const statsPaymentAuthMTD = await Stat.aggregate([
       {
+        $project: {
+          paymentPeriodNum: 1,
+          amount: 1,
+          paymentStatus: 1,
+        },
+      },
+      {
+        $match: {
+          $and: [
+            {
+              paymentPeriodNum: currentPeriod,
+            },
+            {
+              paymentStatus: "Approved",
+            },
+          ],
+        },
+      },
+      {
         $group: {
-          _id: "$status",
-          total: { $sum: "$payment" },
+          _id: "$paymentStatus",
+          total: {
+            $sum: "$amount",
+          },
         },
       },
     ]);
     const statsPaymentAuthYTD = await Stat.aggregate([
       {
+        $project: {
+          amount: 1,
+          paymentStatus: 1,
+          academicYear: 1,
+        },
+      },
+      {
+        $match: {
+          $and: [
+            {
+              academicYear: CurrentAcaYear,
+            },
+            {
+              paymentStatus: "Approved",
+            },
+          ],
+        },
+      },
+      {
         $group: {
-          _id: "$status",
-          total: { $sum: "$payment" },
+          _id: "$paymentStatus",
+          total: {
+            $sum: "$amount",
+          },
         },
       },
     ]);
+    const statsCurrentSemComp = await Stat.aggregate([
+      {
+        $project: {
+          amount: 1,
+          paymentStatus: 1,
+          academicYear: 1,
+          semester: 1,
+        },
+      },
+      {
+        $match: {
+          $and: [
+            {
+              academicYear: CurrentAcaYear,
+            },
+            {
+              paymentStatus: "Approved",
+            },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: "$semester",
+          x: { $first: "$semester" },
+          y: {
+            $sum: "$amount",
+          },
+        },
+      }, {$unset: ["_id"] },
+    ]);
+    const statsPrevSemComp = await Stat.aggregate([
+     
+      {
+        $project: {
+          amount: 1,
+          paymentStatus: 1,
+          academicYear: 1,
+          semester: 1,
+        },
+      },
+      {
+        $match: {
+          $and: [
+            {
+              academicYear: PrevAcaYear,
+            },
+            {
+              paymentStatus: "Approved",
+            },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: "$semester",
+          x: { $first: "$semester" },
+          y: {
+            $sum: "$amount",
+          },
+        },
+       
+      }, {$unset: ["_id"] },
+    ]);
 
     stats = [
-      { id: 1, statsActive },
-      { id: 2, statsPending },
-      { id: 3, statsExpired },
-      { id: 4, statsPaymentPendingAuth },
-      { id: 5, statsPaymentAuthMTD },
-      { id: 6, statsPaymentAuthYTD },
+      { statsActive },
+      { statsPending },
+      { statsExpired },
+      { statsPaymentPendingAuth },
+      { statsPaymentAuthMTD },
+      { statsPaymentAuthYTD },
+      { CurrentAcaYear },
+      { statsCurrentSemComp },
+      { statsPrevSemComp },
     ];
     res.json(stats);
   } catch (err) {

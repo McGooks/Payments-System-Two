@@ -16,26 +16,30 @@ const options = [
         <ViewListIcon />
       </Link>
     ),
-    name: "View",
+    name: <Link to="/payments">
+    View
+  </Link>,
   },
-  {
-    id: 2,
-    icon: (
-      <Link to="/payments">
-        <ThumbUpIcon />
-      </Link>
-    ),
-    name: "Approve All",
-  },
-  {
-    id: 3,
-    icon: (
-      <Link to="/payments">
-        <ThumbDownIcon />
-      </Link>
-    ),
-    name: "Reject All",
-  },
+  // {
+  //   id: 2,
+  //   icon: (
+  //     <Link to="/payments/approve">
+  //       <ThumbUpIcon />
+  //     </Link>
+  //   ),
+  //   name:<Link to="/payments/approve">Approve All</Link> 
+  // },
+  // {
+  //   id: 3,
+  //   icon: (
+  //     <Link to="/payments">
+  //       <ThumbDownIcon />
+  //     </Link>
+  //   ),
+  //   name: <Link to="/payments">
+  //   Reject All
+  // </Link>,
+  // },
   // { icon: <Admin />, name: "Admin" },
 ];
 
@@ -70,9 +74,7 @@ const LongMenu = () => {
       >
         {options.map((option) => (
           <MenuItem key={option.id} onClick={handleClose}>
-            {option.icon}
-            {"  "}
-            {option.name}
+            {option.icon}{option.name}
           </MenuItem>
         ))}
       </Menu>

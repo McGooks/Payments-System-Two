@@ -1,11 +1,5 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-  Fragment,
-} from "react";
-import { useLocation, useHistory, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState, Fragment } from "react";
+import { useParams } from "react-router-dom";
 import moment from "moment";
 //State
 import AuthContext from "../../context/auth/authContext";
@@ -79,12 +73,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const User = () => {
+const User = (props) => {
   const classes = useStyles();
   const { id } = useParams();
-  const authContext = useContext(AuthContext);
   const userContext = useContext(UserContext);
-  // const { user } = authContext;
+  const { activeUser, isAdmin } = props;
+  // console.log("active user is: ", activeUser._id)
   const {
     user,
     current,
@@ -98,12 +92,10 @@ const User = () => {
     if (current !== null) {
       setData(current);
     } else {
-      getUser(id)
-      setCurrent(user)
+      getUser(id);
+      setCurrent(user);
     }
   }, [userContext, current]);
-
-  const [tab, setTab] = useState(0);
 
   const [password, setPassword] = useState({
     newPassword: "",
@@ -171,29 +163,25 @@ const User = () => {
     ],
   });
 
+  const [tab, setTab] = useState(0);
   const handleChangeTab = (event, newValue) => {
+    console.log(event);
     setTab(newValue);
   };
-
   const onSubmit = (e) => {
     e.preventDefault();
     updateUser(data);
-    console.log("data is", data);
   };
-
   const handleUpdatePassword = () => {
     console.log("Update Password Test");
   };
-
   const handleChangePassword = (e) => {
     setPassword({
       ...password,
       [e.target.name]: e.target.value,
     });
   };
-
   const onChange = (e, i) => {
-    console.log(data);
     switch (i) {
       case 1:
         data.address[0][e.target.name] = e.target.value;
@@ -218,9 +206,7 @@ const User = () => {
         });
     }
   };
-
   const handleSwitchChange = (e) => {
-    console.log(data);
     data.taxDeclaration[0][e.target.name] = e.target.checked;
     setData({ ...data });
   };
@@ -241,7 +227,7 @@ const User = () => {
                 <Tab label="PROFILE" icon={<PersonIcon />} />
                 <Tab label="TAX" icon={<BusinessCenterIcon />} />
                 <Tab label="CHANGE PASSWORD" icon={<LockIcon />} />
-                <Tab label="SETTINGS" icon={<SettingsIcon />} />
+                {/* <Tab label="SETTINGS" icon={<SettingsIcon />} /> */}
               </Tabs>
             </Box>
           </Grid>
@@ -611,7 +597,7 @@ const User = () => {
                         variant="outlined"
                       />
                     </>
-                  ) :  tab === 2 ? (
+                  ) : tab === 2 ? (
                     <>
                       <Typography
                         variant="h5"

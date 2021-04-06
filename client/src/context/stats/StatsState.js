@@ -7,6 +7,7 @@ import { GET_STATS, STATS_ERROR } from "../types";
 
 const StatsState = (props) => {
   const initialState = {
+    loading: true,
     stats: null,
     error: null,
   };
@@ -27,6 +28,7 @@ const StatsState = (props) => {
       value={{
         stats: state.stats,
         error: state.error,
+        loading: state.loading,
         getStatData,
       }}
     >

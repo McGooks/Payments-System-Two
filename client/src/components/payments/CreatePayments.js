@@ -12,9 +12,6 @@ import {
 } from "../../utils/dropdowns";
 
 //Context
-import UserContext from "../../context/user/userContext";
-import UserAdminContext from "../../context/userAdmin/userAdminContext";
-import AuthContext from "../../context/auth/authContext";
 import PaymentContext from "../../context/payment/paymentContext";
 
 //Components
@@ -46,6 +43,7 @@ import MarkingRange from "../layouts/MarkingRange";
 import Dialog from "../layouts/ConfirmationDialog";
 // import CustomToolbar from "../layouts/CustomToolbar";
 
+const CUR = "£";
 const TAX_RATE = -0.2;
 const AC1_RATE = 14.73;
 const AC2_RATE = 17.57;
@@ -142,31 +140,19 @@ function totalOfficeHours(totals) {
   return totals.reduce((sum, i) => sum * i.count, 1);
 }
 
+function pad(num, size) {
+  return ("0" + num).substr(-size);
+}
+
 const CreatePayment = (props) => {
   const classes = useStyles();
-  const userAdminContext = useContext(UserAdminContext);
-  const userContext = useContext(UserContext);
-  const authContext = useContext(AuthContext);
   const paymentContext = useContext(PaymentContext);
-  const { user, loadUser } = authContext;
-  // eslint-disable-next-line no-unused-vars
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const { id } = useParams();
-  const {
-    payments,
-    getPayments,
-    loading,
-    error,
-    clearErrors,
-    setDialogOpen,
-    setCurrent,
-    deletePayment,
-  } = paymentContext;
+  const { payments, addPayment, loading, error } = paymentContext;
 
   const history = useHistory();
 
   useEffect(() => {
-    console.log("props called", props);
     if (props.activeUsers !== null) {
       setUserSelect(props.activeUsers);
     } else {
@@ -179,28 +165,28 @@ const CreatePayment = (props) => {
         },
       ]);
     }
-    // if(user.role !== "Admin") history.push("/")
     if (error) {
       enqueueSnackbar(error, {
         variant: "error",
       });
-      clearErrors();
     }
   }, [props.activeUsers]);
 
   //State
+  let month = new Date().getMonth() + 1;
+
   const [payment, setPayment] = useState({
     user: "",
     deliveredBy: "TA",
-    school: "",
+    school: "Electronics, Electrical Engineering and Computer Science",
     academicYear: "2020/2021",
-    paymentPeriod: new Date().getMonth(),
+    paymentPeriod: month,
     paymentPeriodYear: new Date().getFullYear(),
     paymentPeriodNum: parseInt(
-      new Date().getFullYear().toString() + new Date().getMonth().toString()
+      new Date().getFullYear().toString() + pad(month.toString(), 2)
     ),
     semester: "1",
-    QUBID: "",
+    QUBID: "10000000",
     account: "",
     projectCode: "",
     projectName: "",
@@ -303,7 +289,7 @@ const CreatePayment = (props) => {
         paymentRate: 0.0,
         time: 0,
         count: 0,
-        totalhrs: 0.1,
+        totalhrs: 0.0,
         payment: 0.0,
       },
       {
@@ -507,9 +493,15 @@ const CreatePayment = (props) => {
         break;
       case 2:
         payment.paymentPeriodNum = parseInt(
-          payment.paymentPeriod.toString() +
-            payment.paymentPeriodYear.toString()
+          payment.paymentPeriodYear.toString() +
+            pad(payment.paymentPeriod.toString(), 2)
         );
+        if (e.target.name === "user") {
+          let userQUBID = userSelect.filter(function (val) {
+            return val._id === e.target.value;
+          });
+          payment.QUBID = userQUBID[0].QUBID;
+        }
         setPayment({
           ...payment,
           [e.target.name]: e.target.value,
@@ -798,7 +790,6 @@ const CreatePayment = (props) => {
       rate1: 14.73,
       rate2: 17.57,
     });
-
     setIsDisabled({
       panel1: false,
       panel2: true,
@@ -962,9 +953,82 @@ const CreatePayment = (props) => {
         },
       ],
     });
+    setMarkingCalc([
+      {
+        range: "A",
+        grade: "",
+        numOfStudents: 0,
+        numOfCWPcsPerStudent: 0,
+        OralExamHours: 0,
+        total: 0,
+        totalPaidHours: 0.0,
+      },
+      {
+        range: "B",
+        grade: "",
+        numOfStudents: 0,
+        numOfCWPcsPerStudent: 0,
+        OralExamHours: 0,
+        total: 0,
+        totalPaidHours: 0.0,
+      },
+      {
+        range: "C-1",
+        grade: "",
+        numOfStudents: 0,
+        numOfCWPcsPerStudent: 0,
+        OralExamHours: 0,
+        total: 0,
+        totalPaidHours: 0.0,
+      },
+      {
+        range: "C-2",
+        grade: "",
+        numOfStudents: 0,
+        numOfCWPcsPerStudent: 0,
+        OralExamHours: 0,
+        total: 0,
+        totalPaidHours: 0.0,
+      },
+      {
+        range: "C-3",
+        grade: "",
+        numOfStudents: 0,
+        numOfCWPcsPerStudent: 0,
+        OralExamHours: 0,
+        total: 0,
+        totalPaidHours: 0.0,
+      },
+      {
+        range: "C-4",
+        grade: "",
+        numOfStudents: 0,
+        numOfCWPcsPerStudent: 0,
+        OralExamHours: 0,
+        total: 0,
+        totalPaidHours: 0.0,
+      },
+      {
+        range: "C-5",
+        grade: "",
+        numOfStudents: 0,
+        numOfCWPcsPerStudent: 0,
+        OralExamHours: 0,
+        total: 0,
+        totalPaidHours: 0.0,
+      },
+      {
+        range: "D",
+        grade: "",
+        numOfStudents: 0,
+        numOfCWPcsPerStudent: 0,
+        OralExamHours: 0,
+        total: 0,
+        totalPaidHours: 0.0,
+      },
+    ]);
   };
   const showForm = () => {
-    console.log("form showing");
     setFormShowing(true);
   };
   const hideForm = () => {
@@ -972,7 +1036,14 @@ const CreatePayment = (props) => {
   };
   const SubmitPayment = (e) => {
     e.preventDefault();
-    console.log("confirmation on submit");
+    const submitArray = [
+      { ...payment },
+      { ...paymentCalc },
+      [...markingCalc],
+      [...officeHoursCalc],
+    ];
+    addPayment(submitArray);
+    history.push("/payments");
   };
   const continuePayment = (e) => {
     e.preventDefault();
@@ -985,7 +1056,6 @@ const CreatePayment = (props) => {
     });
     setExpanded({ panel1: false, panel2: true, panel3: false });
   };
-
   const continueMarkingOfficeHours = (e) => {
     e.preventDefault();
     setIsDisabled({
@@ -998,10 +1068,9 @@ const CreatePayment = (props) => {
     setExpanded({ panel1: false, panel2: false, panel3: true });
     setStage("SubmitPaymentForm");
   };
-
   const finalisePayment = (e) => {
-    setStage("")
-    hideForm()
+    setStage("");
+    hideForm();
     setIsDisabled({
       panel1: true,
       panel2: true,
@@ -1011,8 +1080,13 @@ const CreatePayment = (props) => {
     });
     setExpanded({ panel1: false, panel2: false, panel3: false });
     setFinalised(true);
+    setPayment({
+      ...payment,
+      amount: invoiceTotal,
+    });
   };
 
+  //declarations
   const invoiceSubtotal =
     subtotal(paymentCalc.training) +
     subtotal(paymentCalc.marking) +
@@ -1023,18 +1097,13 @@ const CreatePayment = (props) => {
     subtotal(paymentCalc.lecture);
   const totPaidHours = totalPaidHours(markingCalc);
   const totOfficeHours = totalOfficeHours(officeHoursCalc);
-
   const invoiceTaxes = TAX_RATE * invoiceSubtotal;
   const invoiceTotal = invoiceTaxes + invoiceSubtotal;
   // console.log("markingCalc", markingCalc);
-  console.log("paymentCalc", paymentCalc);
-  console.log("OfficeCalc", officeHoursCalc);
+  // console.log("paymentCalc", paymentCalc);
+  // console.log("OfficeCalc", officeHoursCalc);
   // console.log("payment", payment);
-
-  if (payments !== null && payments.length === 0 && !loading) {
-    return <h4>You have no payments recorded</h4>; // if user list is empty
-  }
-
+  // console.log("userSelect", userSelect)
   return (
     <Fragment>
       <div>
@@ -1117,7 +1186,6 @@ const CreatePayment = (props) => {
                               fullWidth
                               select
                               variant="outlined"
-                              id="deliveredBy"
                               name="deliveredBy"
                               label="Delivered By"
                               value={payment.deliveredBy}
@@ -1149,7 +1217,6 @@ const CreatePayment = (props) => {
                               fullWidth
                               select
                               variant="outlined"
-                              id="semester"
                               name="semester"
                               label="Semester"
                               value={payment.semester}
@@ -1181,7 +1248,6 @@ const CreatePayment = (props) => {
                               fullWidth
                               select
                               variant="outlined"
-                              id="academicYear"
                               name="academicYear"
                               label="Academic Year"
                               value={payment.academicYear}
@@ -1215,7 +1281,6 @@ const CreatePayment = (props) => {
                               className={classes.textField}
                               select
                               variant="outlined"
-                              id="paymentPeriod"
                               name="paymentPeriod"
                               label="Payment Month"
                               value={payment.paymentPeriod}
@@ -1249,7 +1314,6 @@ const CreatePayment = (props) => {
                               className={classes.textField}
                               select
                               variant="outlined"
-                              id="paymentPeriodYear"
                               name="paymentPeriodYear"
                               label="Payment Year"
                               value={payment.paymentPeriodYear}
@@ -1282,7 +1346,6 @@ const CreatePayment = (props) => {
                               className={classes.textField}
                               select
                               variant="outlined"
-                              id="user"
                               name="user"
                               label="Name"
                               value={payment.user}
@@ -1312,7 +1375,6 @@ const CreatePayment = (props) => {
                               className={classes.textField}
                               select
                               variant="outlined"
-                              id="school"
                               name="school"
                               label="School"
                               value={payment.school}
@@ -1336,7 +1398,6 @@ const CreatePayment = (props) => {
                               fullWidth
                               className={classes.textField}
                               variant="outlined"
-                              id="projectName"
                               name="projectName"
                               label="Module"
                               value={payment.projectName}
@@ -1460,7 +1521,6 @@ const CreatePayment = (props) => {
                                           input: classes.inputCenter,
                                         }}
                                         variant="filled"
-                                        id="time"
                                         name="time"
                                       />
                                     </TableCell>
@@ -1474,7 +1534,6 @@ const CreatePayment = (props) => {
                                           input: classes.inputCenter,
                                         }}
                                         variant="filled"
-                                        id="numOfStudents"
                                         name="numOfStudents"
                                         value={row.numOfStudents}
                                         onChange={(e) => {
@@ -1509,7 +1568,6 @@ const CreatePayment = (props) => {
                                           input: classes.inputCenter,
                                         }}
                                         variant="filled"
-                                        id="time"
                                         name="time"
                                       />
                                     </TableCell>
@@ -1523,7 +1581,6 @@ const CreatePayment = (props) => {
                                           input: classes.inputCenter,
                                         }}
                                         variant="filled"
-                                        id="numOfCWPcsPerStudent"
                                         name="numOfCWPcsPerStudent"
                                         value={row.numOfCWPcsPerStudent}
                                         onChange={(e) => {
@@ -1558,7 +1615,6 @@ const CreatePayment = (props) => {
                                           input: classes.inputCenter,
                                         }}
                                         variant="filled"
-                                        id="time"
                                         name="time"
                                       />
                                     </TableCell>
@@ -1572,7 +1628,6 @@ const CreatePayment = (props) => {
                                           input: classes.inputCenter,
                                         }}
                                         variant="filled"
-                                        id="OralExamHours"
                                         name="OralExamHours"
                                         value={row.OralExamHours}
                                         onChange={(e) => {
@@ -1607,7 +1662,6 @@ const CreatePayment = (props) => {
                                           input: classes.inputCenter,
                                         }}
                                         variant="filled"
-                                        id="total"
                                         name="total"
                                         value={
                                           row.numOfCWPcsPerStudent *
@@ -1644,7 +1698,6 @@ const CreatePayment = (props) => {
                                           input: classes.inputCenter,
                                         }}
                                         variant="filled"
-                                        id="total"
                                         name="total"
                                         value={row.OralExamHours}
                                         onChange={(e) => {
@@ -1678,7 +1731,6 @@ const CreatePayment = (props) => {
                                         input: classes.inputCenter,
                                       }}
                                       variant="filled"
-                                      id="totalhrs"
                                       name="totalhrs"
                                       value={row.totalPaidHours}
                                       onChange={(e) => {
@@ -1745,7 +1797,6 @@ const CreatePayment = (props) => {
                                         input: classes.inputCenter,
                                       }}
                                       variant="filled"
-                                      id="count"
                                       name="count"
                                       value={row.count}
                                       onChange={(e) =>
@@ -1774,12 +1825,10 @@ const CreatePayment = (props) => {
                                       input: classes.inputCenter,
                                     }}
                                     variant="filled"
-                                    id="count"
                                     name="count"
                                     value={parseFloat(
                                       ccyFormat(totOfficeHours)
                                     )}
-                                    onChange={""}
                                   />
                                 </TableCell>
                               </TableRow>
@@ -1793,6 +1842,10 @@ const CreatePayment = (props) => {
                             className={clsx(classes.root, classes.right)}
                           >
                             <Button
+                              disabled={
+                                isDisabled.panel2 ||
+                                (totOfficeHours === 0 && totPaidHours === 0)
+                              }
                               variant="contained"
                               type="submit"
                               color="primary"
@@ -1834,7 +1887,6 @@ const CreatePayment = (props) => {
                           size="small"
                           className={classes.textField}
                           variant="outlined"
-                          id="rate1"
                           name="rate1"
                           label={`${grade.grade1} Rate`}
                           value={hourlyRates.rate1}
@@ -1858,7 +1910,6 @@ const CreatePayment = (props) => {
                           size="small"
                           className={classes.textField}
                           variant="outlined"
-                          id="rate2"
                           name="rate2"
                           label={`${grade.grade2} Rate`}
                           value={hourlyRates.rate2}
@@ -1917,7 +1968,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                   value={paymentCalc.lecture[0].time}
                                   onChange={(e) =>
@@ -1939,7 +1989,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="count"
                                   name="count"
                                   value={paymentCalc.lecture[0].count}
                                   onChange={(e) =>
@@ -1963,7 +2012,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={
                                     paymentCalc.lecture[0].count *
@@ -1979,7 +2027,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.lecture[0].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -1999,7 +2047,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                   value={paymentCalc.lecture[1].time}
                                   onChange={(e) =>
@@ -2021,7 +2068,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="count"
                                   name="count"
                                   value={paymentCalc.lecture[1].count}
                                   onChange={(e) =>
@@ -2045,7 +2091,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={
                                     paymentCalc.lecture[1].count *
@@ -2061,7 +2106,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.lecture[1].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2083,7 +2128,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                   value={null}
                                   onChange={(e) =>
@@ -2107,7 +2151,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="count"
                                   name="count"
                                   value={null}
                                   onChange={(e) =>
@@ -2129,7 +2172,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={paymentCalc.lecture[2].totalhrs}
                                   onChange={(e) =>
@@ -2142,7 +2184,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.lecture[2].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2150,7 +2192,7 @@ const CreatePayment = (props) => {
                               <TableCell colSpan={6} align="left">
                                 Total Lectures
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 subtotal(paymentCalc.lecture)
                               )}`}</TableCell>
                             </TableRow>
@@ -2173,7 +2215,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                   value={paymentCalc.seminar[0].time}
                                   onChange={(e) =>
@@ -2195,7 +2236,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="count"
                                   name="count"
                                   value={paymentCalc.seminar[0].count}
                                   onChange={(e) =>
@@ -2219,7 +2259,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={
                                     paymentCalc.seminar[0].count *
@@ -2235,7 +2274,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.seminar[0].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2255,7 +2294,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                   value={paymentCalc.seminar[1].time}
                                   onChange={(e) =>
@@ -2277,7 +2315,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="count"
                                   name="count"
                                   value={paymentCalc.seminar[1].count}
                                   onChange={(e) =>
@@ -2301,7 +2338,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={
                                     paymentCalc.seminar[1].count *
@@ -2317,7 +2353,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.seminar[1].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2337,7 +2373,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                   value={paymentCalc.seminar[2].time}
                                   onChange={(e) =>
@@ -2359,7 +2394,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="count"
                                   name="count"
                                   value={paymentCalc.seminar[2].count}
                                   onChange={(e) =>
@@ -2383,7 +2417,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={
                                     paymentCalc.seminar[2].count *
@@ -2399,7 +2432,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.seminar[2].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2421,7 +2454,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                 />
                               </TableCell>
@@ -2436,7 +2468,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="count"
                                   name="count"
                                 />
                               </TableCell>
@@ -2449,7 +2480,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={paymentCalc.seminar[3].totalhrs}
                                   onChange={(e) =>
@@ -2462,7 +2492,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.seminar[3].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2470,7 +2500,7 @@ const CreatePayment = (props) => {
                               <TableCell colSpan={6} align="left">
                                 Total Seminar/Tutorial/Oral Classes
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 subtotal(paymentCalc.seminar)
                               )}`}</TableCell>
                             </TableRow>
@@ -2493,7 +2523,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                   value={paymentCalc.lab[0].time}
                                   onChange={(e) =>
@@ -2515,7 +2544,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="count"
                                   name="count"
                                   value={paymentCalc.lab[0].count}
                                   onChange={(e) =>
@@ -2539,7 +2567,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={
                                     paymentCalc.lab[0].count *
@@ -2555,7 +2582,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.lab[0].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2575,7 +2602,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                   value={paymentCalc.lab[1].time}
                                   onChange={(e) =>
@@ -2597,7 +2623,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="count"
                                   name="count"
                                   value={paymentCalc.lab[1].count}
                                   onChange={(e) =>
@@ -2621,7 +2646,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={
                                     paymentCalc.lab[1].count *
@@ -2637,7 +2661,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.lab[1].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2657,7 +2681,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                   value={paymentCalc.lab[2].time}
                                   onChange={(e) =>
@@ -2679,7 +2702,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="count"
                                   name="count"
                                   value={paymentCalc.lab[2].count}
                                   onChange={(e) =>
@@ -2703,7 +2725,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={
                                     paymentCalc.lab[2].count *
@@ -2719,7 +2740,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.lab[2].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2741,7 +2762,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                 />
                               </TableCell>
@@ -2756,7 +2776,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="count"
                                   name="count"
                                 />
                               </TableCell>
@@ -2769,7 +2788,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={paymentCalc.lab[3].totalhrs}
                                   onChange={(e) =>
@@ -2782,7 +2800,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.lab[3].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2790,7 +2808,7 @@ const CreatePayment = (props) => {
                               <TableCell colSpan={6} align="left">
                                 Total Lab Supervision/Demonstrating
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 subtotal(paymentCalc.lab)
                               )}`}</TableCell>
                             </TableRow>
@@ -2813,7 +2831,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={paymentCalc.fieldTrip[0].totalhrs}
                                   onChange={(e) =>
@@ -2826,7 +2843,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.fieldTrip[0].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2834,7 +2851,7 @@ const CreatePayment = (props) => {
                               <TableCell colSpan={6} align="left">
                                 Total Field Trip Assistance
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 subtotal(paymentCalc.fieldTrip)
                               )}`}</TableCell>
                             </TableRow>
@@ -2857,7 +2874,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={paymentCalc.office[0].time}
                                   onChange={(e) =>
@@ -2882,7 +2898,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={paymentCalc.office[0].totalhrs}
                                   onChange={(e) =>
@@ -2895,7 +2910,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.office[0].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2903,7 +2918,7 @@ const CreatePayment = (props) => {
                               <TableCell colSpan={6} align="left">
                                 Total Office Hours
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 subtotal(paymentCalc.office)
                               )}`}</TableCell>
                             </TableRow>
@@ -2926,7 +2941,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                   value={paymentCalc.marking[0].time}
                                   onChange={(e) =>
@@ -2951,7 +2965,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={paymentCalc.marking[0].time}
                                   onChangeCapture={(e) =>
@@ -2964,7 +2977,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.marking[0].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -2986,7 +2999,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="time"
                                   name="time"
                                   value={paymentCalc.marking[1].time}
                                   onChangeCapture={(e) =>
@@ -3011,7 +3023,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={paymentCalc.marking[1].time}
                                   onChangeCapture={(e) =>
@@ -3024,7 +3035,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.marking[1].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -3048,7 +3059,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={paymentCalc.marking[2].totalhrs}
                                   onChange={(e) =>
@@ -3061,7 +3071,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.marking[2].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -3069,7 +3079,7 @@ const CreatePayment = (props) => {
                               <TableCell colSpan={6} align="left">
                                 Total Marking
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 subtotal(paymentCalc.marking)
                               )}`}</TableCell>
                             </TableRow>
@@ -3092,7 +3102,6 @@ const CreatePayment = (props) => {
                                     input: classes.inputCenter,
                                   }}
                                   variant="filled"
-                                  id="totalhrs"
                                   name="totalhrs"
                                   value={paymentCalc.training[0].totalhrs}
                                   onChange={(e) =>
@@ -3105,7 +3114,7 @@ const CreatePayment = (props) => {
                                   }
                                 />
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 paymentCalc.training[0].payment
                               )}`}</TableCell>
                             </TableRow>
@@ -3113,7 +3122,7 @@ const CreatePayment = (props) => {
                               <TableCell colSpan={6} align="left">
                                 Total Training
                               </TableCell>
-                              <TableCell align="center">{`£ ${ccyFormat(
+                              <TableCell align="center">{`${CUR}${ccyFormat(
                                 subtotal(paymentCalc.training)
                               )}`}</TableCell>
                             </TableRow>
@@ -3122,40 +3131,35 @@ const CreatePayment = (props) => {
                               <TableCell />
                               <TableCell />
                               <TableCell colSpan={3}>Subtotal</TableCell>
-                              <TableCell align="right">
-                                {`£ ${ccyFormat(invoiceSubtotal)}`}
+                              <TableCell align="center">
+                                {`£${ccyFormat(invoiceSubtotal)}`}
                               </TableCell>
                             </TableRow>
                             <TableRow key={uuidv4()}>
                               <TableCell />
                               <TableCell />
                               <TableCell>Tax</TableCell>
-                              <TableCell align="right">{`${(
+                              <TableCell align="center">{`${(
                                 -TAX_RATE * 100
                               ).toFixed(0)} %`}</TableCell>
                               <TableCell />
-                              <TableCell align="right">
-                                {`£ ${ccyFormat(invoiceTaxes)}`}
+                              <TableCell align="center">
+                                {`£${ccyFormat(invoiceTaxes)}`}
                               </TableCell>
                             </TableRow>
                             <TableRow key={uuidv4()}>
                               <TableCell />
                               <TableCell />
                               <TableCell colSpan={3}>Total</TableCell>
-                              <TableCell align="right">
-                                {`£ ${ccyFormat(invoiceTotal)}`}
+                              <TableCell align="center">
+                                {`£${ccyFormat(invoiceTotal)}`}
                               </TableCell>
                             </TableRow>
                           </TableBody>
                         </Table>
                       </TableContainer>
                       <Grid container spacing={4}>
-                        <Grid
-                          item
-                          xs={12}
-                          className={classes.finalButton}
-                          spacing={4}
-                        >
+                        <Grid item xs={12} className={classes.finalButton}>
                           <Button
                             fullWidth
                             disabled={isDisabled.panel3 || invoiceTotal === 0}
@@ -3186,7 +3190,8 @@ const CreatePayment = (props) => {
                           </Typography>
                           <Typography variant="caption">
                             A new Payment request to the value of{" "}
-                            {`£ ${ccyFormat(invoiceTotal)}`} will be submitted
+                            {`${CUR}${ccyFormat(invoiceTotal)}`} will be
+                            submitted
                           </Typography>
                         </div>
                       </Grid>

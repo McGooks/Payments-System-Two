@@ -2,9 +2,8 @@ import React, { useContext, Fragment, useEffect } from "react";
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
 import UserContext from "../../context/user/userContext";
-import AuthContext from "../../context/auth/authContext";
 //Components
-import { Grid,Typography } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import PersonIcon from "@material-ui/icons/Person";
@@ -14,13 +13,10 @@ import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
 // import CustomToolbar from "../layouts/CustomToolbar";
 
-
-const UserAdmin = () => {
+const UserAdmin = (props) => {
   const userAdminContext = useContext(UserAdminContext);
   const userContext = useContext(UserContext);
-  const authContext = useContext(AuthContext);
-  const { user, loadUser } = authContext;
-  // eslint-disable-next-line no-unused-vars
+  const { user } = props;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const {
     users,
@@ -35,16 +31,8 @@ const UserAdmin = () => {
 
   const history = useHistory();
 
-  // const openEditDialog = (dataIndex) => {
-  //   setDialogOpen();
-  //   setCurrent(users[dataIndex]._id);
-  //   console.log("Current is set to: ", current);
-  // };
-
   useEffect(() => {
     getUsers();
-    console.log("console log, user ", user)
-    if(user.role !== "Admin") history.push("/")
     if (error) {
       enqueueSnackbar(error, {
         variant: "error",
@@ -60,17 +48,15 @@ const UserAdmin = () => {
 
   const openDialog = (e, dataIndex) => {
     e.preventDefault();
+    setCurrent(users[dataIndex]);
     setDialogOpen();
-    setCurrent(users[dataIndex]._id);
-  }
-  
+  };
 
   const editProfile = (e, dataIndex) => {
-    userContext.setCurrent(users[dataIndex])
-    console.log("UserContext SetCurrent set to:", users[dataIndex]._id );
-   let path = `/user/${users[dataIndex]._id}`
-   history.push(path)
-  }
+    userContext.setCurrent(users[dataIndex]);
+    let path = `/user/${users[dataIndex]._id}`;
+    history.push(path);
+  };
 
   const CustomChip = ({ label, onDelete }) => {
     return (
@@ -221,7 +207,7 @@ const UserAdmin = () => {
       },
     },
     {
-      name: "",
+      name: "Actions",
       options: {
         filter: false,
         sort: false,
@@ -229,60 +215,34 @@ const UserAdmin = () => {
         download: false,
         customBodyRenderLite: (dataIndex) => {
           return (
-            <EditIcon
-              onClick={(e) => {
-                openDialog(e, dataIndex);
-              }}
-            />
+            <>
+              <Grid container direction="row" alignContent="center" alignItems="center" justify="space-around">
+                <Grid item spacing={10} align="center">
+                  <EditIcon
+                    onClick={(e) => {
+                      openDialog(e, dataIndex);
+                    }}
+                  />
+                  <Typography align="center" display="block" variant="caption">
+                    Edit
+                  </Typography>
+                </Grid>
+                <Typography align="center">
+                  <PersonIcon
+                    onClick={(e) => {
+                      editProfile(e, dataIndex);
+                    }}
+                  />
+                  <Typography align="center" display="block" variant="caption">
+                    View
+                  </Typography>
+                </Typography>
+              </Grid>
+            </>
           );
         },
       },
     },
-    {
-      name: "",
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
-        download: false,
-        customBodyRenderLite: (dataIndex) => {
-          return (
-            <PersonIcon
-              onClick={(e) => {
-                editProfile(e, dataIndex);
-              }}
-            />
-          );
-        },
-      },
-    },
-    // {
-    //   name: "Add",
-    //   options: {
-    //     filter: false,
-    //     sort: false,
-    //     empty: true,
-    //     customBodyRenderLite: (dataIndex) => {
-    //       return (
-    //         <button
-    //           onClick={() => {
-    //             const { data } = this.state;
-    //             data.unshift([
-    //               "Mason Ray",
-    //               "Computer Scientist",
-    //               "San Francisco",
-    //               39,
-    //               "$142,000",
-    //             ]);
-    //             this.setState({ data });
-    //           }}
-    //         >
-    //           Add
-    //         </button>
-    //       );
-    //     },
-    //   },
-    // },
   ];
 
   return (
@@ -293,12 +253,14 @@ const UserAdmin = () => {
             <Grid container spacing={4}>
               <Grid item xs={12}>
                 <MUIDataTable
-                  title={<div>
-                    <Typography variant="h5">User Account Admin</Typography>
-                    <Typography variant="caption">
-                      Update basic user account information
-                    </Typography>
-                  </div>}
+                  title={
+                    <div>
+                      <Typography variant="h5">User Account Admin</Typography>
+                      <Typography variant="caption">
+                        Update basic user account information
+                      </Typography>
+                    </div>
+                  }
                   data={users}
                   columns={columns}
                   options={options}

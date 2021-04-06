@@ -318,9 +318,7 @@ router.post(
 //@desc     Update User Details
 //@access   PRIVATE
 router.put("/:id", auth, async (req, res) => {
-  console.log("the request body is:", req.body);
   const userFields = req.body;
-  console.log("userFields is:", userFields);
   //build User objects
   userFields.contact[0].updatedAt = Date.now();
   userFields.address[0].updatedAt = Date.now();
@@ -328,7 +326,6 @@ router.put("/:id", auth, async (req, res) => {
   userFields.taxDeclaration[0].updatedAt = Date.now();
   userFields.updatedById = req.user.id;
   userFields.updatedAt = Date.now();
-  console.log("Updated userFields is:", userFields);
   try {
     let user = await User.findById(req.params.id); // find user by ID
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -345,7 +342,7 @@ router.put("/:id", auth, async (req, res) => {
       { $set: userFields },
       { new: true }
     );
-    res.status(200).json(user);
+    res.status(200).json({msg: "Updated"});
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: "Unable to update user" });

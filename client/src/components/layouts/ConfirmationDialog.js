@@ -13,9 +13,6 @@ const ResponsiveDialog = (props) => {
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { hideForm, stage, finalisePayment, invoiceTotal } = props
 
-  console.log(props)
-
-
   return (
     <div>
       <Dialog

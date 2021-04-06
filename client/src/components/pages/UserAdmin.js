@@ -1,26 +1,28 @@
 import React, { useContext, useEffect } from "react";
 //Navigation
-import NavButtonUserMgmt from "../../components/layouts/NavButtonUserMgmt"
+import NavButtonUserMgmt from "../../components/layouts/NavButtonUserMgmt";
 //Components
 import UsersAdminTable from "../userAdmin/UserAdmin";
+import UserAdminContext from "../../context/userAdmin/userAdminContext";
 //State
 import AuthContext from "../../context/auth/authContext";
 
-const UserAdmin = () => {
+const UserAdmin = (props) => {
   const authContext = useContext(AuthContext);
-  const { loadUser } = authContext
+  const { loadUser, isAdmin, user, loading } = authContext;
 
   useEffect(() => {
     loadUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+    if (!loading && !isAdmin) {
+      props.history.push("/");
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin, props.history]);
   return (
     <>
-    <NavButtonUserMgmt />
-    <div className="grid-1">
-      <UsersAdminTable />
-    </div>
+      <NavButtonUserMgmt />
+      <div className="grid-1">
+        <UsersAdminTable user={user}/>
+      </div>
     </>
   );
 };

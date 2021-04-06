@@ -12,6 +12,13 @@ import {
   CLEAR_FILTER,
   PAYMENT_ERROR,
   CLEAR_PAYMENTS,
+  APPROVE_ALL_PAYMENTS,
+  REJECT_ALL_PAYMENTS,
+  APPROVE_PAYMENT,
+  REJECT_PAYMENT,
+  HOLD_PAYMENT,
+  SET_LOADING,
+  CLEAR_ERRORS,
 } from "../types";
 
 export default (state, action) => {
@@ -50,9 +57,18 @@ export default (state, action) => {
     case UPDATE_PAYMENT: {
       return {
         ...state,
-        payments: state.payments.map((payment) =>
-          payment._id === action.payload._id ? action.payload : payment
-        ),
+        payments: action.payload,
+        loading: false,
+      };
+    }
+    case REJECT_PAYMENT:
+    case APPROVE_PAYMENT:
+    case HOLD_PAYMENT:
+    case REJECT_ALL_PAYMENTS:
+    case APPROVE_ALL_PAYMENTS: {
+      return {
+        ...state,
+        payments: action.payload,
         loading: false,
       };
     }
@@ -96,6 +112,18 @@ export default (state, action) => {
       return {
         ...state,
         error: action.payload,
+      };
+    }
+    case CLEAR_ERRORS: {
+      return {
+        ...state,
+        error: null,
+      };
+    }
+    case SET_LOADING: {
+      return {
+        ...state,
+        loading: true,
       };
     }
     default:

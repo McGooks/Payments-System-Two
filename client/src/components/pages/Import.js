@@ -9,6 +9,7 @@ import Import from "../import/Import"
 const ImportUsers = (props) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const authContext = useContext(AuthContext);
+  const { loadUser, isAdmin } = authContext;
   const userAdminContext = useContext(UserAdminContext);
   const {
     importedUsersAdded,
@@ -17,7 +18,10 @@ const ImportUsers = (props) => {
   } = userAdminContext;
 
   useEffect(() => {
-    authContext.loadUser();
+    loadUser();
+    if (!isAdmin) {
+      props.history.push("/");
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
     if (importedUsersAdded) {
       props.history.push("/userAdmin");
       clearErrors();
@@ -28,7 +32,7 @@ const ImportUsers = (props) => {
       clearErrors();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [importedUsersAdded, props.history]);
+  }, [importedUsersAdded, isAdmin, props.history]);
 
   return (
     <div>

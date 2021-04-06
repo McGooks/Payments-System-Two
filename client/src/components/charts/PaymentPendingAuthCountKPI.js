@@ -8,7 +8,6 @@ import VertIconMenu from "../../components/layouts/VertIconMenu";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 345,
     height: '100%',
     whiteSpace: 'pre-line'
   },

@@ -8,6 +8,11 @@ export const UPDATE_PAYMENT = "UPDATE_PAYMENT";
 export const FILTER_PAYMENTS = "FILTER_PAYMENTS";
 export const CLEAR_PAYMENTS = "CLEAR_PAYMENTS";
 export const PAYMENT_ERROR = "PAYMENT_ERROR";
+export const APPROVE_ALL_PAYMENTS = "APPROVE_ALL_PAYMENTS"
+export const REJECT_ALL_PAYMENTS = "REJECT_ALL_PAYMENTS"
+export const APPROVE_PAYMENT = "APPROVE_PAYMENT"
+export const REJECT_PAYMENT = "REJECT_PAYMENT"
+export const HOLD_PAYMENT = "HOLD_PAYMENT"
 //Contacts Framework Reducer [to be deleted]
 export const GET_CONTACTS = "GET_CONTACTS";
 export const ADD_CONTACT = "ADD_CONTACT";
@@ -51,3 +56,4 @@ export const SET_CURRENT = "SET_CURRENT";
 export const CLEAR_CURRENT = "CLEAR_CURRENT";
 export const OPEN_DIALOG = "OPEN_DIALOG";
 export const CLOSE_DIALOG = "CLOSE_DIALOG";
+export const SET_LOADING = "SET_LOADING"

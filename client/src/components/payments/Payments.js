@@ -3,13 +3,12 @@ import { useLocation, useHistory, useParams, Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 //Context
 import UserContext from "../../context/user/userContext";
-import AuthContext from "../../context/auth/authContext";
 import PaymentContext from "../../context/payment/paymentContext";
+import { monthWords } from "../../utils/dropdowns";
 
 //Components
 import { Grid, Paper, Chip, Button, Typography } from "@material-ui/core";
-import EditIcon from "@material-ui/icons/Edit";
-import PersonIcon from "@material-ui/icons/Person";
+import { ThumbUp, ThumbDown, Pause, Pageview } from "@material-ui/icons";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
@@ -36,27 +35,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Payments = () => {
+const date = new Date().toUTCString();
+
+const Payments = (props) => {
   const classes = useStyles();
   const userContext = useContext(UserContext);
-  const authContext = useContext(AuthContext);
   const paymentContext = useContext(PaymentContext);
-  const { user, loadUser } = authContext;
-  // eslint-disable-next-line no-unused-vars
+  const { user, payments } = props;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { id } = useParams();
-  const {
-    payments,
-    getPayments,
-    loading,
-    error,
-    clearErrors,
-    setDialogOpen,
-    setCurrent,
-    deletePayment,
-  } = paymentContext;
+  const { loading, clearErrors, deletePayment, approvePayment, rejectPayment, holdPayment } = paymentContext;
 
   const history = useHistory();
+
+  function MonthWords(i) {
+    const arr = monthWords.map((value) => value.value);
+    return arr[i - 1];
+  }
 
   // const openEditDialog = (dataIndex) => {
   //   setDialogOpen();
@@ -65,15 +60,13 @@ const Payments = () => {
   // };
 
   useEffect(() => {
-    getPayments();
-    console.log("console log, user payments ", payments);
     // if(user.role !== "Admin") history.push("/")
-    if (error) {
-      enqueueSnackbar(error, {
-        variant: "error",
-      });
-      clearErrors();
-    }
+    // if (error) {
+    //   enqueueSnackbar(error, {
+    //     variant: "error",
+    //   });
+    //   clearErrors();
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -81,11 +74,24 @@ const Payments = () => {
     return <h4>You have no payments recorded</h4>; // if user list is empty
   }
 
+  const onClickApprovePayment = (id) => {
+    approvePayment(id);
+  };
+
+  const onClickRejectPayment = (id) => {
+    rejectPayment(id);
+  };
+
+  const onClickHoldPayment = (id) => {
+    holdPayment(id);
+  };
+
   const openDialog = (e, dataIndex) => {
     e.preventDefault();
-    setDialogOpen();
-    setCurrent(payments[dataIndex]._id);
-    console.log("Handled Click", setCurrent(payments[dataIndex]));
+    console.log("clicked", dataIndex.tableMeta.rowData);
+    // setDialogOpen();
+    // setCurrent(payments[dataIndex]._id);
+    // console.log("Handled Click", setCurrent(payments[dataIndex]));
   };
 
   const editProfile = (e, dataIndex) => {
@@ -122,7 +128,7 @@ const Payments = () => {
         useDisplayedColumnsOnly: false,
         useDisplayedRowsOnly: true,
       },
-      filename: "userAdminDownload.csv",
+      filename: `payments-${date}.csv`,
     },
     rowsPerPageOptions: [5, 10, 20, 50, 100],
     rowsPerPage: 10,
@@ -190,7 +196,7 @@ const Payments = () => {
       options: {
         filter: false,
         display: false,
-        download: false,
+        download: true,
         sort: true,
       },
     },
@@ -202,6 +208,9 @@ const Payments = () => {
         display: true,
         download: true,
         sort: true,
+        customBodyRender: (value) => {
+          return MonthWords(value);
+        },
       },
     },
     {
@@ -269,19 +278,70 @@ const Payments = () => {
       },
     },
     {
-      name: "",
+      name: "Actions",
       options: {
         filter: false,
         sort: false,
         empty: true,
         download: false,
-        customBodyRenderLite: (dataIndex) => {
+        customBodyRender: (value, tableMeta, updateValue) => {
           return (
-            <EditIcon
-              onClick={(e) => {
-                openDialog(e, dataIndex);
-              }}
-            />
+            <>
+              <Grid container direction="row" justify="space-between">
+                {tableMeta.rowData[8] === "Approved" ||
+                tableMeta.rowData[8] === "Rejected" ? (
+                  ""
+                ) : (
+                  <>
+                    <Typography color="primary" align="center">
+                      <ThumbUp
+                        fontSize="small"
+                        onClick={() =>
+                          onClickApprovePayment(tableMeta.rowData[0])
+                        }
+                      />
+                      <Typography
+                        align="center"
+                        display="block"
+                        variant="caption"
+                      >
+                        Approve
+                      </Typography>
+                    </Typography>
+                    <Typography color="secondary" align="center">
+                      <ThumbDown
+                        fontSize="small"
+                        onClick={() => {
+                          onClickRejectPayment(tableMeta.rowData[0]);
+                        }}
+                      />
+                      <Typography
+                        align="center"
+                        display="block"
+                        variant="caption"
+                      >
+                        Reject
+                      </Typography>
+                    </Typography>
+                    <Typography color="textSecondary" align="center">
+                      <Pause
+                        fontSize="small"
+                        onClick={() => {
+                          onClickHoldPayment(tableMeta.rowData[0]);
+                        }}
+                      />
+                      <Typography
+                        align="center"
+                        display="block"
+                        variant="caption"
+                      >
+                        Hold
+                      </Typography>
+                    </Typography>
+                  </>
+                )}
+              </Grid>
+            </>
           );
         },
       },
@@ -293,44 +353,32 @@ const Payments = () => {
         sort: false,
         empty: true,
         download: false,
-        customBodyRenderLite: (dataIndex) => {
+        customBodyRender: (value, tableMeta, updateValue) => {
           return (
-            <PersonIcon
-              onClick={(e) => {
-                editProfile(e, dataIndex);
-              }}
-            />
+            <>
+              <Grid
+                container
+                direction="row"
+                alignContent="center"
+                alignItems="center"
+              >
+                <Typography align="center">
+                  <Pageview
+                    fontSize="small"
+                    onClick={(e) => {
+                      openDialog(e, { value, tableMeta, updateValue });
+                    }}
+                  />
+                  <Typography align="center" display="block" variant="caption">
+                    View
+                  </Typography>
+                </Typography>
+              </Grid>
+            </>
           );
         },
       },
     },
-    // {
-    //   name: "Add",
-    //   options: {
-    //     filter: false,
-    //     sort: false,
-    //     empty: true,
-    //     customBodyRenderLite: (dataIndex) => {
-    //       return (
-    //         <button
-    //           onClick={() => {
-    //             const { data } = this.state;
-    //             data.unshift([
-    //               "Mason Ray",
-    //               "Computer Scientist",
-    //               "San Francisco",
-    //               39,
-    //               "$142,000",
-    //             ]);
-    //             this.setState({ data });
-    //           }}
-    //         >
-    //           Add
-    //         </button>
-    //       );
-    //     },
-    //   },
-    // },
   ];
 
   return (
@@ -339,33 +387,6 @@ const Payments = () => {
         <div>
           {payments !== null && !loading ? (
             <Grid container spacing={1}>
-              <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                  <Grid container spacing={1}>
-                    <Grid
-                      item
-                      xs={6}
-                      className={clsx(classes.root, classes.left)}
-                    >
-                      <Button variant="contained" color="secondary">
-                        Reject All Pending
-                      </Button>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={6}
-                      className={clsx(classes.root, classes.right)}
-                    >
-                      <Button variant="contained" component={Link} to="/payments/new"color="success">
-                        Add Payment
-                      </Button>
-                      <Button variant="contained" color="primary">
-                        Approve All Pending
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </Paper>
-              </Grid>
               <Grid item xs={12}>
                 <MUIDataTable
                   title={

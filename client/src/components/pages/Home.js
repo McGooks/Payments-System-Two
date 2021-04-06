@@ -1,27 +1,74 @@
 import React, { useContext, useEffect } from "react";
 import { Grid } from "@material-ui/core";
-import { Alert, AlertTitle } from '@material-ui/lab';
-import Button from '@material-ui/core/Button';
+import { Alert, AlertTitle } from "@material-ui/lab";
+import Button from "@material-ui/core/Button";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import clsx from "clsx";
 //ScoreCards
 import UserCountKPI from "../../components/charts/UserCountKPI";
 import PaymentPendingAuthCountKPI from "../../components/charts/PaymentPendingAuthCountKPI";
 import PaymentPendingAuthValueKPI from "../../components/charts/PaymentPendingAuthValueKPI";
 import PaymentsAuthValueKPI from "../../components/charts/PaymentsAuthValueKPI";
 import PaymentsAuthValueYTDKPI from "../../components/charts/PaymentsAuthValueYTDKPI";
-// Charts
-import PaymentsTrend from "../../components/charts/PaymentsTrend";
-import DemoChart from "../../components/charts/DemoChart";
-import Tab1 from "../../components/charts/TabTest"
+import Payments from "../../components/payments/Payments";
+
 //Navigation
 import NavButtonHome from "../../components/layouts/NavButtonHome";
 //State
 import AuthContext from "../../context/auth/authContext";
+import StatsContext from "../../context/stats/statsContext";
 
 function MuiAlert(props) {
   return <Alert elevation={6} variant="filled" {...props} />;
 }
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: "right",
+    color: theme.palette.text.secondary,
+  },
+  right: {
+    textAlign: "right",
+  },
+  left: {
+    textAlign: "left",
+  },
+  table: {
+    minWidth: 700,
+  },
+  spacer: {
+    marginTop: theme.spacing(2),
+  },
+  textField: {
+    "& > *": {},
+  },
+  footer: {
+    minHeight: 100,
+  },
+  inputField: {
+    textAlign: "center",
+  },
+  inputCenter: {
+    textAlign: "center",
+    color: "black",
+    fontSize: theme.typography.pxToRem(14),
+  },
+  finalButton: {
+    margin: theme.spacing(2),
+  },
+}));
+
 const Home = () => {
+  const classes = useStyles();
+  const statsContext = useContext(StatsContext);
+  const { stats, getStatData } = statsContext;
   const authContext = useContext(AuthContext);
   const { user, loadUser } = authContext;
 
@@ -46,89 +93,90 @@ const Home = () => {
 
   useEffect(() => {
     loadUser();
-    console.log("user object after loadUser",user);
+    getStatData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-      <> 
+    <>
       {user && user.emailVerified === false ? (
-      <MuiAlert style={{marginBottom: "20px"}} severity="warning" action={
-        <Button onClick={() => {
-          console.log("Email Sent") // This needs to be updated to include actual email request
-        }} color="inherit" size="small">
-          Resend Email
-        </Button>
-      }>
-         <AlertTitle>Email Address Pending Validation</AlertTitle>
-        Please click the verify link issued to {user.email} or click the resend email button
-      </MuiAlert>
-    ) : (
-      <NavButtonHome />
-    )}
-    <h1 className="HomeGreeting">
-      {getGreeting()}, {user && user.firstName}
-    </h1>
-    <h3 className="HomeGreetingSubtitle">You have pending tasks</h3>{" "}
-    {user && user.role !== "Admin" ? (
-      <>
-        <Grid container direction="row" spacing={4} alignItems="stretch">
-          <Grid item xs={12} md sm={6}>
-            Something Else
+        <MuiAlert
+          style={{ marginBottom: "20px" }}
+          severity="warning"
+          action={
+            <Button
+              onClick={() => {
+                console.log("Email Sent"); // This needs to be updated to include actual email request
+              }}
+              color="inherit"
+              size="small"
+            >
+              Resend Email
+            </Button>
+          }
+        >
+          <AlertTitle>Email Address Pending Validation</AlertTitle>
+          Please click the verify link issued to {user.email} or click the
+          resend email button
+        </MuiAlert>
+      ) : (
+        <NavButtonHome />
+      )}
+      <h1 className="HomeGreeting">
+        {getGreeting()}, {user && user.firstName}
+      </h1>
+      <h3 className="HomeGreetingSubtitle">You have pending tasks</h3>{" "}
+      {user && user.role !== "Admin" ? (
+        <>
+          <Grid container direction="row" spacing={4} alignItems="stretch">
+            <Grid item xs={12} sm={6}>
+              Something Else
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <PaymentPendingAuthCountKPI key={2} />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <PaymentPendingAuthValueKPI key={3} />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <PaymentsAuthValueKPI key={4} />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <PaymentsAuthValueYTDKPI key={5} />
+            </Grid>
           </Grid>
-          <Grid item xs={12} md sm={6}>
-            <PaymentPendingAuthCountKPI key={2} />
+        </>
+      ) : (
+        <>
+          <Grid container direction="row" spacing={4} alignItems="stretch">
+              <Grid item md={6} xs={12} sm={6}>
+              <UserCountKPI key={1} />
+            </Grid>
+              <Grid item xs={12} md={6} sm={6}>
+              <PaymentPendingAuthCountKPI key={2} />
+            </Grid>
           </Grid>
-          <Grid item xs={12} md sm={6}>
-            <PaymentPendingAuthValueKPI key={3} />
+          <Grid container direction="row" spacing={4} alignItems="stretch">
+            <Grid item xs={12} md sm={6}>
+              <PaymentPendingAuthValueKPI key={3} />
+            </Grid>
+            <Grid item xs={12} md sm={6}>
+              <PaymentsAuthValueKPI />
+            </Grid>
+            <Grid item xs={12} md sm={6}>
+              <PaymentsAuthValueYTDKPI />
+            </Grid>
           </Grid>
-          <Grid item xs={12} md sm={6}>
-            <PaymentsAuthValueKPI key={4} />
+          <Grid container spacing={10}>
+            <Grid
+              item
+              xs={12}
+              className={clsx(classes.footer, classes.left)}
+            ></Grid>
           </Grid>
-          <Grid item xs={12} md sm={6}>
-            <PaymentsAuthValueYTDKPI key={5}/>
-          </Grid>
-        </Grid>
-        <Grid container spacing={4}>
-          <Grid item md={6} xs={12}>
-            <PaymentsTrend key={6} />
-          </Grid>
-          <Grid item md={6} xs={12}>
-            <DemoChart key={7} />
-          </Grid>
-          
-        </Grid>{" "}
-      </>
-    ) : (
-      <>
-        {" "}
-        <Grid container direction="row" spacing={4} alignItems="stretch">
-          <Grid item xs={12} md sm={6}>
-            <UserCountKPI key={1} />
-          </Grid>
-          <Grid item xs={12} md sm={6}>
-            <PaymentPendingAuthCountKPI key={2} />
-          </Grid>
-          <Grid item xs={12} md sm={6}>
-            <PaymentPendingAuthValueKPI key={3} />
-          </Grid>
-          <Grid item xs={12} md sm={6}>
-            <PaymentsAuthValueKPI />
-          </Grid>
-          <Grid item xs={12} md sm={6}>
-            <PaymentsAuthValueYTDKPI />
-          </Grid>
-        </Grid>
-        <Grid container spacing={4}>
-          <Grid item md={6} xs={12}>
-            <PaymentsTrend />
-          </Grid>
-          <Grid item md={6} xs={12}>
-            <DemoChart />
-          </Grid>
-        </Grid>{" "}
-      </>
-    )}</>
+        </>
+      )}
+    </>
   );
 };
 

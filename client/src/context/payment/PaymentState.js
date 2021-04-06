@@ -15,6 +15,13 @@ import {
   CLEAR_FILTER,
   PAYMENT_ERROR,
   CLEAR_PAYMENTS,
+  APPROVE_ALL_PAYMENTS,
+  REJECT_ALL_PAYMENTS,
+  APPROVE_PAYMENT,
+  REJECT_PAYMENT,
+  HOLD_PAYMENT,
+  SET_LOADING,
+  CLEAR_ERRORS,
 } from "../types";
 
 const PaymentState = (props) => {
@@ -24,6 +31,7 @@ const PaymentState = (props) => {
     current: null,
     filtered: null,
     error: null,
+    loading: true,
   };
 
   const [state, dispatch] = useReducer(paymentReducer, initialState);
@@ -32,7 +40,6 @@ const PaymentState = (props) => {
   const getUserPayments = async (id) => {
     try {
       const res = await axios.get(`/api/user/${id}/payments`);
-      console.log("cl from res", res);
       dispatch({ type: GET_USER_PAYMENTS, payload: res.data.payments });
     } catch (error) {
       dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
@@ -50,7 +57,6 @@ const PaymentState = (props) => {
   };
 
   //Add Payment
-
   const addPayment = async (payment) => {
     const config = {
       headers: {
@@ -60,6 +66,7 @@ const PaymentState = (props) => {
     try {
       const res = await axios.post(`/api/payments/new`, payment, config);
       dispatch({ type: ADD_PAYMENT, payload: res.data });
+      getPayments();
     } catch (error) {
       dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
     }
@@ -101,11 +108,61 @@ const PaymentState = (props) => {
     };
     try {
       const res = await axios.put(
-        `/api/userAdmin/${payment._id}`,
+        `/api/payments/${payment._id}`,
         payment,
         config
       );
       dispatch({ type: UPDATE_PAYMENT, payload: res.data });
+    } catch (error) {
+      dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
+    }
+  };
+
+  //Approve Payment
+  const approvePayment = async (id) => {
+    try {
+      const res = await axios.put(`/api/payments/${id}/approve`);
+      dispatch({ type: APPROVE_PAYMENT, payload: res.data });
+    } catch (error) {
+      dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
+    }
+  };
+
+  //Reject Payment
+  const rejectPayment = async (id) => {
+    try {
+      const res = await axios.put(`/api/payments/${id}/reject`);
+      dispatch({ type: REJECT_PAYMENT, payload: res.data });
+    } catch (error) {
+      dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
+    }
+  };
+
+  //Hold Payment
+  const holdPayment = async (id) => {
+    try {
+      const res = await axios.put(`/api/payments/${id}/onhold`);
+      dispatch({ type: HOLD_PAYMENT, payload: res.data });
+    } catch (error) {
+      dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
+    }
+  };
+
+  //Approve All Pending Payments
+  const approveAllPayments = async () => {
+    try {
+      const res = await axios.put(`/api/payments/approve`);
+      dispatch({ type: APPROVE_ALL_PAYMENTS, payload: res.data });
+    } catch (error) {
+      dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
+    }
+  };
+
+  //Reject All Pending Payments
+  const rejectAllPayments = async () => {
+    try {
+      const res = await axios.put(`/api/payments/reject`);
+      dispatch({ type: REJECT_ALL_PAYMENTS, payload: res.data });
     } catch (error) {
       dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
     }
@@ -139,6 +196,17 @@ const PaymentState = (props) => {
     dispatch({ type: CLEAR_PAYMENTS });
   };
 
+  //Clear Payments
+
+  const clearErrors = () => {
+    dispatch({ type: CLEAR_ERRORS });
+  };
+  const setLoading = () => {
+    return {
+      type: SET_LOADING,
+    };
+  };
+
   return (
     <paymentContext.Provider
       value={{
@@ -147,6 +215,7 @@ const PaymentState = (props) => {
         current: state.current,
         filtered: state.filtered,
         error: state.error,
+        loading: state.loading,
         getPayments,
         getUserPayments,
         addPayment,
@@ -158,6 +227,13 @@ const PaymentState = (props) => {
         filterPayments,
         clearFilter,
         clearPayments,
+        approvePayment,
+        rejectPayment,
+        holdPayment,
+        approveAllPayments,
+        rejectAllPayments,
+        setLoading,
+        clearErrors,
       }}
     >
       {props.children}

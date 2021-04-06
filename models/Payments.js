@@ -33,15 +33,12 @@ const PaymentsSchema = Schema({
   },
   account: {
     type: Number,
-    required: true,
   },
   projectCode: {
     type: String,
-    required: true,
   },
   projectName: {
     type: String,
-    required: true,
   },
   subAnalysis: {
     type: String,
@@ -63,6 +60,10 @@ const PaymentsSchema = Schema({
     type: String,
     enum: ["Pending", "Approved", "Rejected", "On Hold"],
     default: "Pending",
+  },
+  paymentDetail: {
+    type: Schema.Types.ObjectId,
+    ref: "paymentDetail",
   },
   addedByUserDate: {
     type: Date,

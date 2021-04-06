@@ -41,8 +41,6 @@ if (localStorage.token) {
 }
 
 const App = () => {
-  useEffect(() => {});
-
   return (
     <SnackbarProvider maxSnack={10}>
       <AuthState>

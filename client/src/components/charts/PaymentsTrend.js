@@ -1,14 +1,28 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
+import StatsContext from "../../context/stats/statsContext";
 import { Chart } from "react-charts";
 import Card from "@material-ui/core/Card";
 
+function ccyFormat(num) {
+  return `${num.toFixed(2)}`;
+}
+
 const PaymentTrend = () => {
+  const statsContext = useContext(StatsContext);
+  const { stats, getStatData, loading } = statsContext;
+
+  useEffect(() => {
+    getStatData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   const data = React.useMemo(
     () => [
       {
         label: "Series 1",
         data: [
-          [0, 1],
+          [1, 1],
           [1, 2],
           [2, 4],
           [3, 2],

@@ -18,8 +18,6 @@ const Home = () => {
     <>
       <NavButtonPayments />
       <UserPayments/>
-    <div className="grid-1">
-    </div>
     </>
   );
 };

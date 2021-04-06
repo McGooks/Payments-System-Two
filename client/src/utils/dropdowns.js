@@ -9,11 +9,13 @@ export const schoolMenu = [
     id: 3,
     value: "Chemistry and Chemical Engineering",
     label: "Chemistry and Chemical Engineering",
+
   },
   {
     id: 4,
     value: "Electronics, Electrical Engineering and Computer Science",
     label: "Electronics, Electrical Engineering and Computer Science",
+
   },
   { id: 5, value: "EPS Budget Management", label: "EPS Budget Management" },
   { id: 6, value: "Faculty Office - AHSS", label: "Faculty Office - AHSS" },
