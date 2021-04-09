@@ -21,6 +21,21 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+//@route    GET api/payments/:id
+//@desc     Get selected payment
+//@access   Private
+router.get("/:id", auth, async (req, res) => {
+  try {
+    console.log(req.params.id)
+    const payments = await Payment.findById(req.params.id)
+      .populate("paymentDetail")
+    res.json(payments);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send({ error: err.message });
+  }
+});
+
 //@route    POST api/payments/add
 //@desc     Add new Payment
 //@access   PRIVATE

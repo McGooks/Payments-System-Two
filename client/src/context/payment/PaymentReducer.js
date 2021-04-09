@@ -1,6 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import {
   GET_PAYMENTS,
+  GET_PAYMENT,
   GET_USER_PAYMENTS,
   ADD_PAYMENT,
   ADD_USER_PAYMENT,
@@ -26,6 +27,7 @@ import {
 
 export default (state, action) => {
   switch (action.type) {
+   
     case GET_PAYMENTS: {
       return {
         ...state,
@@ -33,6 +35,7 @@ export default (state, action) => {
         loading: false,
       };
     }
+    case GET_PAYMENT: 
     case GET_USER_PAYMENTS: {
       return {
         ...state,

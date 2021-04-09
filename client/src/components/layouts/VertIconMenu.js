@@ -7,6 +7,7 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import ViewListIcon from "@material-ui/icons/ViewList";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import ThumbDownIcon from "@material-ui/icons/ThumbDown";
+import { Typography, Grid } from "@material-ui/core";
 
 const options = [
   {
@@ -16,9 +17,7 @@ const options = [
         <ViewListIcon />
       </Link>
     ),
-    name: <Link to="/payments">
-    View
-  </Link>,
+    name: <Link to="/payments">View</Link>,
   },
   // {
   //   id: 2,
@@ -27,7 +26,7 @@ const options = [
   //       <ThumbUpIcon />
   //     </Link>
   //   ),
-  //   name:<Link to="/payments/approve">Approve All</Link> 
+  //   name:<Link to="/payments/approve">Approve All</Link>
   // },
   // {
   //   id: 3,
@@ -72,11 +71,22 @@ const LongMenu = () => {
         open={open}
         onClose={handleClose}
       >
-        {options.map((option) => (
-          <MenuItem key={option.id} onClick={handleClose}>
-            {option.icon}{option.name}
-          </MenuItem>
-        ))}
+        <Grid
+          container
+          spacing={1}
+          direction="column"
+          justify="flex-start"
+          alignItems="center"
+        >
+          {options.map((option) => (
+            <MenuItem key={option.id} onClick={handleClose}>
+              <Grid item>{option.icon}</Grid>
+              <Grid item>
+                <Typography>{option.name}</Typography>
+              </Grid>
+            </MenuItem>
+          ))}
+        </Grid>
       </Menu>
     </div>
   );

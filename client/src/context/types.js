@@ -1,5 +1,6 @@
 //Payments Framework Reducer
 export const GET_PAYMENTS = "GET_PAYMENTS";
+export const GET_PAYMENT = "GET_PAYMENT";
 export const GET_USER_PAYMENTS = "GET_USER_PAYMENTS";
 export const ADD_PAYMENT = "ADD_PAYMENT";
 export const ADD_USER_PAYMENT = "ADD_USER_PAYMENT";

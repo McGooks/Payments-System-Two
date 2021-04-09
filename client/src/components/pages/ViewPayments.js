@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 //Navigation
 import NavButtonPaymentsAdd from "../layouts/NavButtonPaymentsAdd"
 //Components
-import ViewPayments from "../payments/ViewPayments"
+import CreatePayments from "../payments/CreatePayments"
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
 import AuthContext from "../../context/auth/authContext";
@@ -23,7 +23,7 @@ const Home = () => {
   return (
     <>
       <NavButtonPaymentsAdd />
-      <ViewPayments/>
+      <CreatePayments activeUsers={activeUsers}/>
     </>
   );
 };

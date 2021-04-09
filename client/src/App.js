@@ -16,6 +16,7 @@ import User from "./components/pages/User";
 import UserPayments from "./components/pages/UserPayments";
 import Payments from "./components/pages/Payments";
 import PaymentsCreate from "./components/pages/PaymentsCreate";
+import ViewPayments from "./components/pages/ViewPayments";
 import About from "./components/pages/About";
 import Import from "./components/pages/Import";
 
@@ -74,6 +75,11 @@ const App = () => {
                             exact
                             path="/payments/new"
                             component={PaymentsCreate}
+                          />
+                            <PrivateRoute
+                            exact
+                            path="/payments/:id"
+                            component={ViewPayments}
                           />
                           <PrivateRoute
                             exact

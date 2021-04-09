@@ -4,6 +4,7 @@ import paymentContext from "./paymentContext";
 import paymentReducer from "./PaymentReducer";
 import {
   GET_PAYMENTS,
+  GET_PAYMENT,
   GET_USER_PAYMENTS,
   ADD_PAYMENT,
   ADD_USER_PAYMENT,
@@ -58,6 +59,16 @@ const PaymentState = (props) => {
       dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
     }
   };
+
+    //Get Payments
+    const getPayment = async (id) => {
+      try {
+        const res = await axios.get(`/api/payments/${id}`);
+        dispatch({ type: GET_PAYMENT, payload: res.data });
+      } catch (error) {
+        dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
+      }
+    };
 
   //Add Payment
   const addPayment = async (payment) => {
@@ -250,6 +261,7 @@ const PaymentState = (props) => {
         error: state.error,
         loading: state.loading,
         getPayments,
+        getPayment,
         getUserPayments,
         addPayment,
         addUserPayment,
