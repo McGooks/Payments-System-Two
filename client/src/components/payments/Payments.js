@@ -1,6 +1,7 @@
 import React, { useContext, Fragment, useEffect } from "react";
 import { useLocation, useHistory, useParams, Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
+import moment from "moment";
 //Context
 import UserContext from "../../context/user/userContext";
 import PaymentContext from "../../context/payment/paymentContext";
@@ -8,7 +9,14 @@ import { monthWords } from "../../utils/dropdowns";
 
 //Components
 import { Grid, Paper, Chip, Button, Typography } from "@material-ui/core";
-import { ThumbUp, ThumbDown, Pause, Pageview } from "@material-ui/icons";
+import {
+  ThumbUp,
+  ThumbDown,
+  PauseCircleOutline,
+  PlayCircleOutline,
+  Pageview,
+  Receipt,
+} from "@material-ui/icons";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
@@ -44,7 +52,16 @@ const Payments = (props) => {
   const { user, payments } = props;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { id } = useParams();
-  const { loading, clearErrors, deletePayment, approvePayment, rejectPayment, holdPayment } = paymentContext;
+  const {
+    loading,
+    clearErrors,
+    deletePayment,
+    approvePayment,
+    rejectPayment,
+    holdPayment,
+    pendingPayment,
+    paidPayment,
+  } = paymentContext;
 
   const history = useHistory();
 
@@ -84,6 +101,14 @@ const Payments = (props) => {
 
   const onClickHoldPayment = (id) => {
     holdPayment(id);
+  };
+
+  const onClickPendingPayment = (id) => {
+    pendingPayment(id);
+  };
+
+  const onClickPaidPayment = (id) => {
+    paidPayment(id);
   };
 
   const openDialog = (e, dataIndex) => {
@@ -140,22 +165,20 @@ const Payments = (props) => {
     //   return <CustomToolbar />;
     // },
     onRowsDelete: (rows) => {
-      console.log("Console log of", rows.data.length);
+      console.log("Console log of", rows.data);
       if (rows.data.length <= 10) {
         const paymentsToDelete = rows.data.map((d) => payments[d.dataIndex]);
         paymentsToDelete.forEach((a) => {
-          if (a._id === user._id) {
+          console.log(a);
+          if (a.user === user._id) {
             enqueueSnackbar(`You cannot delete your own record`, {
               variant: "error",
             });
             clearErrors();
           } else {
-            enqueueSnackbar(
-              `User ${a.firstName} ${a.lastName} (${a.QUBID}) deleted`,
-              {
-                variant: "success",
-              }
-            );
+            enqueueSnackbar(`Payment for QUBID ${a.QUBID} deleted`, {
+              variant: "success",
+            });
             deletePayment(a._id);
           }
         });
@@ -272,7 +295,18 @@ const Payments = (props) => {
       label: "Status",
       options: {
         filter: true,
+        filterList: ["Pending","On Hold"],
         display: true,
+        download: true,
+        sort: false,
+      },
+    },
+    {
+      name: "updatedByUserDate",
+      label: "Updated",
+      options: {
+        filter: true,
+        display: false,
         download: true,
         sort: false,
       },
@@ -288,10 +322,10 @@ const Payments = (props) => {
           return (
             <>
               <Grid container direction="row" justify="space-between">
-                {tableMeta.rowData[8] === "Approved" ||
-                tableMeta.rowData[8] === "Rejected" ? (
+                {tableMeta.rowData[8] === "Rejected" ||
+                tableMeta.rowData[8] === "Paid" ? (
                   ""
-                ) : (
+                ) : tableMeta.rowData[8] === "Pending" ? (
                   <>
                     <Typography color="primary" align="center">
                       <ThumbUp
@@ -324,7 +358,7 @@ const Payments = (props) => {
                       </Typography>
                     </Typography>
                     <Typography color="textSecondary" align="center">
-                      <Pause
+                      <PauseCircleOutline
                         fontSize="small"
                         onClick={() => {
                           onClickHoldPayment(tableMeta.rowData[0]);
@@ -339,6 +373,73 @@ const Payments = (props) => {
                       </Typography>
                     </Typography>
                   </>
+                ) : tableMeta.rowData[8] === "On Hold" ? (
+                  <>
+                    <Typography color="primary" align="center">
+                      <ThumbUp
+                        fontSize="small"
+                        onClick={() =>
+                          onClickApprovePayment(tableMeta.rowData[0])
+                        }
+                      />
+                      <Typography
+                        align="center"
+                        display="block"
+                        variant="caption"
+                      >
+                        Approve
+                      </Typography>
+                    </Typography>
+                    <Typography color="secondary" align="center">
+                      <ThumbDown
+                        fontSize="small"
+                        onClick={() => {
+                          onClickRejectPayment(tableMeta.rowData[0]);
+                        }}
+                      />
+                      <Typography
+                        align="center"
+                        display="block"
+                        variant="caption"
+                      >
+                        Reject
+                      </Typography>
+                    </Typography>
+                    <Typography color="textSecondary" align="center">
+                      <PlayCircleOutline
+                        fontSize="small"
+                        onClick={() => {
+                          onClickPendingPayment(tableMeta.rowData[0]);
+                        }}
+                      />
+                      <Typography
+                        align="center"
+                        display="block"
+                        variant="caption"
+                      >
+                        Pending
+                      </Typography>
+                    </Typography>
+                  </>
+                ) : (
+                  <Typography
+                    style={{
+                      color: "green",
+                    }}
+                    align="center"
+                  >
+                    <Receipt
+                      fontSize="small"
+                      onClick={() => onClickPaidPayment(tableMeta.rowData[0])}
+                    />
+                    <Typography
+                      align="center"
+                      display="block"
+                      variant="caption"
+                    >
+                      Paid
+                    </Typography>
+                  </Typography>
                 )}
               </Grid>
             </>

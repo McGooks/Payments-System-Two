@@ -144,5 +144,6 @@ UserSchema.pre("remove", function (next) {
   const Payments = mongoose.model("payments");
   Payments.remove({ _id: { $in: this.payments } }).then(() => next()); //iterates through the payments and finds all ID's "in" the model and removes
 });
+
 const User = mongoose.model("user", UserSchema);
 module.exports = User

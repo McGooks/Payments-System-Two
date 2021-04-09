@@ -32,19 +32,19 @@ const actions = [
     ),
     name: "Back",
   },
-  {
-    id: 2,
-    icon: (
-      <Link to="/import">
-        <Import />
-      </Link>
-    ),
-    name: "Import File",
-  },
+  // {
+  //   id: 2,
+  //   icon: (
+  //     <Link to="/import">
+  //       <Import />
+  //     </Link>
+  //   ),
+  //   name: "Import File",
+  // },
   {
     id: 3,
     icon: (
-      <Link to="/payments">
+      <Link to="/payments/new">
         <AttachMoneyIcon />
       </Link>
     ),

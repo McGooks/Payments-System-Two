@@ -104,11 +104,38 @@ router.put("/approve", auth, async (req, res) => {
     if (!payments.length) {
       return res
         .status(404)
-        .json({ error: "No pending payments found to reject" });
+        .json({ error: "No pending payments found to Approve" });
     } else {
       payments = await Payment.find({ paymentStatus: "Pending" }).updateMany({
         $set: {
           paymentStatus: "Approved",
+          updatedByUser: req.user.id,
+          updatedByUserDate: Date.now(),
+        },
+      });
+      payments = await Payment.find({});
+      res.status(200).json(payments);
+    }
+  } catch (error) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+//@route    PUT api/payments/approve
+//@desc     Update All Pending payments as approved
+//@access   PRIVATE
+router.put("/paid", auth, async (req, res) => {
+  try {
+    let payments = await Payment.find({ paymentStatus: "Approved" });
+    console.log(payments);
+    if (!payments.length) {
+      return res
+        .status(404)
+        .json({ error: "No approved payments, pending payment" });
+    } else {
+      payments = await Payment.find({ paymentStatus: "Approved" }).updateMany({
+        $set: {
+          paymentStatus: "Paid",
           updatedByUser: req.user.id,
           updatedByUserDate: Date.now(),
         },
@@ -159,7 +186,7 @@ router.put("/:id", auth, async (req, res) => {
 router.put("/:id/approve", auth, async (req, res) => {
   try {
     let payments = await Payment.findById(req.params.id);
-    console.log(payments)
+    console.log(payments);
     if (!payments) {
       return res
         .status(404)
@@ -169,7 +196,7 @@ router.put("/:id/approve", auth, async (req, res) => {
       paymentFields.paymentStatus = "Approved";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      console.log(paymentFields)
+      console.log(paymentFields);
       payments = await Payment.findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
@@ -189,7 +216,7 @@ router.put("/:id/approve", auth, async (req, res) => {
 router.put("/:id/reject", auth, async (req, res) => {
   try {
     let payments = await Payment.findById(req.params.id);
-    console.log(payments)
+    console.log(payments);
     if (!payments) {
       return res
         .status(404)
@@ -199,7 +226,7 @@ router.put("/:id/reject", auth, async (req, res) => {
       paymentFields.paymentStatus = "Rejected";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      console.log(paymentFields)
+      console.log(paymentFields);
       payments = await Payment.findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
@@ -219,7 +246,7 @@ router.put("/:id/reject", auth, async (req, res) => {
 router.put("/:id/onhold", auth, async (req, res) => {
   try {
     let payments = await Payment.findById(req.params.id);
-    console.log(payments)
+    console.log(payments);
     if (!payments) {
       return res
         .status(404)
@@ -229,7 +256,67 @@ router.put("/:id/onhold", auth, async (req, res) => {
       paymentFields.paymentStatus = "On Hold";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      console.log(paymentFields)
+      console.log(paymentFields);
+      payments = await Payment.findByIdAndUpdate(
+        req.params.id,
+        { $set: paymentFields },
+        { new: true }
+      );
+      payments = await Payment.find({});
+      res.status(200).json(payments);
+    }
+  } catch (error) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+//@route    PUT api/payments/:id/pending
+//@desc     Update User Payment as pending
+//@access   PRIVATE
+router.put("/:id/pending", auth, async (req, res) => {
+  try {
+    let payments = await Payment.findById(req.params.id);
+    console.log(payments);
+    if (!payments) {
+      return res
+        .status(404)
+        .json({ error: "This payment is not currently set to on hold" });
+    } else {
+      const paymentFields = {};
+      paymentFields.paymentStatus = "Pending";
+      paymentFields.updatedById = req.user.id;
+      paymentFields.updatedAt = Date.now();
+      console.log(paymentFields);
+      payments = await Payment.findByIdAndUpdate(
+        req.params.id,
+        { $set: paymentFields },
+        { new: true }
+      );
+      payments = await Payment.find({});
+      res.status(200).json(payments);
+    }
+  } catch (error) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+//@route    PUT api/payments/:id/pending
+//@desc     Update User Payment as pending
+//@access   PRIVATE
+router.put("/:id/paid", auth, async (req, res) => {
+  try {
+    let payments = await Payment.findById(req.params.id);
+    console.log(payments);
+    if (!payments) {
+      return res
+        .status(404)
+        .json({ error: "This payment is not currently set to approved" });
+    } else {
+      const paymentFields = {};
+      paymentFields.paymentStatus = "Paid";
+      paymentFields.updatedById = req.user.id;
+      paymentFields.updatedAt = Date.now();
+      console.log(paymentFields);
       payments = await Payment.findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
@@ -249,11 +336,14 @@ router.put("/:id/onhold", auth, async (req, res) => {
 router.delete("/:id", auth, async (req, res) => {
   try {
     let payment = await Payment.findById(req.params.id); // find payment by ID
-    if (!payment) return res.status(404).json({ msg: "payment not found" });
+    console.log(payment);
+    if (!payment) return res.status(404).json({ error: "payment not found" });
     //ensure user owns payment
-    if (payment.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: "Not Authorised" });
+    if (payment.user.toString() === req.user.id) {
+      return res.status(401).json({ error: "You cannot delete this payment" });
     }
+    await PaymentDetail.findByIdAndRemove(payment.paymentDetail);
+    await User.updateOne({ _id: payment.user }, { $pull: { payments: payment._id }});
     await Payment.findByIdAndRemove(
       req.params.id,
       res.json({ msg: "Payment Removed" })

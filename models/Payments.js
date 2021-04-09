@@ -58,7 +58,7 @@ const PaymentsSchema = Schema({
   },
   paymentStatus: {
     type: String,
-    enum: ["Pending", "Approved", "Rejected", "On Hold"],
+    enum: ["Pending", "Approved", "Rejected", "On Hold", "Paid"],
     default: "Pending",
   },
   paymentDetail: {
@@ -86,6 +86,11 @@ const PaymentsSchema = Schema({
   //   ref: "notes",
   // }
 });
+
+// PaymentsSchema.pre("remove", function (next) {
+//   const PaymentDetail = mongoose.model("paymentDetail");
+//   PaymentDetail.remove({ _id: { $in: this.paymentDetail } }).then(() => next()); //iterates through the payments and finds all ID's "in" the model and removes
+// });
 
 const Payments = mongoose.model("payments", PaymentsSchema);
 module.exports = Payments;

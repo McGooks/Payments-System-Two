@@ -270,7 +270,7 @@ const CreatePayment = (props) => {
       totalPaidHours: 0.0,
     },
   ]);
-  const [formShowing, setFormShowing] = useState(false);
+
   const [officeHoursCalc, setOfficeHoursCalc] = useState([
     {
       description: "No of Seminar Groups per week",
@@ -459,6 +459,7 @@ const CreatePayment = (props) => {
     grade1: "AC1",
     grade2: "AC2",
   });
+  const [formShowing, setFormShowing] = useState(false);
   const [stage, setStage] = useState("");
 
   //Events

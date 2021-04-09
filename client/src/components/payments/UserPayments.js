@@ -1,77 +1,68 @@
 import React, { useContext, Fragment, useEffect } from "react";
-import { useLocation, useHistory, useParams } from "react-router-dom";
+import { useLocation, useHistory, useParams, Link } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
 //Context
 import UserContext from "../../context/user/userContext";
-import AuthContext from "../../context/auth/authContext";
 import PaymentContext from "../../context/payment/paymentContext";
+import { monthWords } from "../../utils/dropdowns";
 
 //Components
-import { Grid, Typography } from "@material-ui/core";
-import EditIcon from "@material-ui/icons/Edit";
-import PersonIcon from "@material-ui/icons/Person";
-import Chip from "@material-ui/core/Chip";
+import { Grid, Paper, Chip, Button, Typography } from "@material-ui/core";
+import { ThumbUp, ThumbDown, Pause, Pageview } from "@material-ui/icons";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
+import clsx from "clsx";
 // import CustomToolbar from "../layouts/CustomToolbar";
 
-const UserAdmin = () => {
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: "right",
+    color: theme.palette.text.secondary,
+  },
+  right: {
+    textAlign: "right",
+  },
+  left: {
+    textAlign: "left",
+  },
+}));
+
+const date = new Date().toUTCString();
+
+const UserPayments = (props) => {
+  const classes = useStyles();
   const userContext = useContext(UserContext);
-  const authContext = useContext(AuthContext);
-  const paymentContext = useContext(PaymentContext);
-  const { user, loadUser } = authContext;
-  // eslint-disable-next-line no-unused-vars
+  const { user, userPayments, userPaymentsLoading } = props;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { id } = useParams();
-  const {
-    userPayments,
-    getUserPayments,
-    loading,
-    error,
-    clearErrors,
-    setDialogOpen,
-    setCurrent,
-    deletePayment,
-  } = paymentContext;
 
   const history = useHistory();
 
-  // const openEditDialog = (dataIndex) => {
-  //   setDialogOpen();
-  //   setCurrent(userPayments[dataIndex]._id);
-  //   console.log("Current is set to: ", current);
-  // };
-
-  useEffect(() => {
-    getUserPayments(id);
-    console.log("console log, user payments ", userPayments);
-    // if(user.role !== "Admin") history.push("/")
-    if (error) {
-      enqueueSnackbar(error, {
-        variant: "error",
-      });
-      clearErrors();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (userPayments !== null && userPayments.length === 0 && !loading) {
-    return <h4>You have no payments recorded</h4>; // if user list is empty
+  function MonthWords(i) {
+    const arr = monthWords.map((value) => value.value);
+    return arr[i - 1];
   }
 
-  // const openDialog = (e, dataIndex) => {
-  //   e.preventDefault();
-  //   setDialogOpen();
-  //   setCurrent(userPayments[dataIndex]._id);
-  //   console.log("Handled Click", setCurrent(userPayments[dataIndex]));
-  // };
+  if (userPayments !== null && !userPayments.length && !userPaymentsLoading) {
+    return <h4>You have no userPayments recorded</h4>; // if user list is empty
+  }
 
-  // const editProfile = (e, dataIndex) => {
-  //   userContext.setCurrent(userPayments[dataIndex]);
-  //   console.log("UserContext SetCurrent set to:", userPayments[dataIndex]._id);
-  //   let path = `/user/${userPayments[dataIndex]._id}`;
-  //   history.push(path);
-  // };
+
+  const openDialog = (e, dataIndex) => {
+    e.preventDefault();
+    console.log("clicked", dataIndex.tableMeta.rowData);
+    // setDialogOpen();
+    // setCurrent(userPayments[dataIndex]._id);
+    // console.log("Handled Click", setCurrent(userPayments[dataIndex]));
+  };
 
   const CustomChip = ({ label, onDelete }) => {
     return (
@@ -100,58 +91,17 @@ const UserAdmin = () => {
         useDisplayedColumnsOnly: false,
         useDisplayedRowsOnly: true,
       },
-      filename: "userAdminDownload.csv",
+      filename: `${user.QUBID}Payments-${date}.csv`,
     },
+    selectableRowsHideCheckboxes: false,
     rowsPerPageOptions: [5, 10, 20, 50, 100],
     rowsPerPage: 10,
     draggableColumns: {
-      enabled: true,
+      enabled: false,
     },
     selectableRowsHideCheckboxes: true,
     // customToolbar: () => {
     //   return <CustomToolbar />;
-    // },
-    // onRowsDelete: (rows) => {
-    //   console.log("Console log of", rows.data.length);
-    //   if (rows.data.length <= 10) {
-    //     const userPaymentsToDelete = rows.data.map(
-    //       (d) => userPayments[d.dataIndex]
-    //     );
-    //     userPaymentsToDelete.forEach((a) => {
-    //       if (a._id === user._id) {
-    //         enqueueSnackbar(`You cannot delete your own record`, {
-    //           variant: "error",
-    //         });
-    //         clearErrors();
-    //       } else {
-    //         enqueueSnackbar(
-    //           `User ${a.firstName} ${a.lastName} (${a.QUBID}) deleted`,
-    //           {
-    //             variant: "success",
-    //           }
-    //         );
-    //         deletePayment(a._id);
-    //       }
-    //     });
-    //   } else {
-    //     paymentContext.loading = true;
-    //     console.log(loading);
-    //     const userPaymentsToDelete = rows.data.map(
-    //       (d) => userPayments[d.dataIndex]
-    //     );
-    //     userPaymentsToDelete.forEach((a) => {
-    //       if (a._id === user._id) {
-    //         enqueueSnackbar(`You cannot delete your own record`, {
-    //           variant: "error",
-    //         });
-    //         clearErrors();
-    //       } else {
-    //         deletePayment(a._id);
-    //       }
-    //     });
-    //     paymentContext.loading = false;
-    //     console.log(loading);
-    //   }
     // },
   };
 
@@ -172,7 +122,7 @@ const UserAdmin = () => {
       options: {
         filter: false,
         display: false,
-        download: false,
+        download: true,
         sort: true,
       },
     },
@@ -184,6 +134,9 @@ const UserAdmin = () => {
         display: true,
         download: true,
         sort: true,
+        customBodyRender: (value) => {
+          return MonthWords(value);
+        },
       },
     },
     {
@@ -191,7 +144,7 @@ const UserAdmin = () => {
       label: "QUBID",
       options: {
         filter: false,
-        display: false,
+        display: true,
         download: true,
         sort: true,
       },
@@ -206,17 +159,6 @@ const UserAdmin = () => {
         sort: true,
       },
     },
-    {
-      name: "account",
-      label: "Account",
-      options: {
-        filter: false,
-        display: true,
-        download: true,
-        sort: true,
-      },
-    },
-
     {
       name: "deliveredBy",
       label: "Role",
@@ -250,85 +192,52 @@ const UserAdmin = () => {
         sort: false,
       },
     },
-    // {
-    //   name: "",
-    //   options: {
-    //     filter: false,
-    //     sort: false,
-    //     empty: true,
-    //     download: false,
-    //     customBodyRenderLite: (dataIndex) => {
-    //       return (
-    //         <EditIcon
-    //           onClick={(e) => {
-    //             openDialog(e, dataIndex);
-    //           }}
-    //         />
-    //       );
-    //     },
-    //   },
-    // },
-    // {
-    //   name: "",
-    //   options: {
-    //     filter: false,
-    //     sort: false,
-    //     empty: true,
-    //     download: false,
-    //     customBodyRenderLite: (dataIndex) => {
-    //       return (
-    //         <PersonIcon
-    //           onClick={(e) => {
-    //             editProfile(e, dataIndex);
-    //           }}
-    //         />
-    //       );
-    //     },
-    //   },
-    // },
-    // {
-    //   name: "Add",
-    //   options: {
-    //     filter: false,
-    //     sort: false,
-    //     empty: true,
-    //     customBodyRenderLite: (dataIndex) => {
-    //       return (
-    //         <button
-    //           onClick={() => {
-    //             const { data } = this.state;
-    //             data.unshift([
-    //               "Mason Ray",
-    //               "Computer Scientist",
-    //               "San Francisco",
-    //               39,
-    //               "$142,000",
-    //             ]);
-    //             this.setState({ data });
-    //           }}
-    //         >
-    //           Add
-    //         </button>
-    //       );
-    //     },
-    //   },
-    // },
+    {
+      name: "",
+      options: {
+        filter: false,
+        sort: false,
+        empty: true,
+        download: false,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return (
+            <>
+              <Grid
+                container
+                direction="row"
+                alignContent="center"
+                alignItems="center"
+              >
+                <Typography align="center">
+                  <Pageview
+                    fontSize="small"
+                    onClick={(e) => {
+                      openDialog(e, { value, tableMeta, updateValue });
+                    }}
+                  />
+                  <Typography align="center" display="block" variant="caption">
+                    View
+                  </Typography>
+                </Typography>
+              </Grid>
+            </>
+          );
+        },
+      },
+    },
   ];
 
   return (
     <Fragment>
       <div>
         <div>
-          {userPayments !== null && !loading ? (
-            <Grid container spacing={4}>
+          {userPayments !== null && !userPaymentsLoading ? (
+            <Grid container spacing={1}>
               <Grid item xs={12}>
                 <MUIDataTable
                   title={
                     <div>
-                      <Typography variant="h5">User Account Admin</Typography>
-                      <Typography variant="caption">
-                        Update basic user account information
-                      </Typography>
+                      <Typography variant="h5">My Payments</Typography>
                     </div>
                   }
                   data={userPayments}
@@ -349,4 +258,4 @@ const UserAdmin = () => {
   );
 };
 
-export default UserAdmin;
+export default UserPayments;

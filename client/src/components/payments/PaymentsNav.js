@@ -27,8 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 const PaymentsNav = (props) => {
   const classes = useStyles();
-
-  const { onClickReject, onClickApprove } = props;
+  const { onClickReject, onClickApprove, onClickPaid } = props;
 
   const onClickRejectAll = () => {
     onClickReject();
@@ -38,13 +37,17 @@ const PaymentsNav = (props) => {
     onClickApprove();
   };
 
+  const onClickPaidAll = () => {
+    onClickPaid();
+  }
+
   return (
     <Fragment>
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <Paper className={classes.paper}>
             <Grid container spacing={1}>
-              <Grid item xs={6} className={clsx(classes.root, classes.left)}>
+              <Grid item xs={4} className={clsx(classes.root, classes.left)}>
                 <Button
                   onClick={onClickRejectAll}
                   variant="contained"
@@ -53,7 +56,7 @@ const PaymentsNav = (props) => {
                   Reject All Pending
                 </Button>
               </Grid>
-              <Grid item xs={6} className={clsx(classes.root, classes.right)}>
+              <Grid item xs={8} className={clsx(classes.root, classes.right)}>
                 <Button
                   variant="contained"
                   component={Link}
@@ -68,6 +71,16 @@ const PaymentsNav = (props) => {
                   color="primary"
                 >
                   Approve All Pending
+                </Button>
+                <Button
+                  onClick={onClickPaidAll}
+                  variant="contained"
+                  style={{
+                    backgroundColor: "green",
+                    color: "white"
+                }}
+                >
+                  Paid All Approved
                 </Button>
               </Grid>
             </Grid>

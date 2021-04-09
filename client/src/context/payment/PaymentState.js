@@ -17,9 +17,12 @@ import {
   CLEAR_PAYMENTS,
   APPROVE_ALL_PAYMENTS,
   REJECT_ALL_PAYMENTS,
+  PAID_ALL_PAYMENTS,
   APPROVE_PAYMENT,
   REJECT_PAYMENT,
   HOLD_PAYMENT,
+  PENDING_PAYMENT,
+  PAID_PAYMENT,
   SET_LOADING,
   CLEAR_ERRORS,
 } from "../types";
@@ -40,7 +43,7 @@ const PaymentState = (props) => {
   const getUserPayments = async (id) => {
     try {
       const res = await axios.get(`/api/user/${id}/payments`);
-      dispatch({ type: GET_USER_PAYMENTS, payload: res.data.payments });
+      dispatch({ type: GET_USER_PAYMENTS, payload: res.data });
     } catch (error) {
       dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
     }
@@ -89,9 +92,9 @@ const PaymentState = (props) => {
   };
 
   //Delete Payment
-  const deletePayment = async (id, pid) => {
+  const deletePayment = async (pid) => {
     try {
-      await axios.delete(`/api/user/${id}/payments/${pid}`);
+      await axios.delete(`/api/payments/${pid}`);
       dispatch({ type: DELETE_PAYMENT, payload: pid });
     } catch (error) {
       dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
@@ -148,11 +151,41 @@ const PaymentState = (props) => {
     }
   };
 
+  //Hold Payment
+  const pendingPayment = async (id) => {
+    try {
+      const res = await axios.put(`/api/payments/${id}/pending`);
+      dispatch({ type: PENDING_PAYMENT, payload: res.data });
+    } catch (error) {
+      dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
+    }
+  };
+
+  //Hold Payment
+  const paidPayment = async (id) => {
+    try {
+      const res = await axios.put(`/api/payments/${id}/paid`);
+      dispatch({ type: PAID_PAYMENT, payload: res.data });
+    } catch (error) {
+      dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
+    }
+  };
+
   //Approve All Pending Payments
   const approveAllPayments = async () => {
     try {
       const res = await axios.put(`/api/payments/approve`);
       dispatch({ type: APPROVE_ALL_PAYMENTS, payload: res.data });
+    } catch (error) {
+      dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
+    }
+  };
+
+  //Reject All Pending Payments
+  const paidAllPayments = async () => {
+    try {
+      const res = await axios.put(`/api/payments/paid`);
+      dispatch({ type: PAID_ALL_PAYMENTS, payload: res.data });
     } catch (error) {
       dispatch({ type: PAYMENT_ERROR, payload: error.response.data.error });
     }
@@ -230,8 +263,11 @@ const PaymentState = (props) => {
         approvePayment,
         rejectPayment,
         holdPayment,
+        pendingPayment,
+        paidPayment,
         approveAllPayments,
         rejectAllPayments,
+        paidAllPayments,
         setLoading,
         clearErrors,
       }}

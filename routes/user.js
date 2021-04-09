@@ -38,7 +38,10 @@ router.get("/:id/payments", auth, async (req, res) => {
   userPayments = await User.findById(req.params.id)
     .select("_id")
     .populate("payments")
-    .then((payments) => res.status(200).send(payments))
+    .then((userPayments) => {
+      res.status(200).send(userPayments)
+      console.log("Console log from GET user req by ID:", userPayments)
+    })
     .catch((err) => {
       console.error(err.message);
       res.status(500).json({ error: err });

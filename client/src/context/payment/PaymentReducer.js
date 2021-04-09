@@ -14,9 +14,12 @@ import {
   CLEAR_PAYMENTS,
   APPROVE_ALL_PAYMENTS,
   REJECT_ALL_PAYMENTS,
+  PAID_ALL_PAYMENTS,
   APPROVE_PAYMENT,
   REJECT_PAYMENT,
   HOLD_PAYMENT,
+  PENDING_PAYMENT,
+  PAID_PAYMENT,
   SET_LOADING,
   CLEAR_ERRORS,
 } from "../types";
@@ -64,6 +67,9 @@ export default (state, action) => {
     case REJECT_PAYMENT:
     case APPROVE_PAYMENT:
     case HOLD_PAYMENT:
+    case PENDING_PAYMENT:
+    case PAID_PAYMENT:
+    case PAID_ALL_PAYMENTS:
     case REJECT_ALL_PAYMENTS:
     case APPROVE_ALL_PAYMENTS: {
       return {
