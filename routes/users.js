@@ -313,20 +313,18 @@ router.put("/confirm-email/:token", async (req, res) => {
           if (err) {
             return res.status(400).json({ error: "This token has expired" });
           }
-
           return decodedToken;
         }
       );
       const { email, iat, exp } = decode;
 
       const userFields = {};
-      userFields.emailTokenIssued = iat;
-      userFields.emailTokenExpiry = exp;
+      userFields.emailTokenIssued = new Date(iat * 1000)
+      userFields.emailTokenExpiry = new Date(exp * 1000)
       userFields.emailVerified = true;
       userFields.status = "Active";
       userFields.emailVerifiedDate = Date.now();
       userFields.updatedAt = Date.now();
-
       try {
         let UpdatedUser = await User.findOne({ email }); // find user by email address
         if (UpdatedUser.emailVerified) {
@@ -353,9 +351,8 @@ router.put("/confirm-email/:token", async (req, res) => {
     } else {
       return res.json({ error: "An error occurred here" });
     }
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send({ error: err.message });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
   }
 });
 

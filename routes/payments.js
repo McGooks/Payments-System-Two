@@ -16,7 +16,6 @@ router.get("/", auth, async (req, res) => {
     });
     res.json(payments);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send({ error: err.message });
   }
 });
@@ -31,7 +30,6 @@ router.get("/:id", auth, async (req, res) => {
       .populate("paymentDetail")
     res.json(payments);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send({ error: err.message });
   }
 });
@@ -76,7 +74,6 @@ router.post(
       const payment = newPayment.save();
       res.status(200).json(payment);
     } catch (err) {
-      console.error(err.message);
       res.status(500).send({ error: err.message });
     }
   }
@@ -88,7 +85,6 @@ router.post(
 router.put("/reject", auth, async (req, res) => {
   try {
     let payments = await Payment.find({ paymentStatus: "Pending" });
-    console.log(payments);
     if (!payments.length) {
       return res
         .status(404)
@@ -115,7 +111,6 @@ router.put("/reject", auth, async (req, res) => {
 router.put("/approve", auth, async (req, res) => {
   try {
     let payments = await Payment.find({ paymentStatus: "Pending" });
-    console.log(payments);
     if (!payments.length) {
       return res
         .status(404)
@@ -142,7 +137,6 @@ router.put("/approve", auth, async (req, res) => {
 router.put("/paid", auth, async (req, res) => {
   try {
     let payments = await Payment.find({ paymentStatus: "Approved" });
-    console.log(payments);
     if (!payments.length) {
       return res
         .status(404)
@@ -201,7 +195,6 @@ router.put("/:id", auth, async (req, res) => {
 router.put("/:id/approve", auth, async (req, res) => {
   try {
     let payments = await Payment.findById(req.params.id);
-    console.log(payments);
     if (!payments) {
       return res
         .status(404)
@@ -231,7 +224,6 @@ router.put("/:id/approve", auth, async (req, res) => {
 router.put("/:id/reject", auth, async (req, res) => {
   try {
     let payments = await Payment.findById(req.params.id);
-    console.log(payments);
     if (!payments) {
       return res
         .status(404)
@@ -241,7 +233,6 @@ router.put("/:id/reject", auth, async (req, res) => {
       paymentFields.paymentStatus = "Rejected";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      console.log(paymentFields);
       payments = await Payment.findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
@@ -271,7 +262,6 @@ router.put("/:id/onhold", auth, async (req, res) => {
       paymentFields.paymentStatus = "On Hold";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      console.log(paymentFields);
       payments = await Payment.findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
@@ -301,7 +291,6 @@ router.put("/:id/pending", auth, async (req, res) => {
       paymentFields.paymentStatus = "Pending";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      console.log(paymentFields);
       payments = await Payment.findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
@@ -321,7 +310,6 @@ router.put("/:id/pending", auth, async (req, res) => {
 router.put("/:id/paid", auth, async (req, res) => {
   try {
     let payments = await Payment.findById(req.params.id);
-    console.log(payments);
     if (!payments) {
       return res
         .status(404)
@@ -331,7 +319,6 @@ router.put("/:id/paid", auth, async (req, res) => {
       paymentFields.paymentStatus = "Paid";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      console.log(paymentFields);
       payments = await Payment.findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
@@ -351,7 +338,6 @@ router.put("/:id/paid", auth, async (req, res) => {
 router.delete("/:id", auth, async (req, res) => {
   try {
     let payment = await Payment.findById(req.params.id); // find payment by ID
-    console.log(payment);
     if (!payment) return res.status(404).json({ error: "payment not found" });
     //ensure user owns payment
     if (payment.user.toString() === req.user.id) {
@@ -364,8 +350,7 @@ router.delete("/:id", auth, async (req, res) => {
       res.json({ msg: "Payment Removed" })
     );
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: err.message });
   }
 });
 

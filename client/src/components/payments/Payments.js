@@ -112,15 +112,7 @@ const Payments = (props) => {
   };
 
   const viewPayment = (dataIndex) => {
-    console.log("user ID is :", dataIndex);
     let path = `/payments/${dataIndex}`;
-    history.push(path);
-  };
-
-  const editProfile = (e, dataIndex) => {
-    userContext.setCurrent(payments[dataIndex]);
-    console.log("UserContext SetCurrent set to:", payments[dataIndex]._id);
-    let path = `/user/${payments[dataIndex]._id}`;
     history.push(path);
   };
 
@@ -167,7 +159,6 @@ const Payments = (props) => {
       if (rows.data.length <= 10) {
         const paymentsToDelete = rows.data.map((d) => payments[d.dataIndex]);
         paymentsToDelete.forEach((a) => {
-          console.log(a);
           if (a.user === user._id) {
             enqueueSnackbar(`You cannot delete your own record`, {
               variant: "error",
@@ -182,7 +173,6 @@ const Payments = (props) => {
         });
       } else {
         paymentContext.loading = true;
-        console.log(loading);
         const paymentsToDelete = rows.data.map((d) => payments[d.dataIndex]);
         paymentsToDelete.forEach((a) => {
           if (a._id === user._id) {
@@ -195,7 +185,6 @@ const Payments = (props) => {
           }
         });
         paymentContext.loading = false;
-        console.log(loading);
       }
     },
   };
@@ -358,8 +347,8 @@ const Payments = (props) => {
                     <Typography color="textSecondary" align="center">
                       <PauseCircleOutline
                         fontSize="small"
-                        onClick={() => {
-                          onClickHoldPayment(tableMeta.rowData[0]);
+                        onClick={(e) => {
+                          onClickHoldPayment(e, tableMeta.rowData[0]);
                         }}
                       />
                       <Typography

@@ -47,11 +47,9 @@ const UserSchema = mongoose.Schema({
   },
   emailTokenIssued: {
     type: Date,
-    set: (d) => convertSecsToMs(d),
   },
   emailTokenExpiry: {
     type: Date,
-    set: (d) => convertSecsToMs(d),
   },
   emailVerified: {
     type: Boolean,

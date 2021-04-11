@@ -14,9 +14,8 @@ router.get("/", auth, async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ error: err });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
   next();
 });
@@ -51,6 +50,9 @@ router.post(
           .status(400)
           .json({ error: "The password you have entered is invalid"}); // if user password does not match exist throw error
       }
+      if (user.status === "Disabled") {
+        res.status(403).json({ error: "This account has been disabled, please contact the system administrator for support"})
+      }
       // set payload variable for jwt sign (token)
       const payload = {
         user: {
@@ -64,14 +66,13 @@ router.post(
         {
           expiresIn: 360000,
         },
-        (err, token) => {
-          if (err) throw err;
+        (error, token) => {
+          if (error) throw error;
           res.json({ token });
         }
       );
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).json({ error: err });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
   }
 );

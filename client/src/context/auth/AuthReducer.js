@@ -4,6 +4,7 @@ import {
   REGISTER_FAIL,
   PASSWORD_RESET_EMAIL_SUCCESS,
   PASSWORD_RESET_EMAIL_FAIL,
+  RESEND_VERIFY,
   USER_LOADED,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
@@ -22,13 +23,18 @@ export default (state, action) => {
         loading: false,
         user: action.payload,
       };
-    case REGISTER_SUCCESS:
     case LOGIN_SUCCESS:
       localStorage.setItem("token", action.payload.token);
       return {
         ...state,
         ...action.payload,
         isAuthenticated: true,
+        loading: false,
+      };
+    case REGISTER_SUCCESS:
+      return {
+        ...state,
+        ...action.payload,
         loading: false,
       };
     case REGISTER_FAIL:
@@ -49,6 +55,12 @@ export default (state, action) => {
     case PASSWORD_RESET_EMAIL_SUCCESS:
       return {
         ...state,
+      };
+    case RESEND_VERIFY:
+      return {
+        ...state,
+        user: action.payload,
+        loading: false,
       };
     case PASSWORD_RESET_EMAIL_FAIL:
       return {

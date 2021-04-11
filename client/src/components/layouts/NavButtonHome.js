@@ -27,11 +27,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NavButtonHome = () => {
+const NavButtonHome = (props) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const authContext = useContext(AuthContext);
   const { user } = authContext;
+  const {isAdmin} = props
 
   useEffect(() => {
     if (user !== null) {
@@ -52,7 +53,7 @@ const NavButtonHome = () => {
 
   // eslint-disable-next-line no-lone-blocks
   {
-    user && user.role === "Admin"
+    isAdmin
       ? (actions = [
           {
             id: 1,

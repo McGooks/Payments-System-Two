@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState, Fragment } from "react";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 //State
-import AuthContext from "../../context/auth/authContext";
 import UserContext from "../../context/user/userContext";
 import {
   titlesMenu,
@@ -11,27 +10,33 @@ import {
   Counties,
 } from "../../utils/dropdowns";
 //Components
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Typography from "@material-ui/core/Typography";
-import Tooltip from "@material-ui/core/Tooltip";
-import Button from "@material-ui/core/Button";
-import { Grid, Box, TextField } from "@material-ui/core";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Checkbox from "@material-ui/core/Checkbox";
-import Switch from "@material-ui/core/Switch";
+import {
+  Radio,
+  FormHelperText,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  Typography,
+  Tooltip,
+  Button,
+  Grid,
+  Box,
+  TextField,
+  Tabs,
+  Tab,
+  Checkbox,
+  Switch,
+  Select,
+  MenuItem,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import LockIcon from "@material-ui/icons/Lock";
 import SettingsIcon from "@material-ui/icons/Settings";
 import PersonIcon from "@material-ui/icons/Person";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import BusinessCenterIcon from "@material-ui/icons/BusinessCenter";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import ProgressIndicator from "../layouts/Spinner";
+import clsx from "clsx";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,9 +69,13 @@ const useStyles = makeStyles((theme) => ({
   },
   taxText: {
     textAlign: "center",
-    marginBottom: 30,
-    marginTop: 30,
     fontWeight: "bold",
+  },
+  taxTextSpacingTop: {
+    marginTop: 30,
+  },
+  taxTextSpacingBottom: {
+    marginBottom: 30,
   },
   Subtext: {
     margin: theme.spacing(1),
@@ -77,6 +86,7 @@ const User = (props) => {
   const classes = useStyles();
   const { id } = useParams();
   const userContext = useContext(UserContext);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { activeUser, isAdmin } = props;
   // console.log("active user is: ", activeUser._id)
   const {
@@ -165,12 +175,14 @@ const User = (props) => {
 
   const [tab, setTab] = useState(0);
   const handleChangeTab = (event, newValue) => {
-    console.log(event);
     setTab(newValue);
   };
   const onSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     updateUser(data);
+    enqueueSnackbar("User Profile Updated", {
+      variant: "success",
+    });
   };
   const handleUpdatePassword = () => {
     console.log("Update Password Test");
@@ -596,6 +608,18 @@ const User = (props) => {
                         label="Building Society Number"
                         variant="outlined"
                       />
+                      <Box>
+                        <Button
+                          size="large"
+                          fullWidth={true}
+                          className={classes.button}
+                          onClick={onSubmit}
+                          color="secondary"
+                          variant="contained"
+                        >
+                          Save
+                        </Button>
+                      </Box>
                     </>
                   ) : tab === 2 ? (
                     <>
@@ -606,14 +630,29 @@ const User = (props) => {
                       >
                         Tax Declaration
                       </Typography>
-                      <Typography variant="p" className={classes.taxText}>
-                        <p>Employee Statement 1</p>
-                        You need to select only one of the following statements
-                        A, B or C, if you do not have a P45 or the leaving date
-                        on your P45 is before last 6th April.
+                      <Typography className={classes.taxText}>
+                        <h2>Section 1</h2>
+                        <h3>Employee Statement</h3>
+                        <p>
+                          You need to select only one of the following
+                          statements A, B or C, if you do not have a P45 or the
+                          leaving date on your P45 is before last 6th April.
+                        </p>
                       </Typography>
-                      <FormControl component="fieldset">
+                      <FormControl
+                        disabled={data.taxDeclaration[0].signed}
+                        component="fieldset"
+                        error={
+                          data.taxDeclaration[0].signed &&
+                          data.taxDeclaration[0].employeeStatements_section1 ===
+                            ""
+                        }
+                      >
                         <RadioGroup
+                          className={clsx(
+                            classes.taxTextSpacingTop,
+                            classes.taxTextSpacingBottom
+                          )}
                           name="employeeStatements_section1"
                           value={
                             data.taxDeclaration[0].employeeStatements_section1
@@ -647,6 +686,13 @@ const User = (props) => {
                                 control={<Radio />}
                                 label="A"
                               />
+                              <FormHelperText>
+                                {data.taxDeclaration[0].signed &&
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section1 === ""
+                                  ? "Required"
+                                  : ""}
+                              </FormHelperText>
                             </Grid>
                             <Grid item xs={1}>
                               <Typography variant="p" weight="medium">
@@ -668,6 +714,13 @@ const User = (props) => {
                                 control={<Radio />}
                                 label="B"
                               />
+                              <FormHelperText>
+                                {data.taxDeclaration[0].signed &&
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section1 === ""
+                                  ? "Required"
+                                  : ""}
+                              </FormHelperText>
                             </Grid>
                             <Grid item xs={1}>
                               <Typography variant="p" weight="medium">
@@ -686,19 +739,43 @@ const User = (props) => {
                                 control={<Radio />}
                                 label="C"
                               />
+                              <FormHelperText>
+                                {data.taxDeclaration[0].signed &&
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section1 === ""
+                                  ? "Required"
+                                  : ""}
+                              </FormHelperText>
                             </Grid>
                           </Grid>
                         </RadioGroup>
                       </FormControl>
-                      <br></br>
                       <hr></hr>
-                      <Typography variant="p" className={classes.taxText}>
-                        <p>Employee Statement 2</p>
-                        Please select the statement which applies to you
+                      <Typography
+                        className={clsx(
+                          classes.taxText,
+                          classes.taxTextSpacingTop
+                        )}
+                      >
+                        <h2>Section 2</h2>
+                        <h3>Employee Statement</h3>
+                        <p>Please select the statement which applies to you</p>
                       </Typography>
 
-                      <FormControl component="fieldset">
+                      <FormControl
+                        disabled={data.taxDeclaration[0].signed}
+                        component="fieldset"
+                        error={
+                          data.taxDeclaration[0].signed &&
+                          data.taxDeclaration[0].employeeStatements_section2 ===
+                            ""
+                        }
+                      >
                         <RadioGroup
+                          className={clsx(
+                            classes.taxTextSpacingTop,
+                            classes.taxTextSpacingBottom
+                          )}
                           name="employeeStatements_section2"
                           value={
                             data.taxDeclaration[0].employeeStatements_section2
@@ -728,6 +805,13 @@ const User = (props) => {
                                 control={<Radio />}
                                 label="1"
                               />
+                              <FormHelperText>
+                                {data.taxDeclaration[0].signed &&
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section2 === ""
+                                  ? "Required"
+                                  : ""}
+                              </FormHelperText>
                             </Grid>
                             <Grid item xs={1}>
                               <Typography variant="p" weight="medium">
@@ -746,6 +830,13 @@ const User = (props) => {
                                 control={<Radio />}
                                 label="2"
                               />
+                              <FormHelperText>
+                                {data.taxDeclaration[0].signed &&
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section2 === ""
+                                  ? "Required"
+                                  : ""}
+                              </FormHelperText>
                             </Grid>
                             <Grid item xs={12}>
                               <Typography variant="p" weight="medium">
@@ -768,19 +859,52 @@ const User = (props) => {
                           </Grid>
                         </RadioGroup>
                       </FormControl>
-                      <br></br>
                       <hr></hr>
-                      <Typography variant="p" className={classes.taxText}>
-                        <p>Section 3</p>
-                        Student Loan Declaration
-                        <br></br>
+                      <Typography
+                        className={clsx(
+                          classes.taxText,
+                          classes.taxTextSpacingTop
+                        )}
+                      >
+                        <h2>Section 3</h2>
+                        <p>Student Loan Declaration</p>
+                        <p>
+                          Please read the following questions carefully and
+                          select the statement which applies to you.
+                        </p>
                       </Typography>
-                      <p>
-                        Please read the following questions carefully and select
-                        the statement which applies to you.
-                      </p>
-                      <FormControl component="fieldset">
+                      <FormControl
+                        disabled={data.taxDeclaration[0].signed}
+                        component="fieldset"
+                        error={
+                          (data.taxDeclaration[0].signed &&
+                            data.taxDeclaration[0]
+                              .employeeStatements_section1 === "") ||
+                          data.taxDeclaration[0].employeeStatements_section2 ===
+                            "" ||
+                          data.taxDeclaration[0]
+                            .employeeStatements_section3q1 === "" ||
+                          (data.taxDeclaration[0]
+                            .employeeStatements_section3q1 === "true" &&
+                            data.taxDeclaration[0]
+                              .employeeStatements_section3q2 === "") ||
+                          (data.taxDeclaration[0]
+                            .employeeStatements_section3q2 === "true" &&
+                            data.taxDeclaration[0]
+                              .employeeStatements_section3q3 === "") ||
+                          (data.taxDeclaration[0]
+                            .employeeStatements_section3q3 === "false" &&
+                            data.taxDeclaration[0]
+                              .employeeStatements_section3q4 === "") ||
+                          data.taxDeclaration[0]
+                            .employeeStatements_section3q5 === ""
+                        }
+                      >
                         <RadioGroup
+                          className={clsx(
+                            classes.taxTextSpacingTop,
+                            classes.taxTextSpacingBottom
+                          )}
                           name="employeeStatements_section3q1"
                           value={
                             data.taxDeclaration[0].employeeStatements_section3q1
@@ -795,11 +919,20 @@ const User = (props) => {
                             alignItems={"center"}
                           >
                             <Grid item xs={12}>
-                              <Typography variant="p" weight="medium">
-                                <br></br>
-                                <p>Question 1:</p> Have you left full-time
-                                education before the last 6th April?
+                              <Typography weight="medium">
+                                <p>Question 1:</p>
+                                <p>
+                                  Have you left full-time education before the
+                                  last 6th April?
+                                </p>
                               </Typography>
+                              <FormHelperText>
+                                {data.taxDeclaration[0].signed &&
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section3q1 === ""
+                                  ? "Required"
+                                  : ""}
+                              </FormHelperText>
                             </Grid>
                             <Grid item xs={6}>
                               <FormControlLabel
@@ -823,203 +956,401 @@ const User = (props) => {
                             </Grid>
                           </Grid>
                         </RadioGroup>
-                        <RadioGroup
-                          name="employeeStatements_section3q2"
-                          value={
-                            data.taxDeclaration[0].employeeStatements_section3q2
-                          }
-                          onChange={(e) => onChange(e, 4)}
-                        >
-                          <Grid
-                            className={classes.taxAlign}
-                            xs={12}
-                            container
-                            spacing={3}
-                            alignItems={"center"}
-                          >
-                            <Grid item xs={12}>
-                              <Typography variant="p" weight="medium">
-                                <br></br>
-                                <p>Question 2:</p> Do you have a Student Loan
-                                which is not fully repaid?
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                              <FormControlLabel
-                                value="true"
-                                control={<Radio />}
-                                label="Yes"
-                              />
-                              <Typography variant="p" weight="medium">
-                                (Go to Question 3)
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                              <FormControlLabel
-                                value="false"
-                                control={<Radio />}
-                                label="No"
-                              />
-                              <Typography variant="p" weight="medium">
-                                (Sign the declaration below)
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                        </RadioGroup>
-                        <RadioGroup
-                          name="employeeStatements_section3q3"
-                          value={
-                            data.taxDeclaration[0].employeeStatements_section3q3
-                          }
-                          onChange={(e) => onChange(e, 4)}
-                        >
-                          <Grid
-                            className={classes.taxAlign}
-                            xs={12}
-                            container
-                            spacing={3}
-                            alignItems={"center"}
-                          >
-                            <Grid item xs={12}>
-                              <Typography variant="p" weight="medium">
-                                <br></br>
-                                <p>Question 3:</p> Are you repaying your Student
-                                Loan direct to the Student Loan Company by
-                                agreed monthly payments?
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                              <FormControlLabel
-                                value="true"
-                                control={<Radio />}
-                                label="Yes"
-                              />
-                              <Typography variant="p" weight="medium">
-                                (Sign the declaration below)
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                              <FormControlLabel
-                                value="false"
-                                control={<Radio />}
-                                label="No"
-                              />
-                              <Typography variant="p" weight="medium">
-                                (Go to Question 4)
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                        </RadioGroup>
-
-                        <RadioGroup
-                          name="employeeStatements_section3q4"
-                          value={
-                            data.taxDeclaration[0].employeeStatements_section3q4
-                          }
-                          onChange={(e) => onChange(e, 4)}
-                        >
-                          <Grid
-                            className={classes.taxAlign}
-                            xs={12}
-                            container
-                            spacing={3}
-                            alignItems={"center"}
-                          >
-                            <Grid item xs={12}>
-                              <Typography variant="p" weight="medium">
-                                <br></br>
-                                <p>Question 4 - Student Load Plans:</p>
-                                <p>Please select Plan 1 or Plan 2</p>
-                                <br></br>
-                                <p>You will have a Plan 1 Student Loan if:</p>
-                              </Typography>
-
-                              <p style={{ marginLeft: "30px" }}>
-                                You lived in Scotland or Northern Ireland when
-                                you started your course, or
-                              </p>
-                              <p style={{ marginLeft: "30px" }}>
-                                You lived in England or Wales and started your
-                                course before 1st September 2012
-                              </p>
-                            </Grid>
-                            <Grid item xs={6}>
-                              <FormControlLabel
-                                value="1"
-                                control={<Radio />}
-                                label="Plan 1"
-                              />
-                            </Grid>
-                            <Grid item xs={6}>
-                              <FormControlLabel
-                                value="2"
-                                control={<Radio />}
-                                label="Plan 2"
-                              />
-                            </Grid>
-                          </Grid>
-                        </RadioGroup>
-                        <RadioGroup
-                          name="employeeStatements_section3q5"
-                          checked={
-                            data.taxDeclaration[0].employeeStatements_section3q5
-                          }
-                          onChange={(e) => onChange(e, 4)}
-                        >
-                          <Grid
-                            className={classes.taxAlign}
-                            xs={12}
-                            container
-                            spacing={3}
-                            alignItems={"center"}
-                          >
-                            <Grid item xs={12}>
-                              <Typography variant="p" weight="medium">
-                                <br></br>
-                                <p>Question 5 - Post Graduate Student Loan:</p>
-                                <p>
-                                  Have you left full-time education before the
-                                  last 6th April and have a Post Graduate
-                                  Student Loan which is not fully repaid which
-                                  is not being repaid via Direct Debit to the
-                                  Student Loan Company?
-                                </p>
-                                <br></br>
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                              <FormControlLabel
-                                value="Yes"
-                                control={<Radio />}
-                                label="Yes"
-                              />
-                            </Grid>
-                            <Grid item xs={6}>
-                              <FormControlLabel
-                                value="No"
-                                control={<Radio />}
-                                label="No"
-                              />
-                            </Grid>
-                          </Grid>
-                        </RadioGroup>
+                        {data.taxDeclaration[0]
+                          .employeeStatements_section3q1 === "true" ? (
+                          <>
+                            <RadioGroup
+                              className={clsx(classes.taxTextSpacingBottom)}
+                              name="employeeStatements_section3q2"
+                              value={
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section3q2
+                              }
+                              onChange={(e) => onChange(e, 4)}
+                            >
+                              <Grid
+                                className={classes.taxAlign}
+                                xs={12}
+                                container
+                                spacing={3}
+                                alignItems={"center"}
+                              >
+                                <Grid item xs={12}>
+                                  <Typography variant="p" weight="medium">
+                                    <p>Question 2:</p>
+                                    <p>
+                                      Do you have a Student Loan which is not
+                                      fully repaid?
+                                    </p>
+                                  </Typography>
+                                  <FormHelperText>
+                                    {data.taxDeclaration[0].signed &&
+                                    data.taxDeclaration[0]
+                                      .employeeStatements_section3q2 === ""
+                                      ? "Required"
+                                      : ""}
+                                  </FormHelperText>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <FormControlLabel
+                                    value="true"
+                                    control={<Radio />}
+                                    label="Yes"
+                                  />
+                                  <Typography variant="p" weight="medium">
+                                    (Go to Question 3)
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <FormControlLabel
+                                    value="false"
+                                    control={<Radio />}
+                                    label="No"
+                                  />
+                                  <Typography variant="p" weight="medium">
+                                    (Sign the declaration below)
+                                  </Typography>
+                                </Grid>
+                              </Grid>
+                            </RadioGroup>
+                            {data.taxDeclaration[0]
+                              .employeeStatements_section3q2 === "true" ? (
+                              <>
+                                <RadioGroup
+                                  className={clsx(classes.taxTextSpacingBottom)}
+                                  name="employeeStatements_section3q3"
+                                  value={
+                                    data.taxDeclaration[0]
+                                      .employeeStatements_section3q3
+                                  }
+                                  onChange={(e) => onChange(e, 4)}
+                                >
+                                  <Grid
+                                    className={classes.taxAlign}
+                                    xs={12}
+                                    container
+                                    spacing={3}
+                                    alignItems={"center"}
+                                  >
+                                    <Grid item xs={12}>
+                                      <Typography weight="medium">
+                                        <p>Question 3:</p>
+                                        <p>
+                                          Are you repaying your Student Loan
+                                          direct to the Student Loan Company by
+                                          agreed monthly payments?
+                                        </p>
+                                      </Typography>
+                                      <FormHelperText>
+                                        {data.taxDeclaration[0].signed &&
+                                        data.taxDeclaration[0]
+                                          .employeeStatements_section3q3 === ""
+                                          ? "Required"
+                                          : ""}
+                                      </FormHelperText>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                      <FormControlLabel
+                                        value="true"
+                                        control={<Radio />}
+                                        label="Yes"
+                                      />
+                                      <Typography variant="p" weight="medium">
+                                        (Sign the declaration below)
+                                      </Typography>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                      <FormControlLabel
+                                        value="false"
+                                        control={<Radio />}
+                                        label="No"
+                                      />
+                                      <Typography variant="p" weight="medium">
+                                        (Go to Question 4)
+                                      </Typography>
+                                    </Grid>
+                                  </Grid>
+                                </RadioGroup>
+                                {data.taxDeclaration[0]
+                                  .employeeStatements_section3q3 === "false" ? (
+                                  <>
+                                    <RadioGroup
+                                      className={clsx(
+                                        classes.taxTextSpacingBottom
+                                      )}
+                                      name="employeeStatements_section3q4"
+                                      value={
+                                        data.taxDeclaration[0]
+                                          .employeeStatements_section3q4
+                                      }
+                                      onChange={(e) => onChange(e, 4)}
+                                    >
+                                      <Grid
+                                        className={classes.taxAlign}
+                                        xs={12}
+                                        container
+                                        spacing={3}
+                                        alignItems={"center"}
+                                      >
+                                        <Grid item xs={12}>
+                                          <Typography weight="medium">
+                                            <p>Question 4:</p>
+                                            <p>
+                                              Student Load Plans - Please select
+                                              Plan 1 or Plan 2
+                                            </p>
+                                            <em>
+                                              <div
+                                                style={{
+                                                  paddingLeft: 30,
+                                                  paddingTop: 10,
+                                                }}
+                                              >
+                                                <p>
+                                                  Note: You will have a Plan 1
+                                                  student loan if:
+                                                </p>
+                                                <ol>
+                                                  <li>
+                                                    You lived in Scotland or
+                                                    Northern Ireland when you
+                                                    started your course, or
+                                                  </li>
+                                                  <li>
+                                                    You lived in England or
+                                                    Wales and started your
+                                                    course before 1st September
+                                                    2012
+                                                  </li>
+                                                </ol>
+                                              </div>
+                                            </em>
+                                            <FormHelperText>
+                                              {data.taxDeclaration[0].signed &&
+                                              data.taxDeclaration[0]
+                                                .employeeStatements_section3q4 ===
+                                                ""
+                                                ? "Required"
+                                                : ""}
+                                            </FormHelperText>
+                                          </Typography>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                          <FormControlLabel
+                                            value="1"
+                                            control={<Radio />}
+                                            label="Plan 1"
+                                          />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                          <FormControlLabel
+                                            value="2"
+                                            control={<Radio />}
+                                            label="Plan 2"
+                                          />
+                                        </Grid>
+                                      </Grid>
+                                    </RadioGroup>
+                                    <RadioGroup
+                                      className={clsx(
+                                        classes.taxTextSpacingBottom
+                                      )}
+                                      name="employeeStatements_section3q5"
+                                      checked={
+                                        data.taxDeclaration[0]
+                                          .employeeStatements_section3q5
+                                      }
+                                      onChange={(e) => onChange(e, 4)}
+                                    >
+                                      <Grid
+                                        className={classes.taxAlign}
+                                        xs={12}
+                                        container
+                                        spacing={3}
+                                        alignItems={"center"}
+                                      >
+                                        <Grid item xs={12}>
+                                          <Typography weight="medium">
+                                            <p>Question 5:</p>
+                                            <p>
+                                              Post Graduate Student Loan - Have
+                                              you left full-time education
+                                              before the last 6th April and have
+                                              a Post Graduate Student Loan which
+                                              is not fully repaid which is not
+                                              being repaid via Direct Debit to
+                                              the Student Loan Company?
+                                            </p>
+                                            <FormHelperText>
+                                              {data.taxDeclaration[0].signed &&
+                                              data.taxDeclaration[0]
+                                                .employeeStatements_section3q5 ===
+                                                ""
+                                                ? "Required"
+                                                : ""}
+                                            </FormHelperText>
+                                          </Typography>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                          <FormControlLabel
+                                            value="Yes"
+                                            control={<Radio />}
+                                            label="Yes"
+                                          />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                          <FormControlLabel
+                                            value="No"
+                                            control={<Radio />}
+                                            label="No"
+                                          />
+                                        </Grid>
+                                      </Grid>
+                                    </RadioGroup>
+                                  </>
+                                ) : (
+                                  ""
+                                )}
+                              </>
+                            ) : (
+                              ""
+                            )}
+                          </>
+                        ) : (
+                          ""
+                        )}
                       </FormControl>
-                      <Box display={"flex"} mt={2} mb={2} alignItems={"center"}>
-                        <Typography weight={"medium"}>
-                          I confirm the data provided is correct
-                        </Typography>
-                        <Switch
-                          checked={data.taxDeclaration[0].signed}
-                          onChange={(e) => handleSwitchChange(e, 4)}
-                          name="signed"
-                          color={"secondary"}
-                        />
-                      </Box>
-                      <Typography variant="h5" className={classes.taxText}>
-                        <p></p>
-                        <p></p>
-                        <br></br>
-                      </Typography>
+                      {isAdmin ? (
+                        <>
+                          <Box
+                            display={"flex"}
+                            mt={2}
+                            mb={2}
+                            alignItems={"center"}
+                          >
+                            <Typography weight={"medium"}>
+                              {
+                                "I confirm the data provided is correct & hereby sign this declaration"
+                              }
+                            </Typography>
+                            <Switch
+                              checked={data.taxDeclaration[0].signed}
+                              onChange={(e) => handleSwitchChange(e, 4)}
+                              name="signed"
+                              color={"secondary"}
+                            />
+                          </Box>
+                          <Box>
+                            <Button
+                              disabled={
+                                !data.taxDeclaration[0].signed ||
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section1 === "" ||
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section2 === "" ||
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section3q1 === "" ||
+                                (data.taxDeclaration[0]
+                                  .employeeStatements_section3q1 === "true" &&
+                                  data.taxDeclaration[0]
+                                    .employeeStatements_section3q2 === "") ||
+                                (data.taxDeclaration[0]
+                                  .employeeStatements_section3q2 === "true" &&
+                                  data.taxDeclaration[0]
+                                    .employeeStatements_section3q3 === "") ||
+                                (data.taxDeclaration[0]
+                                  .employeeStatements_section3q3 === "false" &&
+                                  data.taxDeclaration[0]
+                                    .employeeStatements_section3q4 === "") ||
+                                (data.taxDeclaration[0]
+                                  .employeeStatements_section3q4 !== "" &&
+                                  data.taxDeclaration[0]
+                                    .employeeStatements_section3q5 === "")
+                              }
+                              size="large"
+                              fullWidth={true}
+                              className={classes.button}
+                              onClick={(e) => onSubmit(e)}
+                              color="secondary"
+                              variant="contained"
+                            >
+                              Save
+                            </Button>
+                          </Box>
+                        </>
+                      ) : (
+                        <>
+                          {data.taxDeclaration[0].signed ? (
+                            <>
+                              {" "}
+                              (
+                              <Box
+                                display={"flex"}
+                                mt={2}
+                                mb={2}
+                                alignItems={"center"}
+                              >
+                                <Typography weight={"medium"}>
+                                  {
+                                    "I confirm the data provided is correct & hereby sign this declaration"
+                                  }
+                                </Typography>
+                                <Switch
+                                  checked={data.taxDeclaration[0].signed}
+                                  onChange={(e) => handleSwitchChange(e, 4)}
+                                  name="signed"
+                                  color={"secondary"}
+                                />
+                              </Box>
+                              <Box>
+                                <Button
+                                  disabled={
+                                    !data.taxDeclaration[0].signed ||
+                                    data.taxDeclaration[0]
+                                      .employeeStatements_section1 === "" ||
+                                    data.taxDeclaration[0]
+                                      .employeeStatements_section2 === "" ||
+                                    data.taxDeclaration[0]
+                                      .employeeStatements_section3q1 === "" ||
+                                    (data.taxDeclaration[0]
+                                      .employeeStatements_section3q1 ===
+                                      "true" &&
+                                      data.taxDeclaration[0]
+                                        .employeeStatements_section3q2 ===
+                                        "") ||
+                                    (data.taxDeclaration[0]
+                                      .employeeStatements_section3q2 ===
+                                      "true" &&
+                                      data.taxDeclaration[0]
+                                        .employeeStatements_section3q3 ===
+                                        "") ||
+                                    (data.taxDeclaration[0]
+                                      .employeeStatements_section3q3 ===
+                                      "false" &&
+                                      data.taxDeclaration[0]
+                                        .employeeStatements_section3q4 ===
+                                        "") ||
+                                    (data.taxDeclaration[0]
+                                      .employeeStatements_section3q4 !== "" &&
+                                      data.taxDeclaration[0]
+                                        .employeeStatements_section3q5 === "")
+                                  }
+                                  size="large"
+                                  fullWidth={true}
+                                  className={classes.button}
+                                  onClick={(e) => onSubmit(e)}
+                                  color="secondary"
+                                  variant="contained"
+                                >
+                                  Save
+                                </Button>
+                              </Box>
+                            </>
+                          ) : (
+                            "No"
+                          )}
+                        </>
+                      )}
                     </>
                   ) : tab === 3 ? (
                     <>
@@ -1133,18 +1464,6 @@ const User = (props) => {
                     //   </Box>
                     // </>
                   )}
-                  <Box>
-                    <Button
-                      size="large"
-                      fullWidth={true}
-                      className={classes.button}
-                      onClick={onSubmit}
-                      color="secondary"
-                      variant="contained"
-                    >
-                      Save
-                    </Button>
-                  </Box>
                 </form>
               </Box>
             </Grid>

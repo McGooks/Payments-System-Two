@@ -52,7 +52,6 @@ const Import = (props) => {
   };
 
   useEffect(() => {
-    console.log(error);
     if (error) {
       enqueueSnackbar(error, {
         variant: "error",
@@ -61,6 +60,7 @@ const Import = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
+  console.log(error)
 
   const onChange = (e) => {
     try {
@@ -72,8 +72,8 @@ const Import = (props) => {
       enqueueSnackbar(`File ${file.name} is ready to be imported`, {
         variant: "success",
       });
-    } catch (err) {
-      console.error(err.message);
+    } catch (error) {
+      console.error(error.message);
       enqueueSnackbar(`File ${file.name} cannot be imported`, {
         variant: "error",
       });
@@ -146,14 +146,15 @@ const Import = (props) => {
         password: makePassword(10),
         taxDeclaration: [
           {
-            employeeStatements_section1: "A",
-            employeeStatements_section2: "1",
-            employeeStatements_section3q1: "false",
-            employeeStatements_section3q2: "false",
-            employeeStatements_section3q3: "false",
-            employeeStatements_section3q4: "1",
-            employeeStatements_section3q5: "false",
+            employeeStatements_section1: "",
+            employeeStatements_section2: "",
+            employeeStatements_section3q1: "",
+            employeeStatements_section3q2: "",
+            employeeStatements_section3q3: "",
+            employeeStatements_section3q4: "",
+            employeeStatements_section3q5: "",
             signed: false,
+            signedDate: ""
           },
         ],
       };

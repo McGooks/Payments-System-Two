@@ -80,7 +80,7 @@ const PaymentsNav = (props) => {
                     color: "white"
                 }}
                 >
-                  Paid All Approved
+                  Mark All As Paid
                 </Button>
               </Grid>
             </Grid>

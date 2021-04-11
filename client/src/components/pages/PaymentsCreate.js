@@ -2,13 +2,13 @@ import React, { useContext, useEffect } from "react";
 //Navigation
 import NavButtonPaymentsAdd from "../layouts/NavButtonPaymentsAdd"
 //Components
-import ViewPayments from "../payments/ViewPayments"
+import CreatePayments from "../payments/CreatePayments"
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
 import AuthContext from "../../context/auth/authContext";
 
 
-const Home = () => {
+const PaymentsCreate = () => {
   const authContext = useContext(AuthContext);
   const userAdminContext = useContext(UserAdminContext);
   const { activeUsers, getActiveUsers } = userAdminContext;
@@ -23,9 +23,9 @@ const Home = () => {
   return (
     <>
       <NavButtonPaymentsAdd />
-      <ViewPayments/>
+      <CreatePayments activeUsers={activeUsers}/>
     </>
   );
 };
 
-export default Home;
+export default PaymentsCreate;

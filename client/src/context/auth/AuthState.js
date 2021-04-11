@@ -10,6 +10,7 @@ import {
   REGISTER_FAIL,
   PASSWORD_RESET_EMAIL_SUCCESS,
   PASSWORD_RESET_EMAIL_FAIL,
+  RESEND_VERIFY,
   USER_LOADED,
   AUTH_ERROR,
   LOGIN_SUCCESS,
@@ -17,7 +18,6 @@ import {
   LOGOUT,
   CLEAR_ERRORS,
 } from "../types";
-
 
 const AuthState = (props) => {
   const initialState = {
@@ -76,7 +76,7 @@ const AuthState = (props) => {
     }
   };
 
-  //VErify Email 
+  //VErify Email
   const verifyEmail = async (token) => {
     const config = {
       headers: { "Content-Type": "application/json" },
@@ -92,6 +92,22 @@ const AuthState = (props) => {
         variant: "success",
       });
       loadUser();
+    } catch (error) {
+      dispatch({
+        type: REGISTER_FAIL,
+        payload: error.response.data.error,
+      });
+    }
+  };
+
+  //Verify Email
+  const resendVerifyEmail = async (id) => {
+    const config = {
+      headers: { "Content-Type": "application/json" },
+    };
+    try {
+      const res = await axios.post(`/api/user/resend/${id}`, null, config);
+      dispatch({ type: RESEND_VERIFY, payload: res.data });
     } catch (error) {
       dispatch({
         type: REGISTER_FAIL,
@@ -151,6 +167,7 @@ const AuthState = (props) => {
         logout,
         clearErrors,
         verifyEmail,
+        resendVerifyEmail,
       }}
     >
       {props.children}

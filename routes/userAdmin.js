@@ -3,9 +3,9 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
-
 const auth = require("../middleware/auth");
 const User = require("../models/User");
+const Payment = require("../models/Payments");
 const config = require("config");
 
 //Mail Gun
@@ -39,7 +39,7 @@ router.get("/active", auth, async (req, res) => {
     const activeUser = await User.find({ status: "Active" })
       .sort({
         firstName: 1,
-        lastName: 1
+        lastName: 1,
       })
       .select(["firstName", "lastName", "QUBID"]);
     res.json(activeUser);
@@ -368,15 +368,12 @@ router.put("/:id", auth, async (req, res) => {
 
   try {
     let user = await User.findById(req.params.id); // find user by ID
-    if (!user)
-      return res.status(404).json({ msg: [{ msg: "User not found" }] });
-    console.log(req.user.id, "User ID Text");
-    console.log(user._id.toString(), "User to String Text");
+    if (!user) return res.status(404).json({ error: "User not found" });
     // ensure user is not current user
     if (user._id.toString() === req.user.id) {
       return res
         .status(401)
-        .json({ msg: [{ msg: "Users cannot edit their own records" }] });
+        .json({ error: "Users cannot edit their own records" });
     }
     user = await User.findByIdAndUpdate(
       req.params.id,
@@ -384,50 +381,25 @@ router.put("/:id", auth, async (req, res) => {
       { new: true }
     );
     res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: "Unable to update user" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
-//@route    DELETE api/userAdmin/:id
-//@desc     Delete User
-//@access   PRIVATE
-// router.delete("/:id", auth, async (req, res) => {
-//   try {
-//     console.log(req.user.id, "my user ID");
-//     console.log(req.params.id, "id being passed from the table");
-//     let user = await User.findById(req.params.id); // find user by ID
-//     if (!user) return res.status(404).json({ msg: "user not found" });
-//     if (req.params.id === req.user.id) {
-//       return res.status(401).json({ msg: "You cannot delete your own record" });
-//     }
-//     await User.findByIdAndRemove(req.params.id,)
-//     res.status(200).json({ msg: "User Removed" })
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Server Error");
-//   }
-// });
-
-//@route    DELETE api/userAdmin/:id
-//@desc     Delete User
-//@access   PRIVATE
 router.delete("/:id", auth, async (req, res) => {
   try {
-    console.log(req.user.id, "my user ID");
-    console.log(req.params.id, "id being passed from the table");
     let user = await User.findById(req.params.id); // find user by ID
-    if (!user) return res.status(404).json({ msg: "user not found" });
+    if (!user) return res.status(404).json({ error: "user not found" });
     if (req.params.id === req.user.id) {
-      return res.status(401).json({ msg: "You cannot delete your own record" });
+      return res
+        .status(401)
+        .json({ error: "You cannot delete your own record" });
     }
     // await User.findByIdAndRemove(req.params.id,)
     await User.findByIdAndRemove(req.params.id);
     res.status(200).json({ msg: "User Removed" });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+  } catch (error) {
+    res.status(500).send({ error: error.message });
   }
 });
 

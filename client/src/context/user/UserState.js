@@ -44,11 +44,9 @@ const UserState = (props) => {
       },
     };
     try {
-      console.log("current user id is", user._id)
-      console.log("update user data is", user)
       const res = await axios.put(`/api/user/${user._id}`, user, config);
-      console.log("this is the res", res)
       dispatch({ type: UPDATE_USER, payload: res.data });
+      setCurrent(user)
     } catch (error) {
       dispatch({
         type: USER_ERROR,

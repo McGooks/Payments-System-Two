@@ -21,7 +21,7 @@ const UserAdmin = (props) => {
     <>
       <NavButtonUserMgmt />
       <div className="grid-1">
-        <UsersAdminTable user={user}/>
+        <UsersAdminTable user={user} isAdmin={isAdmin}/>
       </div>
     </>
   );

@@ -8,14 +8,10 @@ const Verify = (props) => {
   const {token} = useParams()
   const authContext = useContext(AuthContext);
   const { verifyEmail, logout } = authContext;
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  
 
   useEffect(() => {
     verifyEmail(token)
-    // enqueueSnackbar(`Email address confirmed, please log in`, {
-    //   variant: "success",
-    // })
+    logout()
     props.history.push("/login")
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.history]);
