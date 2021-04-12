@@ -248,8 +248,8 @@ router.put("/:id/reject", auth, async (req, res) => {
   }
 });
 
-//@route    PUT api/payments/:id/reject
-//@desc     Update User Payment as rejected
+//@route    PUT api/payments/:id/onhold
+//@desc     Update User Payment as onhold
 //@access   PRIVATE
 router.put("/:id/onhold", auth, async (req, res) => {
   try {
