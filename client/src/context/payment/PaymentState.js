@@ -162,7 +162,7 @@ const PaymentState = (props) => {
     }
   };
 
-  //Hold Payment
+  //Pending Payment
   const pendingPayment = async (id) => {
     try {
       const res = await axios.put(`/api/payments/${id}/pending`);

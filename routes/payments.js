@@ -29,8 +29,8 @@ router.get("/:id", auth, async (req, res) => {
     const payments = await Payment.findById(req.params.id)
       .populate("paymentDetail")
     res.json(payments);
-  } catch (err) {
-    res.status(500).send({ error: err.message });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -73,8 +73,8 @@ router.post(
       newPaymentDetail.save();
       const payment = newPayment.save();
       res.status(200).json(payment);
-    } catch (err) {
-      res.status(500).send({ error: err.message });
+    } catch (error) {
+      res.status(500).send({ error: error.message });
     }
   }
 );
@@ -101,7 +101,7 @@ router.put("/reject", auth, async (req, res) => {
       res.status(200).json(payments);
     }
   } catch (error) {
-    res.status(500).send({ error: err.message });
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -127,7 +127,7 @@ router.put("/approve", auth, async (req, res) => {
       res.status(200).json(payments);
     }
   } catch (error) {
-    res.status(500).send({ error: err.message });
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -153,7 +153,7 @@ router.put("/paid", auth, async (req, res) => {
       res.status(200).json(payments);
     }
   } catch (error) {
-    res.status(500).send({ error: err.message });
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -189,6 +189,8 @@ router.put("/:id", auth, async (req, res) => {
   //   res.status(500).send("Server Error");
   // }
 });
+
+
 //@route    PUT api/payments/:id/approve
 //@desc     Update User Payment as Approved
 //@access   PRIVATE
@@ -214,7 +216,7 @@ router.put("/:id/approve", auth, async (req, res) => {
       res.status(200).json(payments);
     }
   } catch (error) {
-    res.status(500).send({ error: err.message });
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -242,7 +244,7 @@ router.put("/:id/reject", auth, async (req, res) => {
       res.status(200).json(payments);
     }
   } catch (error) {
-    res.status(500).send({ error: err.message });
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -252,7 +254,6 @@ router.put("/:id/reject", auth, async (req, res) => {
 router.put("/:id/onhold", auth, async (req, res) => {
   try {
     let payments = await Payment.findById(req.params.id);
-    console.log(payments);
     if (!payments) {
       return res
         .status(404)
@@ -271,7 +272,7 @@ router.put("/:id/onhold", auth, async (req, res) => {
       res.status(200).json(payments);
     }
   } catch (error) {
-    res.status(500).send({ error: err.message });
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -281,7 +282,6 @@ router.put("/:id/onhold", auth, async (req, res) => {
 router.put("/:id/pending", auth, async (req, res) => {
   try {
     let payments = await Payment.findById(req.params.id);
-    console.log(payments);
     if (!payments) {
       return res
         .status(404)
@@ -300,7 +300,7 @@ router.put("/:id/pending", auth, async (req, res) => {
       res.status(200).json(payments);
     }
   } catch (error) {
-    res.status(500).send({ error: err.message });
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -328,7 +328,7 @@ router.put("/:id/paid", auth, async (req, res) => {
       res.status(200).json(payments);
     }
   } catch (error) {
-    res.status(500).send({ error: err.message });
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -349,8 +349,8 @@ router.delete("/:id", auth, async (req, res) => {
       req.params.id,
       res.json({ msg: "Payment Removed" })
     );
-  } catch (err) {
-    res.status(500).send({ error: err.message });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
   }
 });
 

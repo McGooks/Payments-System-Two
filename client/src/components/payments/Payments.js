@@ -348,7 +348,7 @@ const Payments = (props) => {
                       <PauseCircleOutline
                         fontSize="small"
                         onClick={(e) => {
-                          onClickHoldPayment(e, tableMeta.rowData[0]);
+                          onClickHoldPayment(tableMeta.rowData[0]);
                         }}
                       />
                       <Typography
