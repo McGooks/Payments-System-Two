@@ -52,6 +52,18 @@ const PaymentsSchema = Schema({
     required: true,
     default: true,
   },
+  rate1: {
+    type: Number
+  },
+  rate2: {
+    type: Number
+  },
+  grade1: {
+    type: String
+  },
+  grade2: {
+    type: String
+  },
   cohort_id: {
     type: String,
     required: true,

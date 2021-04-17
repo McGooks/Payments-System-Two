@@ -94,12 +94,15 @@ export default (state, action) => {
       return {
         ...state,
         current: action.payload,
+        loading: false
       };
     }
     case CLEAR_CURRENT: {
       return {
         ...state,
         current: null,
+        userPayments: null,
+        loading: false
       };
     }
     case FILTER_PAYMENTS: {

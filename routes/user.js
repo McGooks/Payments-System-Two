@@ -274,6 +274,7 @@ router.post("/resend/:id", auth, async (req, res) => {
   }
 });
 
+
 //@route    POST api/user
 //@desc     Add new User
 //@access   PRIVATE

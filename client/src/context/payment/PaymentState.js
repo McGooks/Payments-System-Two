@@ -60,7 +60,7 @@ const PaymentState = (props) => {
     }
   };
 
-    //Get Payments
+    //Get Payment
     const getPayment = async (id) => {
       try {
         const res = await axios.get(`/api/payments/${id}`);

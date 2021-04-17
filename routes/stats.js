@@ -46,8 +46,7 @@ function getPrevAcademicYear() {
   return academicYear[0];
 }
 let PrevAcaYear = getPrevAcademicYear();
-console.log(PrevAcaYear)
-
+console.log(PrevAcaYear);
 
 //@route    GET api/stats/
 //@desc     Get stats
@@ -83,7 +82,7 @@ router.get("/", auth, async (req, res) => {
               paymentPeriodNum: currentPeriod,
             },
             {
-              paymentStatus: "Approved",
+              paymentStatus: { $in: ["Approved", "Paid"] },
             },
           ],
         },
@@ -112,7 +111,7 @@ router.get("/", auth, async (req, res) => {
               academicYear: CurrentAcaYear,
             },
             {
-              paymentStatus: "Approved",
+              paymentStatus: { $in: ["Approved", "Paid"] },
             },
           ],
         },
@@ -142,7 +141,7 @@ router.get("/", auth, async (req, res) => {
               academicYear: CurrentAcaYear,
             },
             {
-              paymentStatus: "Approved",
+              paymentStatus: { $in: ["Approved", "Paid"] },
             },
           ],
         },
@@ -155,10 +154,10 @@ router.get("/", auth, async (req, res) => {
             $sum: "$amount",
           },
         },
-      }, {$unset: ["_id"] },
+      },
+      { $unset: ["_id"] },
     ]);
     const statsPrevSemComp = await Stat.aggregate([
-     
       {
         $project: {
           amount: 1,
@@ -174,7 +173,7 @@ router.get("/", auth, async (req, res) => {
               academicYear: PrevAcaYear,
             },
             {
-              paymentStatus: "Approved",
+              paymentStatus: { $in: ["Approved", "Paid"] },
             },
           ],
         },
@@ -187,8 +186,8 @@ router.get("/", auth, async (req, res) => {
             $sum: "$amount",
           },
         },
-       
-      }, {$unset: ["_id"] },
+      },
+      { $unset: ["_id"] },
     ]);
 
     stats = [

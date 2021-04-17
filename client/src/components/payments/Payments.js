@@ -45,6 +45,10 @@ const useStyles = makeStyles((theme) => ({
 
 const date = new Date().toUTCString();
 
+function ccyFormat(num) {
+  return `${num.toFixed(2)}`;
+}
+
 const Payments = (props) => {
   const classes = useStyles();
   const userContext = useContext(UserContext);
@@ -64,6 +68,8 @@ const Payments = (props) => {
   } = paymentContext;
 
   const history = useHistory();
+
+
 
   function MonthWords(i) {
     const arr = monthWords.map((value) => value.value);
@@ -273,7 +279,7 @@ const Payments = (props) => {
         download: true,
         sort: false,
         customBodyRender: (value) => {
-          return `£${value}`;
+          return `£${value}`
         },
       },
     },
@@ -282,7 +288,7 @@ const Payments = (props) => {
       label: "Status",
       options: {
         filter: true,
-        filterList: ["Pending","On Hold"],
+        // filterList: ["Pending","On Hold"],
         display: true,
         download: true,
         sort: false,
@@ -454,6 +460,7 @@ const Payments = (props) => {
                   <Pageview
                     fontSize="small"
                     onClick={() => viewPayment(tableMeta.rowData[0])}
+                    userID={tableMeta.rowData[0]}
                   />
                   <Typography align="center" display="block" variant="caption">
                     View

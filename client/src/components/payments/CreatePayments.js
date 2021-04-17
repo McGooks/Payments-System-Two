@@ -1,5 +1,5 @@
 import React, { useContext, Fragment, useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, Link } from "react-router-dom";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -98,8 +98,18 @@ const useStyles = makeStyles((theme) => ({
     color: "black",
     fontSize: theme.typography.pxToRem(14),
   },
+  inputEdit: {
+    textAlign: "center",
+    color: "black",
+    fontSize: theme.typography.pxToRem(14),
+    backgroundColor: "#edfced"
+  },
   finalButton: {
     margin: theme.spacing(2),
+  },
+  BandB: {
+    backgroundColor: "white",
+    color: "white !important",
   },
 }));
 
@@ -149,7 +159,7 @@ const CreatePayment = (props) => {
   const classes = useStyles();
   const paymentContext = useContext(PaymentContext);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const { payments, addPayment, loading, error} = paymentContext;
+  const { payments, addPayment, loading, error } = paymentContext;
   const history = useHistory();
   const { id } = useParams();
 
@@ -195,6 +205,10 @@ const CreatePayment = (props) => {
     student_cohort: true,
     cohort_id: "00",
     paymentStatus: "Pending",
+    grade1: "AC1",
+    grade2: "AC2",
+    rate1: AC1_RATE,
+    rate2: AC2_RATE,
   });
   const [markingCalc, setMarkingCalc] = useState([
     {
@@ -459,7 +473,6 @@ const CreatePayment = (props) => {
   });
   const [formShowing, setFormShowing] = useState(false);
   const [stage, setStage] = useState("");
-
   //Events
   const onChange = (e, i, g, r, rng) => {
     let rate = "";
@@ -488,6 +501,10 @@ const CreatePayment = (props) => {
         setPayment({
           ...payment,
           [e.target.name]: e.target.value,
+          grade1: grade.grade1,
+          rate1: hourlyRates.rate1,
+          grade2: grade.grade2,
+          rate2: hourlyRates.rate2,
         });
         break;
       case 2:
@@ -1081,7 +1098,7 @@ const CreatePayment = (props) => {
     setFinalised(true);
     setPayment({
       ...payment,
-      amount: invoiceTotal,
+      amount: ccyFormat(invoiceTotal),
     });
   };
 
@@ -1096,12 +1113,12 @@ const CreatePayment = (props) => {
     subtotal(paymentCalc.lecture);
   const totPaidHours = totalPaidHours(markingCalc);
   const totOfficeHours = totalOfficeHours(officeHoursCalc);
-  const invoiceTaxes = TAX_RATE * invoiceSubtotal;
+  const invoiceTaxes = TAX_RATE * 0;
   const invoiceTotal = invoiceTaxes + invoiceSubtotal;
   // console.log("markingCalc", markingCalc);
   // console.log("paymentCalc", paymentCalc);
   // console.log("OfficeCalc", officeHoursCalc);
-  // console.log("payment", payment);
+  console.log("payment", payment);
   // console.log("userSelect", userSelect)
   return (
     <Fragment>
@@ -1130,6 +1147,14 @@ const CreatePayment = (props) => {
                       xs={4}
                       className={clsx(classes.root, classes.right)}
                     >
+                       <Button
+                        variant="contained"
+                        component={Link}
+                        to="/payments/"
+                        color="secondary"
+                      >
+                        Back to Payments
+                      </Button>
                       <Button
                         disabled={isDisabled.resetButton}
                         variant="contained"
@@ -1408,6 +1433,7 @@ const CreatePayment = (props) => {
                             xs={6}
                             className={clsx(classes.root, classes.right)}
                           >
+                            
                             <Button
                               type="submit"
                               variant="contained"
@@ -1516,9 +1542,6 @@ const CreatePayment = (props) => {
                                         size="small"
                                         margin="dense"
                                         disableUnderline={true}
-                                        classes={{
-                                          input: classes.inputCenter,
-                                        }}
                                         variant="filled"
                                         name="time"
                                       />
@@ -1530,7 +1553,7 @@ const CreatePayment = (props) => {
                                         size="small"
                                         margin="dense"
                                         classes={{
-                                          input: classes.inputCenter,
+                                          input: classes.inputEdit,
                                         }}
                                         variant="filled"
                                         name="numOfStudents"
@@ -1563,9 +1586,7 @@ const CreatePayment = (props) => {
                                         size="small"
                                         margin="dense"
                                         disableUnderline={true}
-                                        classes={{
-                                          input: classes.inputCenter,
-                                        }}
+
                                         variant="filled"
                                         name="time"
                                       />
@@ -1577,7 +1598,7 @@ const CreatePayment = (props) => {
                                         size="small"
                                         margin="dense"
                                         classes={{
-                                          input: classes.inputCenter,
+                                          input: classes.inputEdit,
                                         }}
                                         variant="filled"
                                         name="numOfCWPcsPerStudent"
@@ -1610,9 +1631,7 @@ const CreatePayment = (props) => {
                                         size="small"
                                         margin="dense"
                                         disableUnderline={true}
-                                        classes={{
-                                          input: classes.inputCenter,
-                                        }}
+                                        
                                         variant="filled"
                                         name="time"
                                       />
@@ -1624,7 +1643,7 @@ const CreatePayment = (props) => {
                                         size="small"
                                         margin="dense"
                                         classes={{
-                                          input: classes.inputCenter,
+                                          input: classes.inputEdit,
                                         }}
                                         variant="filled"
                                         name="OralExamHours"
@@ -1793,7 +1812,7 @@ const CreatePayment = (props) => {
                                       size="small"
                                       margin="dense"
                                       classes={{
-                                        input: classes.inputCenter,
+                                        input: classes.inputEdit,
                                       }}
                                       variant="filled"
                                       name="count"
@@ -1834,16 +1853,88 @@ const CreatePayment = (props) => {
                             </TableBody>
                           </Table>
                         </TableContainer>
+                        <TableContainer
+                          className={clsx(classes.spacer)}
+                          component={Paper}
+                        >
+                          <Table
+                            className={clsx(classes.table)}
+                            aria-label="spanning table"
+                            size="small"
+                          >
+                            <TableHead>
+                              <TableRow key={uuidv4()}>
+                                <TableCell align="left">
+                                  Lab Supervision/Demonstrating
+                                </TableCell>
+                                <TableCell />
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              <TableRow key={uuidv4()}>
+                                <TableCell align="left">
+                                  {paymentCalc.lab[3].activity}
+                                </TableCell>
+                                <TableCell align="right">
+                                  <Input
+                                    type="number"
+                                    size="small"
+                                    margin="dense"
+                                    classes={{
+                                      input: classes.inputEdit,
+                                    }}
+                                    variant="filled"
+                                    name="totalhrs"
+                                    value={paymentCalc.lab[3].totalhrs}
+                                    onChange={(e) =>
+                                      onChange(
+                                        e,
+                                        4,
+                                        grade.grade1,
+                                        paymentCalc.lab[3]
+                                      )
+                                    }
+                                  />
+                                </TableCell>
+                              </TableRow>
+                              <TableRow key={uuidv4()} selected={true}>
+                                <TableCell align="left">Total Hours</TableCell>
+                                <TableCell align="right">
+                                  <Input
+                                    disabled
+                                    type="number"
+                                    size="small"
+                                    margin="dense"
+                                    disableUnderline={true}
+                                    classes={{
+                                      input: classes.inputCenter,
+                                    }}
+                                    variant="filled"
+                                    name="count"
+                                    value={paymentCalc.lab[3].totalhrs}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
                         <Grid container spacing={1}>
                           <Grid
                             item
                             xs={12}
                             className={clsx(classes.root, classes.right)}
                           >
+                             <div>
+                        <Typography variant="caption">
+                          All values entered here will be calculated on the next view<p>Please check you have entered the correct details before proceeding</p> 
+                        </Typography>
+                      </div>
                             <Button
                               disabled={
                                 isDisabled.panel2 ||
-                                (totOfficeHours === 0 && totPaidHours === 0)
+                                (totOfficeHours === 0 &&
+                                  totPaidHours === 0 &&
+                                  paymentCalc.lab[3].totalhrs === 0)
                               }
                               variant="contained"
                               type="submit"
@@ -1950,251 +2041,257 @@ const CreatePayment = (props) => {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            <TableRow key={uuidv4()}>
-                              <TableCell rowSpan={3}>Lecture</TableCell>
-                              <TableCell align="left">
-                                {paymentCalc.lecture[0].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.lecture[0].time}
-                                  onChange={(e) =>
-                                    onChange(
-                                      e,
-                                      3,
-                                      grade.grade2,
-                                      paymentCalc.lecture[0]
-                                    )
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={paymentCalc.lecture[0].count}
-                                  onChange={(e) =>
-                                    onChange(
-                                      e,
-                                      3,
-                                      grade.grade2,
-                                      paymentCalc.lecture[0]
-                                    )
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={
-                                    paymentCalc.lecture[0].count *
-                                    paymentCalc.lecture[0].time
-                                  }
-                                  onChangeCapture={(e) =>
-                                    onChange(
-                                      e,
-                                      3,
-                                      grade.grade2,
-                                      paymentCalc.lecture[0]
-                                    )
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.lecture[0].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.lecture[1].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.lecture[1].time}
-                                  onChange={(e) =>
-                                    onChange(
-                                      e,
-                                      3,
-                                      grade.grade2,
-                                      paymentCalc.lecture[1]
-                                    )
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={paymentCalc.lecture[1].count}
-                                  onChange={(e) =>
-                                    onChange(
-                                      e,
-                                      3,
-                                      grade.grade2,
-                                      paymentCalc.lecture[1]
-                                    )
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={
-                                    paymentCalc.lecture[1].count *
-                                    paymentCalc.lecture[1].time
-                                  }
-                                  onChangeCapture={(e) =>
-                                    onChange(
-                                      e,
-                                      3,
-                                      grade.grade2,
-                                      paymentCalc.lecture[1]
-                                    )
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.lecture[1].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.lecture[2].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={null}
-                                  onChange={(e) =>
-                                    onChange(
-                                      e,
-                                      3,
-                                      grade.grade2,
-                                      paymentCalc.lecture[2]
-                                    )
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={null}
-                                  onChange={(e) =>
-                                    onChange(
-                                      e,
-                                      3,
-                                      grade.grade2,
-                                      paymentCalc.lecture[2]
-                                    )
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.lecture[2].totalhrs}
-                                  onChange={(e) =>
-                                    onChange(
-                                      e,
-                                      4,
-                                      grade.grade2,
-                                      paymentCalc.lecture[2]
-                                    )
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.lecture[2].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()} selected={true}>
-                              <TableCell colSpan={6} align="left">
-                                Total Lectures
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                subtotal(paymentCalc.lecture)
-                              )}`}</TableCell>
-                            </TableRow>
+                            {grade.grade2 !== "Band B" ? (
+                              <>
+                                <TableRow key={uuidv4()}>
+                                  <TableCell rowSpan={3}>Lecture</TableCell>
+                                  <TableCell align="left">
+                                    {paymentCalc.lecture[0].activity}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {grade.grade2}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <Input
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputEdit,
+                                      }}
+                                      variant="filled"
+                                      name="time"
+                                      value={paymentCalc.lecture[0].time}
+                                      onChange={(e) =>
+                                        onChange(
+                                          e,
+                                          3,
+                                          grade.grade2,
+                                          paymentCalc.lecture[0]
+                                        )
+                                      }
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <Input
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputEdit,
+                                      }}
+                                      variant="filled"
+                                      name="count"
+                                      value={paymentCalc.lecture[0].count}
+                                      onChange={(e) =>
+                                        onChange(
+                                          e,
+                                          3,
+                                          grade.grade2,
+                                          paymentCalc.lecture[0]
+                                        )
+                                      }
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      name="totalhrs"
+                                      value={
+                                        paymentCalc.lecture[0].count *
+                                        paymentCalc.lecture[0].time
+                                      }
+                                      onChangeCapture={(e) =>
+                                        onChange(
+                                          e,
+                                          3,
+                                          grade.grade2,
+                                          paymentCalc.lecture[0]
+                                        )
+                                      }
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">{`${CUR}${ccyFormat(
+                                    paymentCalc.lecture[0].payment
+                                  )}`}</TableCell>
+                                </TableRow>
+                                <TableRow key={uuidv4()}>
+                                  <TableCell align="left">
+                                    {paymentCalc.lecture[1].activity}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {grade.grade2}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <Input
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputEdit,
+                                      }}
+                                      variant="filled"
+                                      name="time"
+                                      value={paymentCalc.lecture[1].time}
+                                      onChange={(e) =>
+                                        onChange(
+                                          e,
+                                          3,
+                                          grade.grade2,
+                                          paymentCalc.lecture[1]
+                                        )
+                                      }
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <Input
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputEdit,
+                                      }}
+                                      variant="filled"
+                                      name="count"
+                                      value={paymentCalc.lecture[1].count}
+                                      onChange={(e) =>
+                                        onChange(
+                                          e,
+                                          3,
+                                          grade.grade2,
+                                          paymentCalc.lecture[1]
+                                        )
+                                      }
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      name="totalhrs"
+                                      value={
+                                        paymentCalc.lecture[1].count *
+                                        paymentCalc.lecture[1].time
+                                      }
+                                      onChangeCapture={(e) =>
+                                        onChange(
+                                          e,
+                                          3,
+                                          grade.grade2,
+                                          paymentCalc.lecture[1]
+                                        )
+                                      }
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">{`${CUR}${ccyFormat(
+                                    paymentCalc.lecture[1].payment
+                                  )}`}</TableCell>
+                                </TableRow>
+                                <TableRow key={uuidv4()}>
+                                  <TableCell align="left">
+                                    {paymentCalc.lecture[2].activity}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {grade.grade2}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      name="time"
+                                      value={null}
+                                      onChange={(e) =>
+                                        onChange(
+                                          e,
+                                          3,
+                                          grade.grade2,
+                                          paymentCalc.lecture[2]
+                                        )
+                                      }
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      name="count"
+                                      value={null}
+                                      onChange={(e) =>
+                                        onChange(
+                                          e,
+                                          3,
+                                          grade.grade2,
+                                          paymentCalc.lecture[2]
+                                        )
+                                      }
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <Input
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputEdit,
+                                      }}
+                                      variant="filled"
+                                      name="totalhrs"
+                                      value={paymentCalc.lecture[2].totalhrs}
+                                      onChange={(e) =>
+                                        onChange(
+                                          e,
+                                          4,
+                                          grade.grade2,
+                                          paymentCalc.lecture[2]
+                                        )
+                                      }
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">{`${CUR}${ccyFormat(
+                                    paymentCalc.lecture[2].payment
+                                  )}`}</TableCell>
+                                </TableRow>
+                                <TableRow key={uuidv4()} selected={true}>
+                                  <TableCell colSpan={6} align="left">
+                                    Total Lectures
+                                  </TableCell>
+                                  <TableCell align="center">{`${CUR}${ccyFormat(
+                                    subtotal(paymentCalc.lecture)
+                                  )}`}</TableCell>
+                                </TableRow>
+                              </>
+                            ) : (
+                              ""
+                            )}
                             <TableRow key={uuidv4()}>
                               <TableCell rowSpan={4}>
                                 Seminar / Tutorial / Oral Classes
@@ -2211,7 +2308,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="time"
@@ -2232,7 +2329,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="count"
@@ -2290,7 +2387,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="time"
@@ -2311,7 +2408,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="count"
@@ -2369,7 +2466,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="time"
@@ -2390,7 +2487,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="count"
@@ -2476,7 +2573,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="totalhrs"
@@ -2519,7 +2616,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="time"
@@ -2540,7 +2637,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="count"
@@ -2598,7 +2695,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="time"
@@ -2619,7 +2716,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="count"
@@ -2677,7 +2774,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="time"
@@ -2698,7 +2795,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="count"
@@ -2780,6 +2877,7 @@ const CreatePayment = (props) => {
                               </TableCell>
                               <TableCell align="center">
                                 <Input
+                                  disabled
                                   type="number"
                                   size="small"
                                   margin="dense"
@@ -2789,14 +2887,7 @@ const CreatePayment = (props) => {
                                   variant="filled"
                                   name="totalhrs"
                                   value={paymentCalc.lab[3].totalhrs}
-                                  onChange={(e) =>
-                                    onChange(
-                                      e,
-                                      4,
-                                      grade.grade1,
-                                      paymentCalc.lab[3]
-                                    )
-                                  }
+                                  disableUnderline={true}
                                 />
                               </TableCell>
                               <TableCell align="center">{`${CUR}${ccyFormat(
@@ -2827,7 +2918,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="totalhrs"
@@ -3082,6 +3173,8 @@ const CreatePayment = (props) => {
                                 subtotal(paymentCalc.marking)
                               )}`}</TableCell>
                             </TableRow>
+                            {grade.grade2 !== "Band B" ?
+                                <>
                             <TableRow key={uuidv4()}>
                               <TableCell>Training</TableCell>
                               <TableCell align="left">
@@ -3098,7 +3191,7 @@ const CreatePayment = (props) => {
                                   size="small"
                                   margin="dense"
                                   classes={{
-                                    input: classes.inputCenter,
+                                    input: classes.inputEdit,
                                   }}
                                   variant="filled"
                                   name="totalhrs"
@@ -3125,16 +3218,17 @@ const CreatePayment = (props) => {
                                 subtotal(paymentCalc.training)
                               )}`}</TableCell>
                             </TableRow>
+                                </> : "" }
                             <TableRow key={uuidv4()}>
                               <TableCell rowSpan={3} />
                               <TableCell />
                               <TableCell />
-                              <TableCell colSpan={3}>Subtotal</TableCell>
+                              <TableCell colSpan={3}></TableCell>
                               <TableCell align="center">
-                                {`£${ccyFormat(invoiceSubtotal)}`}
+                                {/* {`£${ccyFormat(invoiceSubtotal)}`} */}
                               </TableCell>
                             </TableRow>
-                            <TableRow key={uuidv4()}>
+                            {/* <TableRow key={uuidv4()}>
                               <TableCell />
                               <TableCell />
                               <TableCell>Tax</TableCell>
@@ -3145,7 +3239,7 @@ const CreatePayment = (props) => {
                               <TableCell align="center">
                                 {`£${ccyFormat(invoiceTaxes)}`}
                               </TableCell>
-                            </TableRow>
+                            </TableRow> */}
                             <TableRow key={uuidv4()}>
                               <TableCell />
                               <TableCell />

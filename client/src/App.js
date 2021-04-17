@@ -24,6 +24,8 @@ import Import from "./components/pages/Import";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import Verify from "./components/auth/Verify";
+import PasswordReset from "./components/auth/PasswordReset";
+
 
 //Components
 import NavigationBar from "./components/layouts/NavigationBar";
@@ -96,6 +98,11 @@ const App = () => {
                             exact
                             path="/users/confirm-email/:token"
                             component={Verify}
+                          />
+                          <Route
+                            exact
+                            path="/users/password-reset/:token"
+                            component={PasswordReset}
                           />
                           <Route exact path="/about" component={About} />
                           <Route

@@ -8,7 +8,7 @@ import { useSnackbar } from "notistack";
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
-  PASSWORD_RESET_EMAIL_SUCCESS,
+  PASSWORD_RESET_REQUEST,
   PASSWORD_RESET_EMAIL_FAIL,
   RESEND_VERIFY,
   USER_LOADED,
@@ -76,7 +76,7 @@ const AuthState = (props) => {
     }
   };
 
-  //VErify Email
+  //Verify Email
   const verifyEmail = async (token) => {
     const config = {
       headers: { "Content-Type": "application/json" },
@@ -95,6 +95,54 @@ const AuthState = (props) => {
     } catch (error) {
       dispatch({
         type: REGISTER_FAIL,
+        payload: error.response.data.error,
+      });
+    }
+  };
+
+  //Password Reset Request Email
+  const passwordResetRequest = async (id) => {
+    const config = {
+      headers: { "Content-Type": "application/json" },
+    };
+    try {
+      const res = await axios.post(
+        `/api/users/password-reset-request/${id}`,
+        null,
+        config
+      );
+      dispatch({ type: PASSWORD_RESET_REQUEST, payload: res.data });
+      enqueueSnackbar("Password Updated, please log in", {
+        variant: "success",
+      });
+      logout()
+    } catch (error) {
+      dispatch({
+        type:PASSWORD_RESET_EMAIL_FAIL,
+        payload: error.response.data.error,
+      });
+    }
+  };
+
+  //Password Reset Request Email
+  const passwordUpdateRequest = async (token, formData) => {
+    const config = {
+      headers: { "Content-Type": "application/json" },
+    };
+    try {
+      const res = await axios.post(
+        `/api/users/password-reset/${token}`,
+        formData,
+        config
+      );
+      dispatch({ type: PASSWORD_RESET_REQUEST, payload: res.data });
+      enqueueSnackbar("Password Updated, please log in", {
+        variant: "success",
+      });
+      logout()
+    } catch (error) {
+      dispatch({
+        type:PASSWORD_RESET_EMAIL_FAIL,
         payload: error.response.data.error,
       });
     }
@@ -168,6 +216,8 @@ const AuthState = (props) => {
         clearErrors,
         verifyEmail,
         resendVerifyEmail,
+        passwordResetRequest,
+        passwordUpdateRequest
       }}
     >
       {props.children}

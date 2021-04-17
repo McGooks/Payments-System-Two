@@ -166,7 +166,41 @@ const Home = () => {
                 ></Grid>
               </Grid>
             </>
-          ) : (
+          ) : user && user.role === "Module Owner" ? (
+            <>
+              <NavButtonHome isAdmin={isAdmin} />
+              {stats && stats[1].statsPending !== 0 ? (
+                <h3 className="HomeGreetingSubtitle">You have pending tasks</h3>
+              ) : (
+                <h3 className="HomeGreetingSubtitle">You are all caught up</h3>
+              )}
+              <Grid container direction="row" spacing={4} alignItems="stretch">
+                <Grid item md={6} xs={12} sm={6}>
+                  <UserCountKPI key={1} />
+                </Grid>
+                <Grid item xs={12} md={6} sm={6}>
+                  <PaymentPendingAuthCountKPI key={2} />
+                </Grid>
+              </Grid>
+              <Grid container direction="row" spacing={4} alignItems="stretch">
+                <Grid item xs={12} md sm={6}>
+                  <PaymentPendingAuthValueKPI key={3} />
+                </Grid>
+                <Grid item xs={12} md sm={6}>
+                  <PaymentsAuthValueKPI />
+                </Grid>
+                <Grid item xs={12} md sm={6}>
+                  <PaymentsAuthValueYTDKPI />
+                </Grid>
+              </Grid>
+              <Grid container spacing={10}>
+                <Grid
+                  item
+                  xs={12}
+                  className={clsx(classes.footer, classes.left)}
+                ></Grid>
+              </Grid>
+            </>) : (
             <>
               {user && user.emailVerified === false ? (
                 <MuiAlert

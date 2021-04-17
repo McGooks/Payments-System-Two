@@ -1,0 +1,99 @@
+import React, { useState, useEffect, useContext } from "react";
+import { useParams } from "react-router-dom";
+import AuthContext from "../../context/auth/authContext";
+//Components
+import { useSnackbar } from "notistack";
+import { Typography, TextField, Box, Button } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    flexWrap: "wrap",
+    fontSize: "1.2rem",
+  },
+  textFieldFull: {
+    margin: theme.spacing(1),
+    width: "97%",
+  },
+  button: {
+    backgroundColor: "rgb(214, 0, 13)",
+    margin: theme.spacing(1),
+    width: "97%",
+  },
+  text: {
+    textAlign: "center",
+    marginBottom: 30,
+  },
+}));
+
+const PasswordReset= (props) => {
+  const classes = useStyles();
+  const { token } = useParams();
+  const authContext = useContext(AuthContext);
+  const { verifyEmail, logout } = authContext;
+
+  useEffect(() => {
+    logout();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [password, setPassword] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const handleUpdatePassword = () => {
+    console.log("Update Password Test");
+  };
+  const handleChangePassword = (e) => {
+    setPassword({
+      ...password,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  return (
+    <>
+      <Typography variant="h5" weight="medium" className={classes.text}>
+        Change your password
+      </Typography>
+      <TextField
+        className={classes.textFieldFull}
+        id="password-new"
+        type="password"
+        name="newPassword"
+        placeholder="New Password"
+        value={password.newPassword || ""}
+        onChange={handleChangePassword}
+        label="New Password"
+        variant="outlined"
+      />
+      <TextField
+        className={classes.textFieldFull}
+        id="password-new1"
+        type="password"
+        name="confirmPassword"
+        placeholder="Confirm New Password"
+        value={password.confirmPassword || ""}
+        onChange={handleChangePassword}
+        label="Confirm New Password"
+        variant="outlined"
+      />
+      <Box>
+        <Button
+          size="large"
+          fullWidth={true}
+          className={classes.button}
+          onClick={handleUpdatePassword}
+          color="secondary"
+          variant="contained"
+        >
+          Save
+        </Button>
+      </Box>
+    </>
+  );
+};
+
+export default PasswordReset;

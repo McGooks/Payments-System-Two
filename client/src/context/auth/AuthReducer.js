@@ -2,7 +2,7 @@
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
-  PASSWORD_RESET_EMAIL_SUCCESS,
+  PASSWORD_RESET_REQUEST,
   PASSWORD_RESET_EMAIL_FAIL,
   RESEND_VERIFY,
   USER_LOADED,
@@ -52,9 +52,16 @@ export default (state, action) => {
         error: action.payload,
       };
 
-    case PASSWORD_RESET_EMAIL_SUCCESS:
+    case PASSWORD_RESET_REQUEST:
+      localStorage.removeItem("token");
       return {
         ...state,
+        token: null,
+        isAuthenticated: false,
+        isAdmin: null,
+        loading: false,
+        user: null,
+        error: action.payload,
       };
     case RESEND_VERIFY:
       return {
