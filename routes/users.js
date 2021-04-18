@@ -243,7 +243,7 @@ router.post(
                                 </tr>
                                 <tr>
                                     <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 40px 30px; border-radius: 0px 0px 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                                        <p style="margin: 0;">Cheers,<br>DemPay Team @ QUB</p>
+                                        <p style="margin: 0;">Cheers,<br>DemPay Team</p>
                                     </td>
                                 </tr>
                             </table>
@@ -436,16 +436,15 @@ router.post("/password-reset-request/:id", async (req, res) => {
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <p style="margin: 0;">Hi ${
+                            <p style="margin: 0;"><p>Hi ${
                               findUser.firstName
-                            }, it looks like you have requested a password reset for your DemPay account. To help get you back up and running please follow the steps below:</p>
-                            <br>
+                            },</p>It looks like you have requested a password reset for your DemPay account. To help get you back up and running please follow the steps below:</p>
                             <ol>
                               <li style="margin: 0;">
-                              Clicking the button below to be taken to our super secret password reset page
+                              Click the button below to be taken to a <em>super secret</em> password reset portal
                               </li>
                               <li style="margin: 0;">
-                              Insert your new password, into both fields & hit submit
+                              Pop a new password into both fields & hit "Password Reset"
                               </li>
                               <li style="margin: 0;">
                               That's you done, you can login with your new password!
@@ -477,7 +476,7 @@ router.post("/password-reset-request/:id", async (req, res) => {
                     </tr>
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 40px 30px; border-radius: 0px 0px 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <p style="margin: 0;">Cheers,<br>DemPay Team @ QUB</p>
+                            <p style="margin: 0;">Cheers,<br>DemPay Team</p>
                         </td>
                     </tr>
                 </table>

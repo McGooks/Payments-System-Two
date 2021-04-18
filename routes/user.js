@@ -242,7 +242,7 @@ router.post("/resend/:id", auth, async (req, res) => {
                     </tr>
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 40px 30px; border-radius: 0px 0px 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <p style="margin: 0;">Cheers,<br>DemPay Team @ QUB</p>
+                            <p style="margin: 0;">Cheers,<br>DemPay Team </p>
                         </td>
                     </tr>
                 </table>
@@ -273,7 +273,6 @@ router.post("/resend/:id", auth, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 //@route    POST api/user
 //@desc     Add new User
@@ -494,7 +493,7 @@ router.post(
                     </tr>
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 40px 30px; border-radius: 0px 0px 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <p style="margin: 0;">Cheers,<br>DemPay Team @ QUB</p>
+                            <p style="margin: 0;">Cheers,<br>DemPay Team</p>
                         </td>
                     </tr>
                 </table>
@@ -557,24 +556,24 @@ router.put("/:id", auth, async (req, res) => {
   userFields.updatedAt = Date.now();
   userFields.emailTokenIssued = new Date(userFields.emailTokenIssued);
   userFields.emailTokenExpiry = new Date(userFields.emailTokenExpiry);
-    try {
-      let user = await User.findById(req.params.id); // find user by ID
-      if (!user) return res.status(404).json({ error: "User not found" });
-      // if (user._id.toString() === req.user.id) {
-      //   return res
-      //     .status(401)
-      //     .json({ error: "Users cannot edit their own records" });
-      // }
-      console.log(user);
-      user = await User.findByIdAndUpdate(
-        req.params.id,
-        { $set: userFields },
-        { new: true }
-      );
-      res.status(200).json(user);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+  try {
+    let user = await User.findById(req.params.id); // find user by ID
+    if (!user) return res.status(404).json({ error: "User not found" });
+    // if (user._id.toString() === req.user.id) {
+    //   return res
+    //     .status(401)
+    //     .json({ error: "Users cannot edit their own records" });
+    // }
+    console.log(user);
+    user = await User.findByIdAndUpdate(
+      req.params.id,
+      { $set: userFields },
+      { new: true }
+    );
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 //@route    DELETE api/user/:id

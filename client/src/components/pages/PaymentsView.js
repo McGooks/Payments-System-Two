@@ -15,14 +15,12 @@ const PaymentsView = () => {
   const userAdminContext = useContext(UserAdminContext);
   const paymentContext = useContext(PaymentContext);
   const {
-    userPayments,
     getPayment,
     loading,
-    clearCurrent,
     current,
   } = paymentContext;
-  const { activeUsers, getActiveUsers } = userAdminContext;
-  const { loadUser } = authContext;
+  const { getActiveUsers } = userAdminContext;
+  const { loadUser, isAdmin } = authContext;
   const { id } = useParams();
 
   useEffect(() => {
@@ -34,11 +32,10 @@ const PaymentsView = () => {
     getActiveUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log("this is current", current);
   return (
     <>
       <NavButtonPaymentsAdd />
-      {!loading && current ? <ViewPayments current={current} /> : <ProgressIndicator />}
+      {!loading && current ? <ViewPayments current={current} isAdmin={isAdmin} /> : <ProgressIndicator />}
     </>
   );
 };

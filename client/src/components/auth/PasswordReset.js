@@ -66,8 +66,8 @@ const PasswordReset = (props) => {
         ...password,
       });
       passwordUpdateRequest(token, password);
-      logout()
-      props.history.push("/")
+      logout();
+      props.history.push("/");
     }
   };
   const handleChangePassword = (e) => {
@@ -79,43 +79,45 @@ const PasswordReset = (props) => {
 
   return (
     <>
-      <Typography variant="h5" weight="medium" className={classes.text}>
-        Change your password
-      </Typography>
-      <TextField
-        className={classes.textFieldFull}
-        id="password-new"
-        type="password"
-        name="newPassword"
-        placeholder="New Password"
-        value={password.newPassword || ""}
-        onChange={handleChangePassword}
-        label="New Password"
-        variant="outlined"
-      />
-      <TextField
-        className={classes.textFieldFull}
-        id="password-new1"
-        type="password"
-        name="confirmPassword"
-        placeholder="Confirm New Password"
-        value={password.confirmPassword || ""}
-        onChange={handleChangePassword}
-        label="Confirm New Password"
-        variant="outlined"
-      />
-      <Box>
-        <Button
-          size="large"
-          fullWidth={true}
-          className={classes.button}
-          onClick={handleUpdatePassword}
-          color="secondary"
-          variant="contained"
-        >
-          Save
-        </Button>
-      </Box>
+      <div className="form-container">
+        <h1>
+          Password <span className="text-primary">Reset</span>
+        </h1>
+        <TextField
+          className={classes.textFieldFull}
+          id="password-new"
+          type="password"
+          name="newPassword"
+          placeholder="New Password"
+          value={password.newPassword || ""}
+          onChange={handleChangePassword}
+          label="New Password"
+          variant="outlined"
+        />
+        <TextField
+          className={classes.textFieldFull}
+          id="password-new1"
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm New Password"
+          value={password.confirmPassword || ""}
+          onChange={handleChangePassword}
+          label="Confirm New Password"
+          variant="outlined"
+        />
+        <Box>
+          <Button
+            size="large"
+            fullWidth={true}
+            className={classes.button}
+            onClick={handleUpdatePassword}
+            color="secondary"
+            variant="contained"
+          >
+            Save
+          </Button>
+        </Box>
+      </div>
     </>
   );
 };

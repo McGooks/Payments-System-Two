@@ -67,7 +67,6 @@ const NavButtonUserMgmt = () => {
     { id: 1, icon: (<Link to="/"><ArrowBackIcon /></Link>), name: "Back", },
     { id: 2, icon: (<Link to="/import"><GroupAddIcon /></Link>), name: "Import User File"},
     { id: 3, icon: (<Link to="#"><PersonAddIcon /></Link>), name: "Manually Add User"},
-    { id: 4, icon: (<Link to="#"><Reports /></Link>), name: "Report Manager"},
   ];
   
 

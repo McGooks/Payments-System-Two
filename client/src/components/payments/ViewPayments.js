@@ -93,12 +93,8 @@ function totalOfficeHours(totals) {
 }
 
 const ViewPayment = (props) => {
-  const { current } = props;
+  const { current, isAdmin } = props;
   const classes = useStyles();
-  const paymentContext = useContext(PaymentContext);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const { userPayments, getPayment, loading, clearCurrent } = paymentContext;
-
   //State
   const [payment, setPayment] = useState(current);
   const [markingCalc, setMarkingCalc] = useState([...current.paymentDetail.markingCalc]);
@@ -112,15 +108,6 @@ const ViewPayment = (props) => {
     grade1: "AC1",
     grade2: "AC2",
   });
-  const [formShowing, setFormShowing] = useState(false);
-  const [stage, setStage] = useState("");
-
-  const showForm = () => {
-    setFormShowing(true);
-  };
-  const hideForm = () => {
-    setFormShowing(false);
-  };
 
   //declarations
   const invoiceSubtotal =
@@ -161,14 +148,14 @@ const ViewPayment = (props) => {
                     xs={4}
                     className={clsx(classes.root, classes.right)}
                   >
-                    <Button
+                    {isAdmin && <Button
                       variant="contained"
                       component={Link}
                       to="/payments/"
                       color="secondary"
                     >
                       Back to Payments
-                    </Button>
+                    </Button>}
                   </Grid>
                 </Grid>
               </Paper>
