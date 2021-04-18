@@ -17,15 +17,6 @@ export const REJECT_PAYMENT = "REJECT_PAYMENT";
 export const HOLD_PAYMENT = "HOLD_PAYMENT";
 export const PENDING_PAYMENT = "PENDING_PAYMENT";
 export const PAID_PAYMENT = "PAID_PAYMENT";
-//Contacts Framework Reducer [to be deleted]
-export const GET_CONTACTS = "GET_CONTACTS";
-export const ADD_CONTACT = "ADD_CONTACT";
-export const DELETE_CONTACT = "DELETE_CONTACT";
-export const UPDATE_CONTACT = "UPDATE_CONTACT";
-export const FILTER_CONTACTS = "FILTER_CONTACTS";
-export const CLEAR_CONTACTS = "CLEAR_CONTACTS";
-export const CLEAR_FILTER = "CLEAR_FILTER";
-export const CONTACT_ERROR = "CONTACT_ERROR";
 //userAdmin Framework Reducer
 export const GET_USERS = "GET_USERS";
 export const GET_ACTIVE_USERS = "GET_ACTIVE_USERS";

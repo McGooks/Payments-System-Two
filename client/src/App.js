@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 
 import "./App.css";
 import {
@@ -32,7 +32,6 @@ import NavigationBar from "./components/layouts/NavigationBar";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import { SnackbarProvider } from "notistack";
 //State
-import ContactState from "./context/contact/ContactState";
 import UserState from "./context/user/UserState";
 import UserAdminState from "./context/userAdmin/UserAdminState";
 import PaymentState from "./context/payment/PaymentState";
@@ -47,7 +46,6 @@ const App = () => {
   return (
     <SnackbarProvider maxSnack={10}>
       <AuthState>
-        <ContactState>
           <UserState>
             <StatsState>
               <UserAdminState>
@@ -125,7 +123,6 @@ const App = () => {
               </UserAdminState>
             </StatsState>
           </UserState>
-        </ContactState>
       </AuthState>
     </SnackbarProvider>
   );

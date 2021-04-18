@@ -9,8 +9,6 @@ import {
   SET_CURRENT,
   CLEAR_CURRENT,
   UPDATE_PAYMENT,
-  FILTER_PAYMENTS,
-  CLEAR_FILTER,
   PAYMENT_ERROR,
   CLEAR_PAYMENTS,
   APPROVE_ALL_PAYMENTS,
@@ -108,21 +106,6 @@ export default (state, action) => {
         current: null,
         userPayments: null,
         loading: false,
-      };
-    }
-    case FILTER_PAYMENTS: {
-      return {
-        ...state,
-        filtered: state.payments.filter((payment) => {
-          const regex = new RegExp(`${action.payload}`, "gi"); //GI = Global Insensitive Search
-          return payment.name.match(regex) || payment.email.match(regex);
-        }),
-      };
-    }
-    case CLEAR_FILTER: {
-      return {
-        ...state,
-        filtered: null,
       };
     }
     case PAYMENT_ERROR: {

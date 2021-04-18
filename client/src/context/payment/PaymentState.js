@@ -13,7 +13,6 @@ import {
   CLEAR_CURRENT,
   UPDATE_PAYMENT,
   FILTER_PAYMENTS,
-  CLEAR_FILTER,
   PAYMENT_ERROR,
   CLEAR_PAYMENTS,
   APPROVE_ALL_PAYMENTS,
@@ -222,17 +221,6 @@ const PaymentState = (props) => {
     dispatch({ type: CLEAR_CURRENT });
   };
 
-  //Filter Payments
-
-  const filterPayments = (text) => {
-    dispatch({ type: FILTER_PAYMENTS, payload: text });
-  };
-
-  //Clear Filters
-
-  const clearFilter = () => {
-    dispatch({ type: CLEAR_FILTER });
-  };
 
   //Clear Payments
 
@@ -269,8 +257,6 @@ const PaymentState = (props) => {
         setCurrent,
         clearCurrent,
         updatePayment,
-        filterPayments,
-        clearFilter,
         clearPayments,
         approvePayment,
         rejectPayment,
