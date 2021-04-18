@@ -32,7 +32,7 @@ const NavButtonHome = (props) => {
   const [open, setOpen] = React.useState(false);
   const authContext = useContext(AuthContext);
   const { user } = authContext;
-  const {isAdmin} = props
+  const { isAdmin } = props;
 
   useEffect(() => {
     if (user !== null) {
@@ -73,24 +73,24 @@ const NavButtonHome = (props) => {
             ),
             name: "Payments",
           },
-          {
-            id: 3,
-            icon: (
-              <Link to="#">
-                <Reports />
-              </Link>
-            ),
-            name: "Report Manager",
-          },
-          {
-            id: 4,
-            icon: (
-              <Link to="#">
-                <Admin />
-              </Link>
-            ),
-            name: "Admin",
-          },
+          // {
+          //   id: 3,
+          //   icon: (
+          //     <Link to="#">
+          //       <Reports />
+          //     </Link>
+          //   ),
+          //   name: "Report Manager",
+          // },
+          // {
+          //   id: 4,
+          //   icon: (
+          //     <Link to="#">
+          //       <Admin />
+          //     </Link>
+          //   ),
+          //   name: "Admin",
+          // },
           {
             id: 5,
             icon: (
@@ -110,15 +110,6 @@ const NavButtonHome = (props) => {
               </Link>
             ),
             name: "My Profile",
-          },
-          {
-            id: 2,
-            icon: (
-              <Link to={`user/${userID}/payments`}>
-                <Payments />
-              </Link>
-            ),
-            name: "Payments",
           },
           {
             id: 5,

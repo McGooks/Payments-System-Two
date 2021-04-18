@@ -178,7 +178,7 @@ const User = (props) => {
     setTab(newValue);
   };
   const onSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     updateUser(data);
     enqueueSnackbar("User Profile Updated", {
       variant: "success",
@@ -238,7 +238,7 @@ const User = (props) => {
                 <Tab label="ACCOUNT" icon={<AccountBoxIcon />} />
                 <Tab label="PROFILE" icon={<PersonIcon />} />
                 <Tab label="TAX" icon={<BusinessCenterIcon />} />
-                <Tab label="CHANGE PASSWORD" icon={<LockIcon />} />
+                {/* <Tab label="CHANGE PASSWORD" icon={<LockIcon />} /> */}
                 {/* <Tab label="SETTINGS" icon={<SettingsIcon />} /> */}
               </Tabs>
             </Box>
@@ -302,7 +302,7 @@ const User = (props) => {
                         )}
                       </div>
                       <TextField
-                        required
+                        disabled
                         className={classes.textFieldFull}
                         id="email"
                         type="email"
@@ -1282,8 +1282,6 @@ const User = (props) => {
                         <>
                           {data.taxDeclaration[0].signed ? (
                             <>
-                              {" "}
-                              (
                               <Box
                                 display={"flex"}
                                 mt={2}
@@ -1296,6 +1294,9 @@ const User = (props) => {
                                   }
                                 </Typography>
                                 <Switch
+                                  disabled={
+                                    data.taxDeclaration[0].signed ? true : false
+                                  }
                                   checked={data.taxDeclaration[0].signed}
                                   onChange={(e) => handleSwitchChange(e, 4)}
                                   name="signed"
@@ -1347,56 +1348,57 @@ const User = (props) => {
                               </Box>
                             </>
                           ) : (
-                            "No"
+                            ""
                           )}
                         </>
                       )}
                     </>
-                  ) : tab === 3 ? (
-                    <>
-                      <Typography
-                        variant="h5"
-                        weight="medium"
-                        className={classes.text}
-                      >
-                        Change your password
-                      </Typography>
-                      <TextField
-                        className={classes.textFieldFull}
-                        id="password-current"
-                        type="password"
-                        name="currentPassword"
-                        placeholder="Current Password"
-                        value={password.currentPassword || ""}
-                        onChange={handleChangePassword}
-                        label="Current Password"
-                        variant="outlined"
-                        helperText={"Forgot Password?"}
-                      />
-                      <TextField
-                        className={classes.textFieldFull}
-                        id="password-new"
-                        type="password"
-                        name="newPassword"
-                        placeholder="New Password"
-                        value={password.newPassword || ""}
-                        onChange={handleChangePassword}
-                        label="New Password"
-                        variant="outlined"
-                      />
-                      <TextField
-                        className={classes.textFieldFull}
-                        id="password-new1"
-                        type="password"
-                        name="confirmPassword"
-                        placeholder="Confirm New Password"
-                        value={password.confirmPassword || ""}
-                        onChange={handleChangePassword}
-                        label="Confirm New Password"
-                        variant="outlined"
-                      />
-                    </>
                   ) : (
+                    // ) : tab === 3 ? (
+                    //   <>
+                    //     <Typography
+                    //       variant="h5"
+                    //       weight="medium"
+                    //       className={classes.text}
+                    //     >
+                    //       Change your password
+                    //     </Typography>
+                    //     <TextField
+                    //       className={classes.textFieldFull}
+                    //       id="password-current"
+                    //       type="password"
+                    //       name="currentPassword"
+                    //       placeholder="Current Password"
+                    //       value={password.currentPassword || ""}
+                    //       onChange={handleChangePassword}
+                    //       label="Current Password"
+                    //       variant="outlined"
+                    //       helperText={"Forgot Password?"}
+                    //     />
+                    //     <TextField
+                    //       className={classes.textFieldFull}
+                    //       id="password-new"
+                    //       type="password"
+                    //       name="newPassword"
+                    //       placeholder="New Password"
+                    //       value={password.newPassword || ""}
+                    //       onChange={handleChangePassword}
+                    //       label="New Password"
+                    //       variant="outlined"
+                    //     />
+                    //     <TextField
+                    //       className={classes.textFieldFull}
+                    //       id="password-new1"
+                    //       type="password"
+                    //       name="confirmPassword"
+                    //       placeholder="Confirm New Password"
+                    //       value={password.confirmPassword || ""}
+                    //       onChange={handleChangePassword}
+                    //       label="Confirm New Password"
+                    //       variant="outlined"
+                    //     />
+                    //   </>
+                    // ) : (
                     ""
                     // <>
                     //   <Typography

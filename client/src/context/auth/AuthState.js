@@ -19,6 +19,7 @@ import {
   LOGOUT,
   CLEAR_ERRORS,
 } from "../types";
+import id from "date-fns/esm/locale/id";
 
 const AuthState = (props) => {
   const initialState = {
@@ -126,8 +127,6 @@ const AuthState = (props) => {
     const config = {
       headers: { "Content-Type": "application/json" },
     };
-    console.log(token)
-    console.log(formData)
     try {
       const res = await axios.put(
         `/api/users/password-reset/${token}`,
@@ -139,6 +138,27 @@ const AuthState = (props) => {
         variant: "success",
       });
       logout();
+    } catch (error) {
+      dispatch({
+        type: PASSWORD_RESET_EMAIL_FAIL,
+        payload: error.response.data.error,
+      });
+    }
+  };
+
+  //Password Reset Request Email
+  const passwordResetRequestPublic = async (formData) => {
+    const config = {
+      headers: { "Content-Type": "application/json" },
+    };
+    try {
+      const res = await axios.post(
+        `/api/users/password-reset-request-public`,
+        formData,
+        config
+      );
+      let ID = res.data;
+      await passwordResetRequest(ID);
     } catch (error) {
       dispatch({
         type: PASSWORD_RESET_EMAIL_FAIL,
@@ -179,7 +199,6 @@ const AuthState = (props) => {
       });
       loadUser();
     } catch (error) {
-      console.error(error);
       dispatch({
         type: LOGIN_FAIL,
         payload: error.response.data.error,
@@ -217,6 +236,7 @@ const AuthState = (props) => {
         resendVerifyEmail,
         passwordResetRequest,
         passwordUpdateRequest,
+        passwordResetRequestPublic,
       }}
     >
       {props.children}

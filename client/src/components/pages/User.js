@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 //State
 import AuthContext from "../../context/auth/authContext";
 //Components
-import NavButtonUserMgmtImport from "../layouts/NavButtonUserMgmtImport";
+import NavButtonUserProfile from "../layouts/NavButtonUserProfile";
 import UserProfile from "../user/User";
 
 const User = (props) => {
@@ -15,8 +15,8 @@ const User = (props) => {
 
   return (
     <div>
-      <NavButtonUserMgmtImport />
-      <UserProfile activeUser={user} isAdmin={isAdmin}/>
+      <NavButtonUserProfile isAdmin={isAdmin} />
+      <UserProfile activeUser={user} isAdmin={isAdmin} />
     </div>
   );
 };

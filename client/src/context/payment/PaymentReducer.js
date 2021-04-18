@@ -27,7 +27,6 @@ import {
 
 export default (state, action) => {
   switch (action.type) {
-   
     case GET_PAYMENTS: {
       return {
         ...state,
@@ -35,11 +34,17 @@ export default (state, action) => {
         loading: false,
       };
     }
-    case GET_PAYMENT: 
     case GET_USER_PAYMENTS: {
       return {
         ...state,
         userPayments: action.payload,
+        loading: false,
+      };
+    }
+    case GET_PAYMENT: {
+      return {
+        ...state,
+        current: action.payload,
         loading: false,
       };
     }
@@ -94,7 +99,7 @@ export default (state, action) => {
       return {
         ...state,
         current: action.payload,
-        loading: false
+        loading: false,
       };
     }
     case CLEAR_CURRENT: {
@@ -102,7 +107,7 @@ export default (state, action) => {
         ...state,
         current: null,
         userPayments: null,
-        loading: false
+        loading: false,
       };
     }
     case FILTER_PAYMENTS: {

@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
 //Components
 import { useSnackbar } from "notistack";
 //Context
@@ -8,7 +7,6 @@ import AuthContext from "../../context/auth/authContext";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import {Typography } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,19 +24,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = (props) => {
+const PasswordResetRequest = (props) => {
   const classes = useStyles();
   const authContext = useContext(AuthContext);
-  const { login, error, clearErrors, isAuthenticated } = authContext;
+  const {
+    register,
+    error,
+    clearErrors,
+    isAuthenticated,
+    passwordResetRequestPublic,
+    logout
+  } = authContext;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const preventDefault = (event) => event.preventDefault();
-
   useEffect(() => {
-    if (isAuthenticated) {
-      props.history.push("/");
-    }
-    console.log(error);
     if (error) {
       enqueueSnackbar(error, {
         variant: "error",
@@ -49,10 +48,10 @@ const Login = (props) => {
   }, [error, isAuthenticated, props.history]);
 
   const [user, setUser] = useState({
+    QUBID: "",
     email: "",
-    password: "",
   });
-  const { email, password } = user;
+  const { QUBID, email } = user;
 
   const onChange = (e) => {
     setUser({
@@ -63,49 +62,56 @@ const Login = (props) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (error) {
-      enqueueSnackbar(error, {
-        variant: "error",
+    if (QUBID === "" || email === "") {
+      enqueueSnackbar(`Please complete all fields`, {
+        variant: "warning",
       });
-      clearErrors();
     } else {
-      login({
-        email,
-        password,
+      passwordResetRequestPublic(user);
+      logout();
+      props.history.push("/");
+      enqueueSnackbar(`Please check ${email} for reset instructions`, {
+        variant: "success",
       });
     }
   };
+  console.log(user);
   return (
     <div className="form-container">
       <h1>
-        Account <span className="text-primary">Login</span>
+        Password Reset <span className="text-primary">Request</span>
       </h1>
       <form onSubmit={onSubmit}>
         <div>
-          <TextField
-            className={classes.textFieldFull}
-            id="email"
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={email}
-            onChange={onChange}
-            label="Email"
-            variant="outlined"
-          />
-        </div>
-        <div>
-          <TextField
-            className={classes.textFieldFull}
-            id="password"
-            type="password"
-            name="password"
-            placeholder="password"
-            value={password}
-            onChange={onChange}
-            label="Password"
-            variant="outlined"
-          />
+          <div>
+            <TextField
+              className={classes.textFieldFull}
+              required
+              id="QUBID"
+              type="text"
+              name="QUBID"
+              value={QUBID}
+              onChange={onChange}
+              placeholder="QUB ID Number"
+              label="QUB ID"
+              variant="outlined"
+            />
+          </div>
+          <div>
+            <TextField
+              className={classes.textFieldFull}
+              required
+              id="email"
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={email}
+              onChange={onChange}
+              label="Email"
+              variant="outlined"
+              autoComplete="username"
+            />
+          </div>
         </div>
         <Button
           size="large"
@@ -115,14 +121,11 @@ const Login = (props) => {
           color="secondary"
           variant="contained"
         >
-          Login
+          Request Reset
         </Button>
       </form>
-      <Typography component={Link} to="/password-reset/">
-        Password Reset
-      </Typography>
     </div>
   );
 };
 
-export default Login;
+export default PasswordResetRequest;

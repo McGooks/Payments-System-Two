@@ -3,7 +3,6 @@ import React, { useContext, useEffect } from "react";
 import NavButtonUserMgmt from "../../components/layouts/NavButtonUserMgmt";
 //Components
 import UsersAdminTable from "../userAdmin/UserAdmin";
-import UserAdminContext from "../../context/userAdmin/userAdminContext";
 //State
 import AuthContext from "../../context/auth/authContext";
 

@@ -25,7 +25,7 @@ import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import Verify from "./components/auth/Verify";
 import PasswordReset from "./components/auth/PasswordReset";
-
+import PasswordResetRequest from "./components/auth/PasswordResetRequest"
 
 //Components
 import NavigationBar from "./components/layouts/NavigationBar";
@@ -73,12 +73,12 @@ const App = () => {
                             path="/payments"
                             component={Payments}
                           />
-                           <PrivateRoute
+                          <PrivateRoute
                             exact
                             path="/payments/new"
                             component={PaymentsCreate}
                           />
-                            <PrivateRoute
+                          <PrivateRoute
                             exact
                             path="/payments/:id"
                             component={ViewPayments}
@@ -109,6 +109,11 @@ const App = () => {
                             exact
                             path="/users/register"
                             component={Register}
+                          />
+                          <Route
+                            exact
+                            path="/password-reset"
+                            component={PasswordResetRequest}
                           />
                           <Route exact path="/login" component={Login} />
                           <Redirect from="*" to="/" />

@@ -25,7 +25,7 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import ProgressIndicator from "../layouts/Spinner";
+
 import { useSnackbar } from "notistack";
 import clsx from "clsx";
 
@@ -76,7 +76,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 function ccyFormat(num) {
   return `${num.toFixed(2)}`;
 }
@@ -94,180 +93,17 @@ function totalOfficeHours(totals) {
 }
 
 const ViewPayment = (props) => {
-  useEffect(() => {
-    clearCurrent()
-    getPayment(id);
-  }, [])
+  const { current } = props;
   const classes = useStyles();
   const paymentContext = useContext(PaymentContext);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const {
-    userPayments,
-    getPayment,
-    loading,
-    clearCurrent,
-  } = paymentContext;
-  const { id } = useParams();
+  const { userPayments, getPayment, loading, clearCurrent } = paymentContext;
 
   //State
-  const [payment, setPayment] = useState(null);
-  const [markingCalc, setMarkingCalc] = useState([]);
-  const [officeHoursCalc, setOfficeHoursCalc] = useState([]);
-  const [paymentCalc, setPaymentCalc] = useState({
-    lecture: [
-      {
-        activity: "Prep - 1st delivery",
-        paymentGrade: "",
-        paymentRate: 0.0,
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-      {
-        activity: "Prep - Repeat in same week (one repeat only)",
-        paymentGrade: "",
-        paymentRate: 0.0,
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-      {
-        activity: "Delivery",
-        paymentGrade: "",
-        paymentRate: 0.0,
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-    ],
-    seminar: [
-      {
-        activity: "Prep - 1st delivery (1hr)",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-      {
-        activity: "Prep - 1st delivery (2hrs)",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-      {
-        activity: "Prep - Repeat in same week (one repeat only)",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-      {
-        activity: "Delivery",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-    ],
-    lab: [
-      {
-        activity: "Prep - 1st delivery (0.5hrs)",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-      {
-        activity: "Prep - 1st delivery (1hr)",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-      {
-        activity: "Prep - Repeat in same week (one repeat only)",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-      {
-        activity: "Delivery",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-    ],
-    fieldTrip: [
-      {
-        activity: "Number of contact hours",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-    ],
-    office: [
-      {
-        activity: "0.5 hours per seminar group per week",
-        paymentGrade: "",
-        time: 0.0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-    ],
-    marking: [
-      {
-        activity: "Exam / Non Exam / Coursework",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-      {
-        activity: "Exam / Non Exam / Coursework",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-      {
-        activity: "Oral Exam",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-    ],
-    training: [
-      {
-        activity: "Number of hours",
-        paymentGrade: "",
-        time: 0,
-        count: 0,
-        totalhrs: 0.0,
-        payment: 0.0,
-      },
-    ],
-  });
+  const [payment, setPayment] = useState(current);
+  const [markingCalc, setMarkingCalc] = useState([...current.paymentDetail.markingCalc]);
+  const [officeHoursCalc, setOfficeHoursCalc] = useState([...current.paymentDetail.officeHours]);
+  const [paymentCalc, setPaymentCalc] = useState(current.paymentDetail.paymentCalc);
   const [hourlyRates, setHourlyRates] = useState({
     rate1: AC1_RATE,
     rate2: AC2_RATE,
@@ -285,7 +121,7 @@ const ViewPayment = (props) => {
   const hideForm = () => {
     setFormShowing(false);
   };
- 
+
   //declarations
   const invoiceSubtotal =
     subtotal(paymentCalc.training) +
@@ -299,70 +135,47 @@ const ViewPayment = (props) => {
   const totOfficeHours = totalOfficeHours(officeHoursCalc);
   //   const invoiceTaxes = TAX_RATE * invoiceSubtotal;
   const invoiceTotal = invoiceSubtotal;
-  console.log("markingCalc", markingCalc);
-  // console.log("paymentCalc", paymentCalc);
-  // console.log("OfficeCalc", officeHoursCalc);
-  // console.log("payment", payment);
-  // console.log("current", current)
-  console.log(loading)
-//   console.log("userSelect", userSelect)
-  
-  useEffect(() => {
-  if (userPayments) {
-    setPayment(userPayments)
-    setMarkingCalc(userPayments ? [...userPayments.paymentDetail.markingCalc] : [])
-    setOfficeHoursCalc(userPayments ? [...userPayments.paymentDetail.officeHours] : [])
-    setPaymentCalc((userPayments.paymentDetail.paymentCalc))
-    setGrade({ ...grade, grade1: userPayments.grade1, grade2: userPayments.grade2, })
-    setHourlyRates({ ...hourlyRates, rate1: userPayments.rate1, rate2: userPayments.rate2, })
-  } else {
-    getPayment(id);
-    setPayment(userPayments)
-  }
-}, [userPayments]);
-
   return (
     <Fragment>
       <div>
         <div>
-          {payment && !loading ? (
-            <Grid container spacing={1}>
-              <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                  <Grid container spacing={1}>
-                    <Grid
-                      item
-                      xs={8}
-                      className={clsx(classes.root, classes.left)}
-                    >
-                      <div>
-                        <Typography variant="h5">View Payment</Typography>
-                        <Typography variant="caption">
-                          Teaching Support Framework - Contract and Payment
-                          Calculator
-                        </Typography>
-                      </div>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={4}
-                      className={clsx(classes.root, classes.right)}
-                    >
-                      <Button
-                        variant="contained"
-                        component={Link}
-                        to="/payments/"
-                        color="secondary"
-                      >
-                        Back to Payments
-                      </Button>
-                    </Grid>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <Grid container spacing={1}>
+                  <Grid
+                    item
+                    xs={8}
+                    className={clsx(classes.root, classes.left)}
+                  >
+                    <div>
+                      <Typography variant="h5">View Payment</Typography>
+                      <Typography variant="caption">
+                        Teaching Support Framework - Contract and Payment
+                        Calculator
+                      </Typography>
+                    </div>
                   </Grid>
-                </Paper>
-              </Grid>
-              <Grid item xs={12}>
-                <Accordion expanded>
-                  {/* <AccordionSummary
+                  <Grid
+                    item
+                    xs={4}
+                    className={clsx(classes.root, classes.right)}
+                  >
+                    <Button
+                      variant="contained"
+                      component={Link}
+                      to="/payments/"
+                      color="secondary"
+                    >
+                      Back to Payments
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <Accordion expanded>
+                {/* <AccordionSummary
                     aria-controls="panel2a-content"
                     id="panel2a-header"
                   >
@@ -378,303 +191,115 @@ const ViewPayment = (props) => {
                       </Grid>
                     </Grid>
                   </AccordionSummary> */}
-                  <AccordionSummary
-                    aria-controls="panel3a-content"
-                    id="panel3a-header"
-                  >
-                    <Grid container spacing={1}>
-                      <Grid
-                        item
-                        xs={6}
-                        className={clsx(classes.root, classes.left)}
-                      >
-                        <Typography variant="h5">
-                          {"Marking & Office Hours"}
-                        </Typography>
-                      </Grid>
-                      <Grid
-                        item
-                        xs={3}
-                        className={clsx(classes.root, classes.left)}
-                      >
-                        <TextField
-                          fullWidth
-                          disabled
-                          size="small"
-                          className={classes.textField}
-                          variant="outlined"
-                          name="rate1"
-                          label={`${grade.grade1} Rate`}
-                          value={hourlyRates.rate1}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                £
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
-                      <Grid
-                        item
-                        xs={3}
-                        className={clsx(classes.root, classes.left)}
-                      >
-                        <TextField
-                          fullWidth
-                          disabled
-                          size="small"
-                          className={classes.textField}
-                          variant="outlined"
-                          name="rate2"
-                          label={`${grade.grade2} Rate`}
-                          value={hourlyRates.rate2}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                £
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
+                <AccordionSummary
+                  aria-controls="panel3a-content"
+                  id="panel3a-header"
+                >
+                  <Grid container spacing={1}>
+                    <Grid
+                      item
+                      xs={6}
+                      className={clsx(classes.root, classes.left)}
+                    >
+                      <Typography variant="h5">
+                        {"Marking & Office Hours"}
+                      </Typography>
                     </Grid>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <form>
-                      <Grid item xs={12}>
-                        <TableContainer component={Paper}>
-                          <Table
-                            className={classes.table}
-                            aria-label="spanning table"
-                            size="small"
-                          >
-                            <TableHead>
-                              <TableRow key={uuidv4()}>
-                                <TableCell align="left" colSpan={4}>
-                                  Marking hours Calculation (Exam / Non Exam /
-                                  Coursework)
-                                </TableCell>
-
-                                <TableCell />
-                                <TableCell />
-                                <TableCell />
-                              </TableRow>
-                              <TableRow key={uuidv4()}>
-                                <TableCell align="left">Range</TableCell>
-                                <TableCell align="center">
-                                  Payment Grade
-                                </TableCell>
-                                <TableCell align="center">
-                                  No of Students
-                                </TableCell>
-                                <TableCell align="center">
-                                  No of Pieces of Coursework per Student
-                                </TableCell>
-                                <TableCell align="center">
-                                  Oral Exam Contact Hours
-                                </TableCell>
-                                <TableCell align="center">Total</TableCell>
-                                <TableCell align="center">
-                                  Total Paid hours
-                                </TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {payment.paymentDetail.markingCalc.map((row, i) => (
-                                <TableRow key={i}>
-                                  <TableCell align="left">
-                                    {row.range}
-                                  </TableCell>
-                                  <TableCell align="center">
-                                    {row.range === "A" || row.range === "B"
-                                      ? grade.grade1
-                                      : grade.grade2}
-                                  </TableCell>
-                                  {row.range === "D" ? (
-                                    <TableCell align="center">
-                                      <Input
-                                        disabled
-                                        disableUnderline={true}
-                                        type="number"
-                                        size="small"
-                                        margin="dense"
-                                        classes={{
-                                          input: classes.inputCenter,
-                                        }}
-                                        variant="filled"
-                                        name="time"
-                                      />
-                                    </TableCell>
-                                  ) : (
-                                    <TableCell align="center">
-                                      <Input
-                                        disabled
-                                        disableUnderline={true}
-                                        type="number"
-                                        size="small"
-                                        margin="dense"
-                                        classes={{
-                                          input: classes.inputCenter,
-                                        }}
-                                        variant="filled"
-                                        name="numOfStudents"
-                                        value={row.numOfStudents}
-                                      />
-                                    </TableCell>
-                                  )}
-                                  {row.range === "D" ? (
-                                    <TableCell align="center">
-                                      <Input
-                                        disabled
-                                        type="number"
-                                        size="small"
-                                        margin="dense"
-                                        disableUnderline={true}
-                                        classes={{
-                                          input: classes.inputCenter,
-                                        }}
-                                        variant="filled"
-                                        name="time"
-                                      />
-                                    </TableCell>
-                                  ) : (
-                                    <TableCell align="center">
-                                      <Input
-                                        disabled
-                                        disableUnderline={true}
-                                        type="number"
-                                        size="small"
-                                        margin="dense"
-                                        classes={{
-                                          input: classes.inputCenter,
-                                        }}
-                                        variant="filled"
-                                        name="numOfCWPcsPerStudent"
-                                        value={row.numOfCWPcsPerStudent}
-                                      />
-                                    </TableCell>
-                                  )}
-                                  {row.range !== "D" ? (
-                                    <TableCell align="center">
-                                      <Input
-                                        disabled
-                                        type="number"
-                                        size="small"
-                                        margin="dense"
-                                        disableUnderline={true}
-                                        classes={{
-                                          input: classes.inputCenter,
-                                        }}
-                                        variant="filled"
-                                        name="time"
-                                      />
-                                    </TableCell>
-                                  ) : (
-                                    <TableCell align="center">
-                                      <Input
-                                        disabled
-                                        disableUnderline={true}
-                                        type="number"
-                                        size="small"
-                                        margin="dense"
-                                        classes={{
-                                          input: classes.inputCenter,
-                                        }}
-                                        variant="filled"
-                                        name="OralExamHours"
-                                        value={row.OralExamHours}
-                                      />
-                                    </TableCell>
-                                  )}
-                                  {row.range !== "D" ? (
-                                    <TableCell align="center">
-                                      <Input
-                                        disabled
-                                        type="number"
-                                        size="small"
-                                        margin="dense"
-                                        disableUnderline={true}
-                                        classes={{
-                                          input: classes.inputCenter,
-                                        }}
-                                        variant="filled"
-                                        name="total"
-                                        value={
-                                          row.numOfCWPcsPerStudent *
-                                          row.numOfStudents
-                                        }
-                                      />
-                                    </TableCell>
-                                  ) : (
-                                    <TableCell align="center">
-                                      <Input
-                                        disabled
-                                        type="number"
-                                        size="small"
-                                        margin="dense"
-                                        disableUnderline={true}
-                                        classes={{
-                                          input: classes.inputCenter,
-                                        }}
-                                        variant="filled"
-                                        name="total"
-                                        value={row.OralExamHours}
-                                      />
-                                    </TableCell>
-                                  )}
-                                  <TableCell align="center">
-                                    <Input
-                                      disabled
-                                      type="number"
-                                      size="small"
-                                      margin="dense"
-                                      disableUnderline={true}
-                                      classes={{
-                                        input: classes.inputCenter,
-                                      }}
-                                      variant="filled"
-                                      name="totalhrs"
-                                      value={row.totalPaidHours}
-                                    />
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                              <TableRow key={uuidv4()} selected={true}>
-                                <TableCell colSpan={6} align="right">
-                                  Total Paid Hours
-                                </TableCell>
-                                <TableCell align="center">
-                                  {parseFloat(ccyFormat(totPaidHours))}
-                                </TableCell>
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                        <TableContainer
-                          className={clsx(classes.spacer)}
-                          component={Paper}
+                    <Grid
+                      item
+                      xs={3}
+                      className={clsx(classes.root, classes.left)}
+                    >
+                      <TextField
+                        fullWidth
+                        disabled
+                        size="small"
+                        className={classes.textField}
+                        variant="outlined"
+                        name="rate1"
+                        label={`${grade.grade1} Rate`}
+                        value={hourlyRates.rate1}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">£</InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                    <Grid
+                      item
+                      xs={3}
+                      className={clsx(classes.root, classes.left)}
+                    >
+                      <TextField
+                        fullWidth
+                        disabled
+                        size="small"
+                        className={classes.textField}
+                        variant="outlined"
+                        name="rate2"
+                        label={`${grade.grade2} Rate`}
+                        value={hourlyRates.rate2}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">£</InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <form>
+                    <Grid item xs={12}>
+                      <TableContainer component={Paper}>
+                        <Table
+                          className={classes.table}
+                          aria-label="spanning table"
+                          size="small"
                         >
-                          <Table
-                            className={clsx(classes.table)}
-                            aria-label="spanning table"
-                            size="small"
-                          >
-                            <TableHead>
-                              <TableRow key={uuidv4()}>
-                                <TableCell align="left">
-                                  Office hours Calculation
+                          <TableHead>
+                            <TableRow key={uuidv4()}>
+                              <TableCell align="left" colSpan={4}>
+                                Marking hours Calculation (Exam / Non Exam /
+                                Coursework)
+                              </TableCell>
+
+                              <TableCell />
+                              <TableCell />
+                              <TableCell />
+                            </TableRow>
+                            <TableRow key={uuidv4()}>
+                              <TableCell align="left">Range</TableCell>
+                              <TableCell align="center">
+                                Payment Grade
+                              </TableCell>
+                              <TableCell align="center">
+                                No of Students
+                              </TableCell>
+                              <TableCell align="center">
+                                No of Pieces of Coursework per Student
+                              </TableCell>
+                              <TableCell align="center">
+                                Oral Exam Contact Hours
+                              </TableCell>
+                              <TableCell align="center">Total</TableCell>
+                              <TableCell align="center">
+                                Total Paid hours
+                              </TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {payment.paymentDetail.markingCalc.map((row, i) => (
+                              <TableRow key={i}>
+                                <TableCell align="left">{row.range}</TableCell>
+                                <TableCell align="center">
+                                  {row.range === "A" || row.range === "B"
+                                    ? grade.grade1
+                                    : grade.grade2}
                                 </TableCell>
-                                <TableCell />
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {officeHoursCalc.map((row, i) => (
-                                <TableRow key={i}>
-                                  <TableCell align="left">
-                                    {row.description}
-                                  </TableCell>
-                                  <TableCell align="right">
+                                {row.range === "D" ? (
+                                  <TableCell align="center">
                                     <Input
                                       disabled
                                       disableUnderline={true}
@@ -685,15 +310,127 @@ const ViewPayment = (props) => {
                                         input: classes.inputCenter,
                                       }}
                                       variant="filled"
-                                      name="count"
-                                      value={row.count}
+                                      name="time"
                                     />
                                   </TableCell>
-                                </TableRow>
-                              ))}
-                              <TableRow key={uuidv4()} selected={true}>
-                                <TableCell align="left">Total Hours</TableCell>
-                                <TableCell align="right">
+                                ) : (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      disableUnderline={true}
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      name="numOfStudents"
+                                      value={row.numOfStudents}
+                                    />
+                                  </TableCell>
+                                )}
+                                {row.range === "D" ? (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      name="time"
+                                    />
+                                  </TableCell>
+                                ) : (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      disableUnderline={true}
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      name="numOfCWPcsPerStudent"
+                                      value={row.numOfCWPcsPerStudent}
+                                    />
+                                  </TableCell>
+                                )}
+                                {row.range !== "D" ? (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      name="time"
+                                    />
+                                  </TableCell>
+                                ) : (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      disableUnderline={true}
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      name="OralExamHours"
+                                      value={row.OralExamHours}
+                                    />
+                                  </TableCell>
+                                )}
+                                {row.range !== "D" ? (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      name="total"
+                                      value={
+                                        row.numOfCWPcsPerStudent *
+                                        row.numOfStudents
+                                      }
+                                    />
+                                  </TableCell>
+                                ) : (
+                                  <TableCell align="center">
+                                    <Input
+                                      disabled
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      disableUnderline={true}
+                                      classes={{
+                                        input: classes.inputCenter,
+                                      }}
+                                      variant="filled"
+                                      name="total"
+                                      value={row.OralExamHours}
+                                    />
+                                  </TableCell>
+                                )}
+                                <TableCell align="center">
                                   <Input
                                     disabled
                                     type="number"
@@ -704,495 +441,66 @@ const ViewPayment = (props) => {
                                       input: classes.inputCenter,
                                     }}
                                     variant="filled"
-                                    name="count"
-                                    value={parseFloat(
-                                      ccyFormat(totOfficeHours)
-                                    )}
+                                    name="totalhrs"
+                                    value={row.totalPaidHours}
                                   />
                                 </TableCell>
                               </TableRow>
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      </Grid>
-                    </form>
-                  </AccordionDetails>
-                </Accordion>
-                <Accordion expanded>
-                  <AccordionSummary
-                    aria-controls="panel3a-content"
-                    id="panel3a-header"
-                  >
-                    <Grid container spacing={1}>
-                      <Grid
-                        item
-                        xs={6}
-                        className={clsx(classes.root, classes.left)}
+                            ))}
+                            <TableRow key={uuidv4()} selected={true}>
+                              <TableCell colSpan={6} align="right">
+                                Total Paid Hours
+                              </TableCell>
+                              <TableCell align="center">
+                                {parseFloat(ccyFormat(totPaidHours))}
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                      <TableContainer
+                        className={clsx(classes.spacer)}
+                        component={Paper}
                       >
-                        <Typography variant="h5">
-                          Other Payment Details
-                        </Typography>
-                      </Grid>
-                      <Grid
-                        item
-                        xs={3}
-                        className={clsx(classes.root, classes.left)}
-                      >
-                        <TextField
-                          fullWidth
-                          disabled
-                          size="small"
-                          className={classes.textField}
-                          variant="outlined"
-                          name="rate1"
-                          label={`${grade.grade1} Rate`}
-                          value={hourlyRates.rate1}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                £
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
-                      <Grid
-                        item
-                        xs={3}
-                        className={clsx(classes.root, classes.left)}
-                      >
-                        <TextField
-                          fullWidth
-                          disabled
-                          size="small"
-                          className={classes.textField}
-                          variant="outlined"
-                          name="rate2"
-                          label={`${grade.grade2} Rate`}
-                          value={hourlyRates.rate2}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                £
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
-                    </Grid>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Grid item xs={12}>
-                      <TableContainer component={Paper}>
                         <Table
-                          className={classes.table}
+                          className={clsx(classes.table)}
                           aria-label="spanning table"
                           size="small"
                         >
                           <TableHead>
                             <TableRow key={uuidv4()}>
-                              <TableCell align="left" colSpan={2}>
-                                Activity
+                              <TableCell align="left">
+                                Office hours Calculation
                               </TableCell>
-                              <TableCell align="center">
-                                Payment Grade
-                              </TableCell>
-                              <TableCell align="center">
-                                Delivery/ Completion time (hrs)
-                              </TableCell>
-                              <TableCell align="center">
-                                No of lectures/ Seminars/ Tutorials
-                              </TableCell>
-                              <TableCell align="center">Total hours</TableCell>
-                              <TableCell align="center">Payment £</TableCell>
+                              <TableCell />
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            <TableRow key={uuidv4()}>
-                              <TableCell rowSpan={3}>Lecture</TableCell>
-                              <TableCell align="left">
-                                {paymentCalc.lecture[0].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.lecture[0].time}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={paymentCalc.lecture[0].count}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={
-                                    paymentCalc.lecture[0].count *
-                                    paymentCalc.lecture[0].time
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.lecture[0].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.lecture[1].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.lecture[1].time}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={paymentCalc.lecture[1].count}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={
-                                    paymentCalc.lecture[1].count *
-                                    paymentCalc.lecture[1].time
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.lecture[1].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.lecture[2].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={null}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={null}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.lecture[2].totalhrs}
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.lecture[2].payment
-                              )}`}</TableCell>
-                            </TableRow>
+                            {officeHoursCalc.map((row, i) => (
+                              <TableRow key={i}>
+                                <TableCell align="left">
+                                  {row.description}
+                                </TableCell>
+                                <TableCell align="right">
+                                  <Input
+                                    disabled
+                                    disableUnderline={true}
+                                    type="number"
+                                    size="small"
+                                    margin="dense"
+                                    classes={{
+                                      input: classes.inputCenter,
+                                    }}
+                                    variant="filled"
+                                    name="count"
+                                    value={row.count}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            ))}
                             <TableRow key={uuidv4()} selected={true}>
-                              <TableCell colSpan={6} align="left">
-                                Total Lectures
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                subtotal(paymentCalc.lecture)
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell rowSpan={4}>
-                                Seminar / Tutorial / Oral Classes
-                              </TableCell>
-                              <TableCell align="left">
-                                {paymentCalc.seminar[0].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.seminar[0].time}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={paymentCalc.seminar[0].count}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={
-                                    paymentCalc.seminar[0].count *
-                                    paymentCalc.seminar[0].time
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.seminar[0].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.seminar[1].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.seminar[1].time}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={paymentCalc.seminar[1].count}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={
-                                    paymentCalc.seminar[1].count *
-                                    paymentCalc.seminar[1].time
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.seminar[1].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.seminar[2].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.seminar[2].time}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={paymentCalc.seminar[2].count}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={
-                                    paymentCalc.seminar[2].count *
-                                    paymentCalc.seminar[2].time
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.seminar[2].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.seminar[3].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
+                              <TableCell align="left">Total Hours</TableCell>
+                              <TableCell align="right">
                                 <Input
                                   disabled
                                   type="number"
@@ -1204,533 +512,990 @@ const ViewPayment = (props) => {
                                   }}
                                   variant="filled"
                                   name="count"
+                                  value={parseFloat(ccyFormat(totOfficeHours))}
                                 />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.seminar[3].totalhrs}
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.seminar[3].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()} selected={true}>
-                              <TableCell colSpan={6} align="left">
-                                Total Seminar/Tutorial/Oral Classes
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                subtotal(paymentCalc.seminar)
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell rowSpan={4}>
-                                Lab Supervision / Demonstrating
-                              </TableCell>
-                              <TableCell align="left">
-                                {paymentCalc.lab[0].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade1}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.lab[0].time}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={paymentCalc.lab[0].count}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={
-                                    paymentCalc.lab[0].count *
-                                    paymentCalc.lab[0].time
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.lab[0].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.lab[1].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade1}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.lab[1].time}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={paymentCalc.lab[1].count}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={
-                                    paymentCalc.lab[1].count *
-                                    paymentCalc.lab[1].time
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.lab[1].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.lab[2].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade1}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.lab[2].time}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                  value={paymentCalc.lab[2].count}
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={
-                                    paymentCalc.lab[2].count *
-                                    paymentCalc.lab[2].time
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.lab[2].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.lab[3].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade1}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="count"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.lab[3].totalhrs}
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.lab[3].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()} selected={true}>
-                              <TableCell colSpan={6} align="left">
-                                Total Lab Supervision/Demonstrating
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                subtotal(paymentCalc.lab)
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell>Field Trip Assistance</TableCell>
-                              <TableCell align="left">
-                                {paymentCalc.fieldTrip[0].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade1}
-                              </TableCell>
-                              <TableCell />
-                              <TableCell />
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.fieldTrip[0].totalhrs}
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.fieldTrip[0].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()} selected={true}>
-                              <TableCell colSpan={6} align="left">
-                                Total Field Trip Assistance
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                subtotal(paymentCalc.fieldTrip)
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell>Office Hours</TableCell>
-                              <TableCell align="left">
-                                {paymentCalc.office[0].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade1}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.office[0].time}
-                                />
-                              </TableCell>
-                              <TableCell />
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.office[0].totalhrs}
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.office[0].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()} selected={true}>
-                              <TableCell colSpan={6} align="left">
-                                Total Office Hours
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                subtotal(paymentCalc.office)
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell rowSpan={3}>Marking</TableCell>
-                              <TableCell align="left">
-                                {paymentCalc.marking[0].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade1}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.marking[0].time}
-                                />
-                              </TableCell>
-                              <TableCell />
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.marking[0].time}
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.marking[0].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.marking[1].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="time"
-                                  value={paymentCalc.marking[1].time}
-                                />
-                              </TableCell>
-                              <TableCell />
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.marking[1].time}
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.marking[1].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell align="left">
-                                {paymentCalc.marking[2].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade2}
-                              </TableCell>
-                              <TableCell />
-                              <TableCell />
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  disableUnderline={true}
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.marking[2].totalhrs}
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.marking[2].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()} selected={true}>
-                              <TableCell colSpan={6} align="left">
-                                Total Marking
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                subtotal(paymentCalc.marking)
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell>Training</TableCell>
-                              <TableCell align="left">
-                                {paymentCalc.training[0].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade1}
-                              </TableCell>
-                              <TableCell />
-                              <TableCell />
-                              <TableCell align="center">
-                                <Input
-                                  disabled
-                                  disableUnderline={true}
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputCenter,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.training[0].totalhrs}
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.training[0].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()} selected={true}>
-                              <TableCell colSpan={6} align="left">
-                                Total Training
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                subtotal(paymentCalc.training)
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()}>
-                              <TableCell rowSpan={3} />
-                              <TableCell />
-                              <TableCell />
-                              <TableCell colSpan={3}></TableCell>
-                              <TableCell align="center">
-                                {/* {`£${ccyFormat(invoiceSubtotal)}`} */}
                               </TableCell>
                             </TableRow>
-                            {/* <TableRow key={uuidv4()}>
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Grid>
+                  </form>
+                </AccordionDetails>
+              </Accordion>
+              <Accordion expanded>
+                <AccordionSummary
+                  aria-controls="panel3a-content"
+                  id="panel3a-header"
+                >
+                  <Grid container spacing={1}>
+                    <Grid
+                      item
+                      xs={6}
+                      className={clsx(classes.root, classes.left)}
+                    >
+                      <Typography variant="h5">
+                        Other Payment Details
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={3}
+                      className={clsx(classes.root, classes.left)}
+                    >
+                      <TextField
+                        fullWidth
+                        disabled
+                        size="small"
+                        className={classes.textField}
+                        variant="outlined"
+                        name="rate1"
+                        label={`${grade.grade1} Rate`}
+                        value={hourlyRates.rate1}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">£</InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                    <Grid
+                      item
+                      xs={3}
+                      className={clsx(classes.root, classes.left)}
+                    >
+                      <TextField
+                        fullWidth
+                        disabled
+                        size="small"
+                        className={classes.textField}
+                        variant="outlined"
+                        name="rate2"
+                        label={`${grade.grade2} Rate`}
+                        value={hourlyRates.rate2}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">£</InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid item xs={12}>
+                    <TableContainer component={Paper}>
+                      <Table
+                        className={classes.table}
+                        aria-label="spanning table"
+                        size="small"
+                      >
+                        <TableHead>
+                          <TableRow key={uuidv4()}>
+                            <TableCell align="left" colSpan={2}>
+                              Activity
+                            </TableCell>
+                            <TableCell align="center">Payment Grade</TableCell>
+                            <TableCell align="center">
+                              Delivery/ Completion time (hrs)
+                            </TableCell>
+                            <TableCell align="center">
+                              No of lectures/ Seminars/ Tutorials
+                            </TableCell>
+                            <TableCell align="center">Total hours</TableCell>
+                            <TableCell align="center">Payment £</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          <TableRow key={uuidv4()}>
+                            <TableCell rowSpan={3}>Lecture</TableCell>
+                            <TableCell align="left">
+                              {paymentCalc.lecture[0].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade2}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                                value={paymentCalc.lecture[0].time}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="count"
+                                value={paymentCalc.lecture[0].count}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={
+                                  paymentCalc.lecture[0].count *
+                                  paymentCalc.lecture[0].time
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.lecture[0].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell align="left">
+                              {paymentCalc.lecture[1].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade2}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                                value={paymentCalc.lecture[1].time}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="count"
+                                value={paymentCalc.lecture[1].count}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={
+                                  paymentCalc.lecture[1].count *
+                                  paymentCalc.lecture[1].time
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.lecture[1].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell align="left">
+                              {paymentCalc.lecture[2].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade2}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                                value={null}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="count"
+                                value={null}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={paymentCalc.lecture[2].totalhrs}
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.lecture[2].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()} selected={true}>
+                            <TableCell colSpan={6} align="left">
+                              Total Lectures
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              subtotal(paymentCalc.lecture)
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell rowSpan={4}>
+                              Seminar / Tutorial / Oral Classes
+                            </TableCell>
+                            <TableCell align="left">
+                              {paymentCalc.seminar[0].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade2}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                                value={paymentCalc.seminar[0].time}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="count"
+                                value={paymentCalc.seminar[0].count}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={
+                                  paymentCalc.seminar[0].count *
+                                  paymentCalc.seminar[0].time
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.seminar[0].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell align="left">
+                              {paymentCalc.seminar[1].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade2}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                                value={paymentCalc.seminar[1].time}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="count"
+                                value={paymentCalc.seminar[1].count}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={
+                                  paymentCalc.seminar[1].count *
+                                  paymentCalc.seminar[1].time
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.seminar[1].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell align="left">
+                              {paymentCalc.seminar[2].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade2}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                                value={paymentCalc.seminar[2].time}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="count"
+                                value={paymentCalc.seminar[2].count}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={
+                                  paymentCalc.seminar[2].count *
+                                  paymentCalc.seminar[2].time
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.seminar[2].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell align="left">
+                              {paymentCalc.seminar[3].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade2}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="count"
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={paymentCalc.seminar[3].totalhrs}
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.seminar[3].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()} selected={true}>
+                            <TableCell colSpan={6} align="left">
+                              Total Seminar/Tutorial/Oral Classes
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              subtotal(paymentCalc.seminar)
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell rowSpan={4}>
+                              Lab Supervision / Demonstrating
+                            </TableCell>
+                            <TableCell align="left">
+                              {paymentCalc.lab[0].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade1}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                                value={paymentCalc.lab[0].time}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="count"
+                                value={paymentCalc.lab[0].count}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={
+                                  paymentCalc.lab[0].count *
+                                  paymentCalc.lab[0].time
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.lab[0].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell align="left">
+                              {paymentCalc.lab[1].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade1}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                                value={paymentCalc.lab[1].time}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="count"
+                                value={paymentCalc.lab[1].count}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={
+                                  paymentCalc.lab[1].count *
+                                  paymentCalc.lab[1].time
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.lab[1].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell align="left">
+                              {paymentCalc.lab[2].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade1}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                                value={paymentCalc.lab[2].time}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="count"
+                                value={paymentCalc.lab[2].count}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={
+                                  paymentCalc.lab[2].count *
+                                  paymentCalc.lab[2].time
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.lab[2].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell align="left">
+                              {paymentCalc.lab[3].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade1}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="count"
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={paymentCalc.lab[3].totalhrs}
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.lab[3].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()} selected={true}>
+                            <TableCell colSpan={6} align="left">
+                              Total Lab Supervision/Demonstrating
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              subtotal(paymentCalc.lab)
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell>Field Trip Assistance</TableCell>
+                            <TableCell align="left">
+                              {paymentCalc.fieldTrip[0].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade1}</TableCell>
+                            <TableCell />
+                            <TableCell />
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={paymentCalc.fieldTrip[0].totalhrs}
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.fieldTrip[0].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()} selected={true}>
+                            <TableCell colSpan={6} align="left">
+                              Total Field Trip Assistance
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              subtotal(paymentCalc.fieldTrip)
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell>Office Hours</TableCell>
+                            <TableCell align="left">
+                              {paymentCalc.office[0].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade1}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={paymentCalc.office[0].time}
+                              />
+                            </TableCell>
+                            <TableCell />
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={paymentCalc.office[0].totalhrs}
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.office[0].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()} selected={true}>
+                            <TableCell colSpan={6} align="left">
+                              Total Office Hours
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              subtotal(paymentCalc.office)
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell rowSpan={3}>Marking</TableCell>
+                            <TableCell align="left">
+                              {paymentCalc.marking[0].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade1}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                                value={paymentCalc.marking[0].time}
+                              />
+                            </TableCell>
+                            <TableCell />
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={paymentCalc.marking[0].time}
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.marking[0].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell align="left">
+                              {paymentCalc.marking[1].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade2}</TableCell>
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="time"
+                                value={paymentCalc.marking[1].time}
+                              />
+                            </TableCell>
+                            <TableCell />
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={paymentCalc.marking[1].time}
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.marking[1].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell align="left">
+                              {paymentCalc.marking[2].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade2}</TableCell>
+                            <TableCell />
+                            <TableCell />
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                disableUnderline={true}
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={paymentCalc.marking[2].totalhrs}
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.marking[2].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()} selected={true}>
+                            <TableCell colSpan={6} align="left">
+                              Total Marking
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              subtotal(paymentCalc.marking)
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell>Training</TableCell>
+                            <TableCell align="left">
+                              {paymentCalc.training[0].activity}
+                            </TableCell>
+                            <TableCell align="center">{grade.grade1}</TableCell>
+                            <TableCell />
+                            <TableCell />
+                            <TableCell align="center">
+                              <Input
+                                disabled
+                                disableUnderline={true}
+                                type="number"
+                                size="small"
+                                margin="dense"
+                                classes={{
+                                  input: classes.inputCenter,
+                                }}
+                                variant="filled"
+                                name="totalhrs"
+                                value={paymentCalc.training[0].totalhrs}
+                              />
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              paymentCalc.training[0].payment
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()} selected={true}>
+                            <TableCell colSpan={6} align="left">
+                              Total Training
+                            </TableCell>
+                            <TableCell align="center">{`${CUR}${ccyFormat(
+                              subtotal(paymentCalc.training)
+                            )}`}</TableCell>
+                          </TableRow>
+                          <TableRow key={uuidv4()}>
+                            <TableCell rowSpan={3} />
+                            <TableCell />
+                            <TableCell />
+                            <TableCell colSpan={3}></TableCell>
+                            <TableCell align="center">
+                              {/* {`£${ccyFormat(invoiceSubtotal)}`} */}
+                            </TableCell>
+                          </TableRow>
+                          {/* <TableRow key={uuidv4()}>
                               <TableCell />
                               <TableCell />
                               <TableCell>Tax</TableCell>
@@ -1742,40 +1507,30 @@ const ViewPayment = (props) => {
                                 {`£${ccyFormat(invoiceTaxes)}`}
                               </TableCell>
                             </TableRow> */}
-                            <TableRow key={uuidv4()}>
-                              <TableCell />
-                              <TableCell />
-                              <TableCell colSpan={3}>Total</TableCell>
-                              <TableCell align="center">
-                                {`£${ccyFormat(invoiceTotal)}`}
-                              </TableCell>
-                            </TableRow>
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </Grid>
-                  </AccordionDetails>
-                </Accordion>
-              </Grid>
-              <Grid container spacing={30}>
-                <Grid
-                  item
-                  xs={12}
-                  className={clsx(classes.footer, classes.left)}
-                >
-                  {" "}
-                </Grid>
+                          <TableRow key={uuidv4()}>
+                            <TableCell />
+                            <TableCell />
+                            <TableCell colSpan={3}>Total</TableCell>
+                            <TableCell align="center">
+                              {`£${ccyFormat(invoiceTotal)}`}
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+            <Grid container spacing={30}>
+              <Grid item xs={12} className={clsx(classes.footer, classes.left)}>
+                {" "}
               </Grid>
             </Grid>
-            
-          ) : (
-            <ProgressIndicator />
-          )}
+          </Grid>
         </div>
       </div>
-      
     </Fragment>
-    
   );
 };
 

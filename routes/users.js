@@ -283,15 +283,14 @@ router.post(
 
 //@route    POST api/user/password-reset/:id
 //@desc     Get User and issue password reset to email address
-//@access   PRIVATE
-router.post("/password-reset-request/:id", auth, async (req, res) => {
+//@access   PUBLIC
+router.post("/password-reset-request/:id", async (req, res) => {
   try {
     let findUser = await User.findById(req.params.id).select([
       "id",
       "email",
       "firstName",
     ]);
-    console.log(findUser);
     const { email, _id } = findUser;
     if (!findUser) {
       res.status(400).json({ error: `User does not exist` }); // if user already exists throw error
@@ -510,12 +509,9 @@ router.post("/password-reset-request/:id", auth, async (req, res) => {
   }
 });
 
-let round = function (num, precision) {
-  num = parseFloat(num);
-  if (!precision) return num.toLocaleString();
-  return (Math.round(num / precision) * precision).toLocaleString();
-};
-
+//@route    PUT api/user/password-reset/:token
+//@desc     Get User and issue password reset to email address
+//@access   Public
 router.put(
   "/password-reset/:token",
   [
@@ -608,9 +604,29 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+//@route    POST api/users/password-reset-request-public
+//@desc     POST user ID
+//@access   Public
+router.post("/password-reset-request-public", async (req, res) => {
+  const { QUBID, email } = req.body;
+  try {
+    let users = await User.findOne({ QUBID: QUBID }).select(["id", "email"]);
+    if (users.email !== email) {
+      res
+        .status(401)
+        .send({ error: "An error occurred, please contact the system admin" });
+    } else {
+      res.json(users.id);
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send({ error: err.message });
+  }
+});
+
 //@route    POST api/users/confirm-email/:token
 //@desc     Activate User Account with token
-//@access   Private
+//@access   PUBLIC
 
 router.put("/confirm-email/:token", async (req, res) => {
   const token = req.params.token;

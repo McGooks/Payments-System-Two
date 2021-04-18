@@ -55,6 +55,10 @@ const UserPayments = (props) => {
     return <h4>You have no userPayments recorded</h4>; // if user list is empty
   }
 
+  const viewPayment = (dataIndex) => {
+    let path = `/payments/${dataIndex}`;
+    history.push(path);
+  };
 
   const openDialog = (e, dataIndex) => {
     e.preventDefault();
@@ -209,11 +213,10 @@ const UserPayments = (props) => {
                 alignItems="center"
               >
                 <Typography align="center">
-                  <Pageview
+                <Pageview
                     fontSize="small"
-                    onClick={(e) => {
-                      openDialog(e, { value, tableMeta, updateValue });
-                    }}
+                    onClick={() => viewPayment(tableMeta.rowData[0])}
+                    userID={tableMeta.rowData[0]}
                   />
                   <Typography align="center" display="block" variant="caption">
                     View
