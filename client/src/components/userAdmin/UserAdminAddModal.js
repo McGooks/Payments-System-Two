@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
+import AuthContext from "../../context/auth/authContext";
 import { schoolMenu, statusMenu, roleMenu } from "../../utils/dropdowns";
 import { useSnackbar } from "notistack";
 //UI
@@ -41,6 +42,8 @@ const useStyles = makeStyles((theme) => ({
 
 const UserAdminAddModal = () => {
   const classes = useStyles();
+  const authContext = useContext(AuthContext);
+  const { passwordResetRequest } = authContext;
   const userAdminContext = useContext(UserAdminContext);
   const {
     addUser,
@@ -169,6 +172,7 @@ const UserAdminAddModal = () => {
   };
 
   const passwordReset = () => {
+    passwordResetRequest(current._id)
     onCloseDialog();
     enqueueSnackbar(`Password Reset Sent`, {
       variant: "success",

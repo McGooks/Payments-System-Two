@@ -284,19 +284,21 @@ router.post(
 //@route    POST api/user/password-reset/:id
 //@desc     Get User and issue password reset to email address
 //@access   PRIVATE
-router.post("/password-reset/:id", auth, async (req, res) => {
+router.post("/password-reset-request/:id", auth, async (req, res) => {
   try {
-      let findUser = await User.findById(req.params.id).select(["id","email", "firstName"]);
-      console.log(findUser)
-    const {email, _id } = findUser;
+    let findUser = await User.findById(req.params.id).select([
+      "id",
+      "email",
+      "firstName",
+    ]);
+    console.log(findUser);
+    const { email, _id } = findUser;
     if (!findUser) {
       res.status(400).json({ error: `User does not exist` }); // if user already exists throw error
     } else {
-      const emailToken = jwt.sign(
-        { email, _id },
-        config.get("JWT_ACC_ACTIVATE"),
-        { expiresIn: 360000 }
-      );
+      const emailToken = jwt.sign({ email, _id }, config.get("JWT_PWDRESET"), {
+        expiresIn: 360000,
+      });
       const data = {
         from: "DemPay <noreply@dempay.com>",
         to: email,
@@ -508,6 +510,86 @@ router.post("/password-reset/:id", auth, async (req, res) => {
   }
 });
 
+let round = function (num, precision) {
+  num = parseFloat(num);
+  if (!precision) return num.toLocaleString();
+  return (Math.round(num / precision) * precision).toLocaleString();
+};
+
+router.put(
+  "/password-reset/:token",
+  [
+    check("password")
+      .isLength({ min: 6 })
+      .withMessage("Password must be at least 6 chars long")
+      .matches(/\d/)
+      .withMessage("Password must contain a number"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ error: errors.array({ onlyFirstError: true })[0].msg });
+    }
+    const token = req.params.token;
+    const { password } = req.body;
+    console.log(req.body);
+    console.log(password);
+    try {
+      if (token) {
+        const decode = jwt.verify(
+          token,
+          config.get("JWT_PWDRESET"),
+          function (err, decodedToken) {
+            if (err) {
+              return res.status(400).json({ error: err.message });
+            }
+            return decodedToken;
+          }
+        );
+        console.log(decode);
+        const { _id, exp } = decode;
+        let date = Date.now();
+        let longExp = exp * 1000;
+        console.log("current date", date);
+        console.log("expiry date", longExp);
+        if (longExp < date) {
+          return res.status(400).json({ error: "Token has expired" });
+        }
+        const salt = await bcrypt.genSalt(10); // Password salt
+        const userFields = {};
+        userFields.password = await bcrypt.hash(password, salt); // Pass in password and hash
+        userFields.passwordResetTokenExpiresAt = new Date(exp * 1000);
+        userFields.passwordResetToken = token;
+        userFields.updatedById = _id;
+        userFields.emailVerifiedDate = Date.now();
+        userFields.updatedAt = Date.now();
+        try {
+          let userPasswordReset = await User.findById({ _id }); // find user by ID address
+          console.log(userPasswordReset);
+          const userPasswordResetId = userPasswordReset.id; // Extract User ID
+          if (!userPasswordResetId) {
+            return res.status(404).json({ error: "User not found" });
+          } else {
+            passwordUser = await User.findByIdAndUpdate(
+              userPasswordResetId,
+              { $set: userFields },
+              { new: true }
+            ); // find user by ID address
+            res.json(passwordUser); // Return Json
+          }
+        } catch (err) {
+          res.status(500).json({ error: "User record cannot be verified" });
+        }
+      } else {
+        return res.json({ error: "An error occurred" });
+      }
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
+  }
+);
 
 //@route    GET api/users
 //@desc     Get all users
@@ -644,7 +726,6 @@ router.put("/:id", auth, async (req, res) => {
     res.status(500).send({ error: err.message });
   }
 });
-
 
 //@route    DELETE api/users/:id
 //@desc     Delete User

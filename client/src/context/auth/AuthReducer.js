@@ -4,6 +4,7 @@ import {
   REGISTER_FAIL,
   PASSWORD_RESET_REQUEST,
   PASSWORD_RESET_EMAIL_FAIL,
+  PASSWORD_RESET,
   RESEND_VERIFY,
   USER_LOADED,
   LOGIN_SUCCESS,
@@ -31,6 +32,8 @@ export default (state, action) => {
         isAuthenticated: true,
         loading: false,
       };
+    case PASSWORD_RESET_REQUEST:
+    case PASSWORD_RESET:
     case REGISTER_SUCCESS:
       return {
         ...state,
@@ -41,18 +44,6 @@ export default (state, action) => {
     case LOGIN_FAIL:
     case AUTH_ERROR:
     case LOGOUT:
-      localStorage.removeItem("token");
-      return {
-        ...state,
-        token: null,
-        isAuthenticated: false,
-        isAdmin: null,
-        loading: false,
-        user: null,
-        error: action.payload,
-      };
-
-    case PASSWORD_RESET_REQUEST:
       localStorage.removeItem("token");
       return {
         ...state,

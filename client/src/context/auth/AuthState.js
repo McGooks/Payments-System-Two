@@ -10,6 +10,7 @@ import {
   REGISTER_FAIL,
   PASSWORD_RESET_REQUEST,
   PASSWORD_RESET_EMAIL_FAIL,
+  PASSWORD_RESET,
   RESEND_VERIFY,
   USER_LOADED,
   AUTH_ERROR,
@@ -112,13 +113,9 @@ const AuthState = (props) => {
         config
       );
       dispatch({ type: PASSWORD_RESET_REQUEST, payload: res.data });
-      enqueueSnackbar("Password Updated, please log in", {
-        variant: "success",
-      });
-      logout()
     } catch (error) {
       dispatch({
-        type:PASSWORD_RESET_EMAIL_FAIL,
+        type: PASSWORD_RESET_EMAIL_FAIL,
         payload: error.response.data.error,
       });
     }
@@ -129,20 +126,22 @@ const AuthState = (props) => {
     const config = {
       headers: { "Content-Type": "application/json" },
     };
+    console.log(token)
+    console.log(formData)
     try {
-      const res = await axios.post(
+      const res = await axios.put(
         `/api/users/password-reset/${token}`,
         formData,
         config
       );
-      dispatch({ type: PASSWORD_RESET_REQUEST, payload: res.data });
-      enqueueSnackbar("Password Updated, please log in", {
+      dispatch({ type: PASSWORD_RESET, payload: res.data });
+      enqueueSnackbar("Password reset, please login", {
         variant: "success",
       });
-      logout()
+      logout();
     } catch (error) {
       dispatch({
-        type:PASSWORD_RESET_EMAIL_FAIL,
+        type: PASSWORD_RESET_EMAIL_FAIL,
         payload: error.response.data.error,
       });
     }
@@ -217,7 +216,7 @@ const AuthState = (props) => {
         verifyEmail,
         resendVerifyEmail,
         passwordResetRequest,
-        passwordUpdateRequest
+        passwordUpdateRequest,
       }}
     >
       {props.children}

@@ -27,14 +27,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PasswordReset= (props) => {
+const PasswordReset = (props) => {
   const classes = useStyles();
   const { token } = useParams();
   const authContext = useContext(AuthContext);
-  const { verifyEmail, logout } = authContext;
+  const { passwordUpdateRequest, logout, error, clearErrors } = authContext;
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   useEffect(() => {
     logout();
+    if (error) {
+      enqueueSnackbar(error, {
+        variant: "error",
+      });
+    }
+    clearErrors();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -43,8 +50,25 @@ const PasswordReset= (props) => {
     confirmPassword: "",
   });
 
-  const handleUpdatePassword = () => {
-    console.log("Update Password Test");
+  const handleUpdatePassword = (e) => {
+    e.preventDefault();
+    if (password.confirmPassword === "" || password.newPassword === "") {
+      enqueueSnackbar(`Please complete all fields`, {
+        variant: "warning",
+      });
+    } else if (password.confirmPassword !== password.newPassword) {
+      enqueueSnackbar(`Passwords do not match`, {
+        variant: "error",
+      });
+    } else {
+      password.password = password.newPassword;
+      setPassword({
+        ...password,
+      });
+      passwordUpdateRequest(token, password);
+      logout()
+      props.history.push("/")
+    }
   };
   const handleChangePassword = (e) => {
     setPassword({
