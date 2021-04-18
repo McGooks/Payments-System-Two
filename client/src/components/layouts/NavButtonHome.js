@@ -37,7 +37,6 @@ const NavButtonHome = (props) => {
   useEffect(() => {
     if (user !== null) {
       setUserID(user._id);
-      console.log(user._id);
     } else {
       setUserID({
         _id: "",

@@ -46,7 +46,6 @@ function getPrevAcademicYear() {
   return academicYear[0];
 }
 let PrevAcaYear = getPrevAcademicYear();
-console.log(PrevAcaYear);
 
 //@route    GET api/stats/
 //@desc     Get stats

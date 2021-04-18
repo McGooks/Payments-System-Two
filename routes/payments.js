@@ -25,7 +25,6 @@ router.get("/", auth, async (req, res) => {
 //@access   Private
 router.get("/:id", auth, async (req, res) => {
   try {
-    console.log(req.params.id)
     const payments = await Payment.findById(req.params.id)
       .populate("paymentDetail")
     res.json(payments);
@@ -157,40 +156,6 @@ router.put("/paid", auth, async (req, res) => {
   }
 });
 
-//@route    PUT api/payments/:id
-//@desc     Update User Payment
-//@access   PRIVATE
-router.put("/:id", auth, async (req, res) => {
-  console.log("Update User Payment ", req.body);
-  // const { name, email, phone, type } = req.body;
-  // //build payment object
-  // const paymentFields = {};
-  // if (name) paymentFields.name = name;
-  // if (email) paymentFields.email = email;
-  // if (phone) paymentFields.phone = phone;
-  // if (type) paymentFields.type = type;
-
-  // try {
-  //   let payment = await Payment.findById(req.params.id); // find payment by ID
-  //   if (!payment) return res.status(404).json({ msg: "payment not found" });
-  //   //ensure user owns payment
-  //   if (payment.user.toString() !== req.user.id) {
-  //     return res.status(401).json({ msg: "Not Authorised" });
-  //   }
-  //   payment = await Payment.findByIdAndUpdate(
-  //     req.params.id,
-  //     { $set: paymentFields },
-  //     { new: true }
-  //   );
-
-  //   res.json(payment);
-  // } catch (err) {
-  //   console.error(err.message);
-  //   res.status(500).send("Server Error");
-  // }
-});
-
-
 //@route    PUT api/payments/:id/approve
 //@desc     Update User Payment as Approved
 //@access   PRIVATE
@@ -206,7 +171,6 @@ router.put("/:id/approve", auth, async (req, res) => {
       paymentFields.paymentStatus = "Approved";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      console.log(paymentFields);
       payments = await Payment.findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },

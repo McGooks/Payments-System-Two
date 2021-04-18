@@ -40,7 +40,6 @@ router.post(
     const { QUBID, email, password } = req.body;
     try {
       let user = await User.findOne({ QUBID }); // find user
-      console.log(user);
       if (user) {
         res.status(400).json({
           error: "User already exists, please user system administrator",
@@ -267,13 +266,7 @@ router.post(
             </html>
         `,
       };
-      // mg.messages().send(data, function (err) {
-      //   if (err) {
-      //     console.log("The following error occurred: ", err);
-      //   } else {
-      //     console.log("Email successfully sent to: " + email);
-      //   }
-      // }); // Send Email
+      mg.messages().send(data); // Send Email
     } catch (err) {
       console.error(err.message);
       res.status(500).json({ error: err.message });
@@ -529,8 +522,6 @@ router.put(
     }
     const token = req.params.token;
     const { password } = req.body;
-    console.log(req.body);
-    console.log(password);
     try {
       if (token) {
         const decode = jwt.verify(
@@ -543,12 +534,9 @@ router.put(
             return decodedToken;
           }
         );
-        console.log(decode);
         const { _id, exp } = decode;
         let date = Date.now();
         let longExp = exp * 1000;
-        console.log("current date", date);
-        console.log("expiry date", longExp);
         if (longExp < date) {
           return res.status(400).json({ error: "Token has expired" });
         }
@@ -562,7 +550,6 @@ router.put(
         userFields.updatedAt = Date.now();
         try {
           let userPasswordReset = await User.findById({ _id }); // find user by ID address
-          console.log(userPasswordReset);
           const userPasswordResetId = userPasswordReset.id; // Extract User ID
           if (!userPasswordResetId) {
             return res.status(404).json({ error: "User not found" });

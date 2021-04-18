@@ -71,7 +71,6 @@ router.post(
         .status(400)
         .json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
-    console.log(req.body);
     const {
       address,
       contact,
@@ -319,12 +318,9 @@ router.post(
         });
         const salt = await bcrypt.genSalt(10); // Password salt
         newUser.password = await bcrypt.hash(password, salt); // Pass in password and hash
-        console.log(newUser);
         const user = await newUser.save();
         res.json(user);
         await newUser.save();
-        console.log(newUser);
-        console.log("this is coming from the user admin submission", user);
       }
     } catch (err) {
       console.error(err.message);

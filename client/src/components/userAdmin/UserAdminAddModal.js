@@ -58,7 +58,6 @@ const UserAdminAddModal = () => {
   useEffect(() => {
     if (current !== null) {
       setUser(current);
-      console.log("Current is set", current);
     } else {
       setUser({
         address: [

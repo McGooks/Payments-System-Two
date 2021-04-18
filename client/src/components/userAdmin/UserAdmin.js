@@ -96,7 +96,6 @@ const UserAdmin = (props) => {
     //   return <CustomToolbar />;
     // },
     onRowsDelete: (rows) => {
-      console.log("Console log of", rows.data.length);
       if (rows.data.length <= 10) {
         const usersToDelete = rows.data.map((d) => users[d.dataIndex]);
         usersToDelete.forEach((a) => {
@@ -117,7 +116,6 @@ const UserAdmin = (props) => {
         });
       } else {
         userAdminContext.loading = true;
-        console.log(loading);
         const usersToDelete = rows.data.map((d) => users[d.dataIndex]);
         usersToDelete.forEach((a) => {
           if (a._id === user._id) {
@@ -130,7 +128,6 @@ const UserAdmin = (props) => {
           }
         });
         userAdminContext.loading = false;
-        console.log(loading);
       }
     },
   };

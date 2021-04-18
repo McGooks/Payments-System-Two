@@ -41,7 +41,6 @@ const YOYCOmparisonChart = (props) => {
     ],
     []
   );
-  console.log(data);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -74,9 +73,6 @@ const YOYCOmparisonChart = (props) => {
     ],
     []
   );
-  console.log(data);
-
-
 
   const axes = React.useMemo(
     () => [

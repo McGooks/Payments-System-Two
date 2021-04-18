@@ -60,7 +60,6 @@ const Import = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
-  console.log(error)
 
   const onChange = (e) => {
     try {
@@ -97,7 +96,6 @@ const Import = (props) => {
       };
     });
     promise.then((d) => {
-      console.log(d);
       setJsonFileState(d);
     });
   };

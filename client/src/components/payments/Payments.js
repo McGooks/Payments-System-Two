@@ -69,29 +69,11 @@ const Payments = (props) => {
 
   const history = useHistory();
 
-
-
   function MonthWords(i) {
     const arr = monthWords.map((value) => value.value);
     return arr[i - 1];
   }
 
-  // const openEditDialog = (dataIndex) => {
-  //   setDialogOpen();
-  //   setCurrent(payments[dataIndex]._id);
-  //   console.log("Current is set to: ", current);
-  // };
-
-  useEffect(() => {
-    // if(user.role !== "Admin") history.push("/")
-    // if (error) {
-    //   enqueueSnackbar(error, {
-    //     variant: "error",
-    //   });
-    //   clearErrors();
-    // }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   if (payments !== null && payments.length === 0 && !loading) {
     return <h4>You have no payments recorded</h4>; // if user list is empty
@@ -161,7 +143,6 @@ const Payments = (props) => {
     //   return <CustomToolbar />;
     // },
     onRowsDelete: (rows) => {
-      console.log("Console log of", rows.data);
       if (rows.data.length <= 10) {
         const paymentsToDelete = rows.data.map((d) => payments[d.dataIndex]);
         paymentsToDelete.forEach((a) => {

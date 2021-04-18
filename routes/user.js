@@ -52,7 +52,6 @@ router.post("/resend/:id", auth, async (req, res) => {
   try {
     let findUser = await User.findById(req.params.id);
     const { QUBID, email, password } = findUser;
-    if (findUser) console.log("USER FOUND", findUser);
     if (!findUser) {
       res.status(400).json({ error: `User does not exist` }); // if user already exists throw error
     } else if (findUser.email === true) {
@@ -533,7 +532,6 @@ router.post(
         newUser.password = await bcrypt.hash(password, salt); // Pass in password and hash
         const user = await newUser.save();
         res.status(200).json(user);
-        console.log("this is coming from the user submission", user);
       }
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -559,12 +557,6 @@ router.put("/:id", auth, async (req, res) => {
   try {
     let user = await User.findById(req.params.id); // find user by ID
     if (!user) return res.status(404).json({ error: "User not found" });
-    // if (user._id.toString() === req.user.id) {
-    //   return res
-    //     .status(401)
-    //     .json({ error: "Users cannot edit their own records" });
-    // }
-    console.log(user);
     user = await User.findByIdAndUpdate(
       req.params.id,
       { $set: userFields },
@@ -581,8 +573,6 @@ router.put("/:id", auth, async (req, res) => {
 //@access   PRIVATE
 router.delete("/:id", auth, async (req, res) => {
   try {
-    console.log(req.user.id, "my user ID");
-    console.log(req.params.id, "id being passed from the table");
     let user = await User.findById(req.params.id); // find user by ID
     if (!user) return res.status(404).json({ msg: "user not found" });
     if (req.params.id === req.user.id) {

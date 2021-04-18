@@ -87,14 +87,12 @@ const User = (props) => {
   const { id } = useParams();
   const userContext = useContext(UserContext);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const { activeUser, isAdmin } = props;
-  // console.log("active user is: ", activeUser._id)
+  const { isAdmin } = props;
   const {
     user,
     current,
     getUser,
     setCurrent,
-    loading,
     updateUser,
   } = userContext;
 

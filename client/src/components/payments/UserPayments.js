@@ -60,13 +60,6 @@ const UserPayments = (props) => {
     history.push(path);
   };
 
-  const openDialog = (e, dataIndex) => {
-    e.preventDefault();
-    console.log("clicked", dataIndex.tableMeta.rowData);
-    // setDialogOpen();
-    // setCurrent(userPayments[dataIndex]._id);
-    // console.log("Handled Click", setCurrent(userPayments[dataIndex]));
-  };
 
   const CustomChip = ({ label, onDelete }) => {
     return (

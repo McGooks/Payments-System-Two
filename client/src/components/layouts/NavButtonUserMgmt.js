@@ -57,8 +57,6 @@ const NavButtonUserMgmt = () => {
     e.preventDefault();
     if(id === 3){
       openDialog()
-    }else if(id === 4){
-      console.log("blab")
     }
   };
 

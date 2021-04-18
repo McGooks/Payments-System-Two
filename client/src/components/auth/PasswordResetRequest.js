@@ -75,7 +75,6 @@ const PasswordResetRequest = (props) => {
       });
     }
   };
-  console.log(user);
   return (
     <div className="form-container">
       <h1>

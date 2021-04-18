@@ -476,7 +476,6 @@ const CreatePayment = (props) => {
   //Events
   const onChange = (e, i, g, r, rng) => {
     let rate = "";
-    // console.log(e,i, g, r)
     switch (i) {
       case 1:
         if (e.target.value === "TA") {
@@ -1115,11 +1114,6 @@ const CreatePayment = (props) => {
   const totOfficeHours = totalOfficeHours(officeHoursCalc);
   const invoiceTaxes = TAX_RATE * 0;
   const invoiceTotal = invoiceTaxes + invoiceSubtotal;
-  // console.log("markingCalc", markingCalc);
-  // console.log("paymentCalc", paymentCalc);
-  // console.log("OfficeCalc", officeHoursCalc);
-  console.log("payment", payment);
-  // console.log("userSelect", userSelect)
   return (
     <Fragment>
       <div>

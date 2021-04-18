@@ -38,7 +38,6 @@ const Login = (props) => {
     if (isAuthenticated) {
       props.history.push("/");
     }
-    console.log(error);
     if (error) {
       enqueueSnackbar(error, {
         variant: "error",
