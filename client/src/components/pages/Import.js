@@ -21,7 +21,7 @@ const ImportUsers = (props) => {
     loadUser();
     if (!isAdmin) {
       props.history.push("/");
-    } // eslint-disable-next-line react-hooks/exhaustive-deps
+    }
     if (importedUsersAdded) {
       props.history.push("/userAdmin");
       clearErrors();
@@ -33,12 +33,12 @@ const ImportUsers = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importedUsersAdded, isAdmin, props.history]);
-
+console.log(isAdmin)
   return (
     <div>
       <NavButtonUserMgmtImport />
       <div className="grid-1">
-          <Import />
+        <Import isAdmin={isAdmin}/>
       </div>
     </div>
   );

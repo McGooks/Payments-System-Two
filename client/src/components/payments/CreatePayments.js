@@ -1112,8 +1112,8 @@ const CreatePayment = (props) => {
     subtotal(paymentCalc.lecture);
   const totPaidHours = totalPaidHours(markingCalc);
   const totOfficeHours = totalOfficeHours(officeHoursCalc);
-  const invoiceTaxes = TAX_RATE * 0;
-  const invoiceTotal = invoiceTaxes + invoiceSubtotal;
+  // const invoiceTaxes = TAX_RATE * 0;
+  const invoiceTotal = invoiceSubtotal;
   return (
     <Fragment>
       <div>

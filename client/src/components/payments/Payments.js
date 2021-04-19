@@ -257,10 +257,23 @@ const Payments = (props) => {
       options: {
         filter: true,
         display: true,
+        download: false,
+        sort: false,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(value)
+        },
+      },
+    },
+    {
+      name: "amount",
+      label: "amount",
+      options: {
+        filter: true,
+        display: false,
         download: true,
         sort: false,
-        customBodyRender: (value) => {
-          return `£${value}`
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return new Intl.NumberFormat('en-GB',{ style: 'decimal', minimumFractionDigits: '2'}).format(value)
         },
       },
     },

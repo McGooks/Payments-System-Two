@@ -115,7 +115,7 @@ const Home = () => {
       setUserID({ id: user._id });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, userPayments]);
 
   const resendEmail = () => {
     resendVerifyEmail(userID.id);
@@ -202,7 +202,7 @@ const Home = () => {
               </Grid>
             </>) : (
             <>
-              {user && user.emailVerified === false ? (
+              {user && !user.emailVerified ? (
                 <MuiAlert
                   style={{ marginBottom: "20px" }}
                   severity="warning"
@@ -219,8 +219,7 @@ const Home = () => {
               ) : (
                 <NavButtonHome isAdmin={isAdmin} />
               )}
-
-              {user && !loading && userPayments.payments !== null ? (
+              {!loading && user && userPayments.payments.length ? (
                 <Grid container spacing={10}>
                   <Grid item xs={12}>
                     <UserPayments

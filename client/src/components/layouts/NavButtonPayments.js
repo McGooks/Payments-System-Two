@@ -32,15 +32,15 @@ const actions = [
     ),
     name: "Back",
   },
-  // {
-  //   id: 2,
-  //   icon: (
-  //     <Link to="/import">
-  //       <Import />
-  //     </Link>
-  //   ),
-  //   name: "Import File",
-  // },
+  {
+    id: 2,
+    icon: (
+      <Link to="/import">
+        <Import />
+      </Link>
+    ),
+    name: "Import File",
+  },
   {
     id: 3,
     icon: (
@@ -50,15 +50,15 @@ const actions = [
     ),
     name: "Manually Add Payment",
   },
-  {
-    id: 4,
-    icon: (
-      <Link to="#">
-        <Reports />
-      </Link>
-    ),
-    name: "Report Manager",
-  },
+  // {
+  //   id: 4,
+  //   icon: (
+  //     <Link to="#">
+  //       <Reports />
+  //     </Link>
+  //   ),
+  //   name: "Report Manager",
+  // },
 ];
 
 const NavButtonPayments = () => {

@@ -26,21 +26,21 @@ const actions = [
   {
     id: 1,
     icon: (
-      <Link to="/payments">
+      <Link to="/">
         <ArrowBackIcon />
       </Link>
     ),
     name: "Back",
   },
-  // {
-  //   id: 2,
-  //   icon: (
-  //     <Link to="/import">
-  //       <Import />
-  //     </Link>
-  //   ),
-  //   name: "Import File",
-  // },
+  {
+    id: 2,
+    icon: (
+      <Link to="/import">
+        <Import />
+      </Link>
+    ),
+    name: "Import File",
+  },
   // {
   //   id: 3,
   //   icon: (

@@ -174,8 +174,8 @@ const UserPayments = (props) => {
         display: true,
         download: true,
         sort: false,
-        customBodyRender: (value) => {
-          return `£${value}`;
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(value)
         },
       },
     },

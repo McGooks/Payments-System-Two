@@ -18,12 +18,14 @@ const PaymentsView = () => {
     getPayment,
     loading,
     current,
+    clearCurrent
   } = paymentContext;
   const { getActiveUsers } = userAdminContext;
   const { loadUser, isAdmin } = authContext;
   const { id } = useParams();
 
   useEffect(() => {
+    clearCurrent()
     getPayment(id);
   }, [id]);
 
