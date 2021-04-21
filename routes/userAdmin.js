@@ -50,6 +50,24 @@ router.get("/active", auth, async (req, res) => {
   }
 });
 
+//@route    GET api/userAdmin/:qubID
+//@desc     Get all ACTIVE users
+//@access   Private
+router.get("/:qubid", auth, async (req, res) => {
+  try {
+    const activeUser = await User.findOne({ QUBID: req.params.qubid })
+      .sort({
+        QUBID: 1,
+      })
+      .select(["firstName", "lastName", "QUBID", "_id"]);
+    res.json(activeUser);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+    res.status(500).json({ msg: "Unable to get users" });
+  }
+});
+
 //@route    POST api/userAdmin
 //@desc     Add new User
 //@access   PRIVATE
