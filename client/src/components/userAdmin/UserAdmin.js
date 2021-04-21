@@ -214,7 +214,7 @@ const UserAdmin = (props) => {
           return (
             <>
               <Grid container direction="row" alignContent="center" alignItems="center" justify="space-around">
-                <Grid item spacing={10} align="center">
+                <Grid item align="center">
                   <EditIcon
                     onClick={(e) => {
                       openDialog(e, dataIndex);
