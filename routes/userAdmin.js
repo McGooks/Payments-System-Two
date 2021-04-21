@@ -55,12 +55,12 @@ router.get("/active", auth, async (req, res) => {
 //@access   Private
 router.get("/:qubid", auth, async (req, res) => {
   try {
-    const activeUser = await User.findOne({ QUBID: req.params.qubid })
+    const NSPUser = await User.findOne({ QUBID: req.params.qubid })
       .sort({
         QUBID: 1,
       })
-      .select(["firstName", "lastName", "QUBID", "_id"]);
-    res.json(activeUser);
+      .select(["firstName", "lastName", "QUBID", "id"]);
+    res.json(NSPUser);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -100,6 +100,7 @@ router.post(
       lastName,
       password,
       QUBID,
+      NSPID,
       role,
       status,
       qubSchool,
@@ -329,6 +330,7 @@ router.post(
           lastName,
           password,
           QUBID,
+          NSPID,
           role,
           status,
           qubSchool,
@@ -360,6 +362,7 @@ router.put("/:id", auth, async (req, res) => {
     role,
     status,
     qubSchool,
+    NSPID
   } = req.body;
   //build user object
   const userFields = {};
@@ -368,6 +371,7 @@ router.put("/:id", auth, async (req, res) => {
   if (firstName) userFields.firstName = firstName;
   if (lastName) userFields.lastName = lastName;
   if (QUBID) userFields.QUBID = QUBID;
+  if (NSPID) userFields.NSPID = NSPID;
   if (role) userFields.role = role;
   if (status === "Active") {
     userFields.status = status;
@@ -380,6 +384,36 @@ router.put("/:id", auth, async (req, res) => {
   userFields.updatedById = req.user.id;
   userFields.updatedAt = Date.now();
 
+  try {
+    let user = await User.findById(req.params.id); // find user by ID
+    if (!user) return res.status(404).json({ error: "User not found" });
+    // ensure user is not current user
+    if (user._id.toString() === req.user.id) {
+      return res
+        .status(401)
+        .json({ error: "Users cannot edit their own records" });
+    }
+    user = await User.findByIdAndUpdate(
+      req.params.id,
+      { $set: userFields },
+      { new: true }
+    );
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+//@route    PUT api/userAdmin/NSP/:id
+//@desc     Update User NSP ID
+//@access   PRIVATE
+router.put("/NSP/:id", auth, async (req, res) => {
+  const { NSPID } = req.body;
+  //build user object
+  const userFields = {};
+  userFields.NSPID = NSPID;
+  userFields.updatedById = req.user.id;
+  userFields.updatedAt = Date.now();
   try {
     let user = await User.findById(req.params.id); // find user by ID
     if (!user) return res.status(404).json({ error: "User not found" });

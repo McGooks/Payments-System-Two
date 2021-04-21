@@ -6,14 +6,17 @@ import { schoolMenu, statusMenu, roleMenu } from "../../utils/dropdowns";
 import { useSnackbar } from "notistack";
 //UI
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormLabel from "@material-ui/core/FormLabel";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import {
+  TextField,
+  Tooltip,
+  MenuItem,
+  FormLabel,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -101,6 +104,7 @@ const UserAdminAddModal = () => {
         payment: "",
         payment1: "",
         QUBID: "",
+        NSPID: "",
         qubSchool: "",
         role: "",
         status: "Pending",
@@ -139,6 +143,7 @@ const UserAdminAddModal = () => {
     payment: "",
     payment1: "",
     QUBID: "",
+    NSPID: "",
     role: "User",
     status: "Pending",
     qubSchool: "",
@@ -152,6 +157,7 @@ const UserAdminAddModal = () => {
     password,
     password1,
     QUBID,
+    NSPID,
     role,
     status,
     qubSchool,
@@ -171,7 +177,7 @@ const UserAdminAddModal = () => {
   };
 
   const passwordReset = () => {
-    passwordResetRequest(current._id)
+    passwordResetRequest(current._id);
     onCloseDialog();
     enqueueSnackbar(`Password Reset Sent`, {
       variant: "success",
@@ -281,18 +287,32 @@ const UserAdminAddModal = () => {
                 label="Date Of Birth"
                 variant="outlined"
               />
-              <TextField
-                className={classes.textField}
-                required
-                id="QUBID"
-                type="text"
-                name="QUBID"
-                placeholder="QUB ID"
-                value={QUBID}
-                onChange={onChange}
-                label="QUB ID"
-                variant="outlined"
-              />
+              <div>
+                  <TextField
+                    className={classes.textField}
+                    required
+                    id="QUBID"
+                    type="text"
+                    name="QUBID"
+                    placeholder="QUB ID"
+                    value={QUBID}
+                    onChange={onChange}
+                    label="QUB ID"
+                    variant="outlined"
+                  />
+                <TextField
+                  className={classes.textField}
+                  required
+                  id="NSPID"
+                  type="text"
+                  name="NSPID"
+                  placeholder="NSP ID"
+                  value={NSPID}
+                  onChange={onChange}
+                  label="NSP ID"
+                  variant="outlined"
+                />
+              </div>
               {current ? (
                 <TextField
                   className={classes.textField}
@@ -355,6 +375,7 @@ const UserAdminAddModal = () => {
                     </MenuItem>
                   ))}
                 </TextField>
+
                 {current ? (
                   ""
                 ) : (
