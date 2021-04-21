@@ -74,7 +74,6 @@ const Payments = (props) => {
     return arr[i - 1];
   }
 
-
   if (payments !== null && payments.length === 0 && !loading) {
     return <h4>You have no payments recorded</h4>; // if user list is empty
   }
@@ -176,6 +175,7 @@ const Payments = (props) => {
     },
   };
 
+  // DO NOT change columns[0] to be anything other than ID
   const columns = [
     {
       name: "_id",
@@ -260,7 +260,10 @@ const Payments = (props) => {
         download: false,
         sort: false,
         customBodyRender: (value, tableMeta, updateValue) => {
-          return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(value)
+          return new Intl.NumberFormat("en-GB", {
+            style: "currency",
+            currency: "GBP",
+          }).format(value);
         },
       },
     },
@@ -273,7 +276,10 @@ const Payments = (props) => {
         download: true,
         sort: false,
         customBodyRender: (value, tableMeta, updateValue) => {
-          return new Intl.NumberFormat('en-GB',{ style: 'decimal', minimumFractionDigits: '2'}).format(value)
+          return new Intl.NumberFormat("en-GB", {
+            style: "decimal",
+            minimumFractionDigits: "2",
+          }).format(value);
         },
       },
     },
@@ -309,10 +315,14 @@ const Payments = (props) => {
           return (
             <>
               <Grid container direction="row" justify="space-between">
-                {tableMeta.rowData[8] === "Rejected" ||
-                tableMeta.rowData[8] === "Paid" ? (
+                {tableMeta.rowData.find((element) => element === "Rejected") ===
+                  "Rejected" ||
+                tableMeta.rowData.find((element) => element === "Paid") ===
+                  "Paid" ? (
                   ""
-                ) : tableMeta.rowData[8] === "Pending" ? (
+                ) : tableMeta.rowData.find(
+                    (element) => element === "Pending"
+                  ) === "Pending" ? (
                   <>
                     <Typography color="primary" align="center">
                       <ThumbUp
@@ -360,7 +370,9 @@ const Payments = (props) => {
                       </Typography>
                     </Typography>
                   </>
-                ) : tableMeta.rowData[8] === "On Hold" ? (
+                ) : tableMeta.rowData.find(
+                    (element) => element === "On Hold"
+                  ) === "On Hold" ? (
                   <>
                     <Typography color="primary" align="center">
                       <ThumbUp

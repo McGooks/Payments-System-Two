@@ -506,6 +506,66 @@ const ViewPayment = (props) => {
                           </TableBody>
                         </Table>
                       </TableContainer>
+                      <TableContainer
+                          className={clsx(classes.spacer)}
+                          component={Paper}
+                        >
+                          <Table
+                            className={clsx(classes.table)}
+                            aria-label="spanning table"
+                            size="small"
+                          >
+                            <TableHead>
+                              <TableRow key={uuidv4()}>
+                                <TableCell align="left">
+                                  Lab Supervision/Demonstrating
+                                </TableCell>
+                                <TableCell />
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              <TableRow key={uuidv4()}>
+                                <TableCell align="left">
+                                  {paymentCalc.lab[3].activity}
+                                </TableCell>
+                                <TableCell align="right">
+                                  <Input
+                                    disabled
+                                    type="number"
+                                    size="small"
+                                    margin="dense"
+                                    disableUnderline={true}
+                                    classes={{
+                                      input: classes.inputCenter,
+                                    }}
+                                    variant="filled"
+                                    name="totalhrs"
+                                    value={paymentCalc.lab[3].totalhrs}
+                          
+                                  />
+                                </TableCell>
+                              </TableRow>
+                              <TableRow key={uuidv4()} selected={true}>
+                                <TableCell align="left">Total Hours</TableCell>
+                                <TableCell align="right">
+                                  <Input
+                                    disabled
+                                    type="number"
+                                    size="small"
+                                    margin="dense"
+                                    disableUnderline={true}
+                                    classes={{
+                                      input: classes.inputCenter,
+                                    }}
+                                    variant="filled"
+                                    name="count"
+                                    value={paymentCalc.lab[3].totalhrs}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
                     </Grid>
                   </form>
                 </AccordionDetails>
