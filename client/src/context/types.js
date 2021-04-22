@@ -19,6 +19,7 @@ export const PENDING_PAYMENT = "PENDING_PAYMENT";
 export const PAID_PAYMENT = "PAID_PAYMENT";
 //userAdmin Framework Reducer
 export const GET_USERS = "GET_USERS";
+export const GET_USERS_NSP = "GET_USERS_NSP";
 export const GET_ACTIVE_USERS = "GET_ACTIVE_USERS";
 export const ADD_USER = "ADD_USER";
 export const DELETE_USER = "DELETE_USER";

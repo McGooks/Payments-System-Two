@@ -1,6 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import {
   GET_USERS,
+  GET_USERS_NSP,
   GET_ACTIVE_USERS,
   ADD_USER,
   DELETE_USER,
@@ -20,6 +21,14 @@ export default (state, action) => {
       return {
         ...state,
         users: action.payload,
+        importedUsersAdded: false,
+        loading: false,
+      };
+    }
+    case GET_USERS_NSP: {
+      return {
+        ...state,
+        usersNSP: [...state.usersNSP, action.payload],
         importedUsersAdded: false,
         loading: false,
       };
@@ -62,6 +71,7 @@ export default (state, action) => {
         error: null,
         current: null,
         activeUsers: null,
+        usersNSP: [],
       };
     }
     case SET_CURRENT: {

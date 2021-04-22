@@ -17,11 +17,6 @@ import * as XLSX from "xlsx";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    "& > *": {
-      margin: theme.spacing(1),
-    },
-  },
   input: {
     display: "none",
   },
@@ -36,15 +31,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const mergeById = (a1, a2) =>
+  a1.map((itm) => ({
+    ...a2.find((item) => item.QUBID === itm.QUBID && item),
+    ...itm,
+  }));
+
 const ImportNSP = (props) => {
   const classes = useStyles();
   const userAdminContext = useContext(UserAdminContext);
-  const { addUser, error, clearErrors } = userAdminContext;
+  const {
+    getUsersNSP,
+    updateUserNSP,
+    usersNSP,
+    error,
+    clearErrors,
+    clearNSPUser,
+    loading,
+  } = userAdminContext;
 
   const [filestate, setFilestate] = useState({
     file: "",
   });
   const [jsonFile, setJsonFileState] = useState([]);
+  const [NSPUserState, setNSPUserState] = useState(usersNSP);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const fileUploader = useRef(null);
 
@@ -53,6 +63,12 @@ const ImportNSP = (props) => {
   };
 
   useEffect(() => {
+    setJsonFileState([]);
+    setNSPUserState([]);
+    setFilestate({
+      file: "",
+    });
+    clearNSPUser();
     if (error) {
       enqueueSnackbar(error, {
         variant: "error",
@@ -81,6 +97,7 @@ const ImportNSP = (props) => {
   };
 
   const readFile = (file) => {
+    userAdminContext.loading = true;
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsArrayBuffer(file);
@@ -98,67 +115,44 @@ const ImportNSP = (props) => {
     });
     promise.then((d) => {
       setJsonFileState(d);
+      d.map((a) => {
+        getUsersNSP(a.QUBID);
+      });
     });
+    userAdminContext.loading = false;
   };
 
-  const makePassword = (length) => {
-    var result = "";
-    var characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  const onLookup = (e) => {
+    userAdminContext.loading = true;
+    e.preventDefault();
+    try {
+      jsonFile.map((d) => {
+        NSPUserState[d.__rowNum__ - 1] = usersNSP[d.__rowNum__ - 1];
+        setNSPUserState([...NSPUserState]);
+      });
+      setJsonFileState(mergeById(NSPUserState, jsonFile));
+      userAdminContext.loading = false;
+    } catch (err) {
+      console.error(err.message);
+      enqueueSnackbar(error, {
+        variant: "error",
+      });
     }
-    return result;
   };
 
+  const reset = () => {
+    setJsonFileState([]);
+    setNSPUserState([]);
+    setFilestate({
+      file: "",
+    });
+    clearNSPUser();
+  };
   const onSubmit = (e) => {
     e.preventDefault();
     try {
       jsonFile.map((d) => {
-        let makeRandomPassword = {
-          address: [
-            {
-              street: "",
-              city: "",
-              county: "",
-              country: "",
-              postcode: "",
-            },
-          ],
-          contact: [
-            {
-              mobile: "",
-              landline: "",
-            },
-          ],
-          bank: [
-            {
-              bankName: "",
-              branchName: "",
-              sortCode: "",
-              accNumber: "",
-              buildingSocietyNumber: "",
-            },
-          ],
-          status: "Pending",
-          password: makePassword(10),
-          taxDeclaration: [
-            {
-              employeeStatements_section1: "",
-              employeeStatements_section2: "",
-              employeeStatements_section3q1: "",
-              employeeStatements_section3q2: "",
-              employeeStatements_section3q3: "",
-              employeeStatements_section3q4: "",
-              employeeStatements_section3q5: "",
-              signed: false,
-              signedDate: "",
-            },
-          ],
-        };
-        let userWithAddedRandomPassword = Object.assign(d, makeRandomPassword);
-        addUser(userWithAddedRandomPassword);
+        updateUserNSP(d);
       });
       setJsonFileState([]);
     } catch (err) {
@@ -276,11 +270,10 @@ const ImportNSP = (props) => {
             <Grid container spacing={1}>
               <Grid item xs={12} className={clsx(classes.root, classes.left)}>
                 <div>
-                  <Typography variant="h5">
-                   NSP Data Import
-                  </Typography>
+                  <Typography variant="h5">NSP Data Import</Typography>
                   <Typography variant="caption">
-                    Please only use this tool, for locating and updating user accounts with their NSP ID
+                    Please only use this tool, for locating and updating user
+                    accounts with their NSP ID
                   </Typography>
                 </div>
               </Grid>
@@ -321,8 +314,7 @@ const ImportNSP = (props) => {
             </Grid>
           </Paper>
         </Grid>
-
-        {jsonFile !== null ? (
+        {jsonFile && !loading ? (
           <>
             <Grid item xs={12} spacing={1}>
               <MUIDataTable
@@ -337,9 +329,31 @@ const ImportNSP = (props) => {
                 color="secondary"
                 variant="contained"
                 startIcon={<PublishIcon />}
+                onClick={onLookup}
+              >
+                Verify Users
+              </Button>
+              <Button
+                component="span"
+                size="large"
+                className={classes.button}
+                color="secondary"
+                variant="contained"
+                startIcon={<PublishIcon />}
                 onClick={onSubmit}
               >
                 Import NSP ID's
+              </Button>
+              <Button
+                component="span"
+                size="large"
+                className={classes.button}
+                color="secondary"
+                variant="contained"
+                startIcon={<PublishIcon />}
+                onClick={reset}
+              >
+                Reset
               </Button>
             </Grid>
           </>
