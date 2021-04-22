@@ -17,6 +17,12 @@ import * as XLSX from "xlsx";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+    flexGrow: 1,
+  },
   input: {
     display: "none",
   },
@@ -29,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     width: "54ch",
   },
+  button: {
+    margin: theme.spacing(1),
+  }
 }));
 
 const mergeById = (a1, a2) =>
@@ -63,12 +72,6 @@ const ImportNSP = (props) => {
   };
 
   useEffect(() => {
-    setJsonFileState([]);
-    setNSPUserState([]);
-    setFilestate({
-      file: "",
-    });
-    clearNSPUser();
     if (error) {
       enqueueSnackbar(error, {
         variant: "error",
@@ -229,26 +232,6 @@ const ImportNSP = (props) => {
         sort: true,
       },
     },
-    // {
-    //   name: "email",
-    //   label: "Email",
-    //   options: {
-    //     filter: false,
-    //     display: true,
-    //     download: true,
-    //     sort: true,
-    //   },
-    // },
-    // {
-    //   name: "role",
-    //   label: "Role",
-    //   options: {
-    //     filter: true,
-    //     display: true,
-    //     download: true,
-    //     sort: false,
-    //   },
-    // },
     {
       name: "status",
       label: "Status",
@@ -257,7 +240,7 @@ const ImportNSP = (props) => {
         display: true,
         download: true,
         sort: false,
-        customBodyRenderLite: (value) => (value = "Pending"),
+        customBodyRenderLite: (value) => (value = "Pending Import"),
       },
     },
   ];
@@ -281,7 +264,7 @@ const ImportNSP = (props) => {
                 <div>
                   <input
                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    className={classes.input}
+                    className={clsx(classes.input,classes.button)}
                     id="contained-button-file"
                     type="file"
                     ref={fileUploader}
@@ -322,39 +305,46 @@ const ImportNSP = (props) => {
                 columns={columns}
                 options={options}
               />
-              <Button
-                component="span"
-                size="large"
-                className={classes.button}
-                color="secondary"
-                variant="contained"
-                startIcon={<PublishIcon />}
-                onClick={onLookup}
-              >
-                Verify Users
-              </Button>
-              <Button
-                component="span"
-                size="large"
-                className={classes.button}
-                color="secondary"
-                variant="contained"
-                startIcon={<PublishIcon />}
-                onClick={onSubmit}
-              >
-                Import NSP ID's
-              </Button>
-              <Button
-                component="span"
-                size="large"
-                className={classes.button}
-                color="secondary"
-                variant="contained"
-                startIcon={<PublishIcon />}
-                onClick={reset}
-              >
-                Reset
-              </Button>
+              <Grid container spacing={1}>
+                <Grid item xs={12} className={clsx(classes.button, classes.right)}>
+                  <Button
+                    component="span"
+                    size="large"
+                    className={classes.button}
+                    style={{
+                      backgroundColor: "green",
+                      color: "white"
+                  }}
+                    variant="contained"
+                    startIcon={<PublishIcon />}
+                    onClick={onLookup}
+                  >
+                    Check Users
+                  </Button>
+                  <Button
+                    component="span"
+                    size="large"
+                    className={classes.button}
+                    color="secondary"
+                    variant="contained"
+                    startIcon={<PublishIcon />}
+                    onClick={onSubmit}
+                  >
+                    Import NSP ID's
+                  </Button>
+                  <Button
+                    component="span"
+                    size="large"
+                    className={classes.button}
+                    color="primary"
+                    variant="contained"
+                    startIcon={<PublishIcon />}
+                    onClick={reset}
+                  >
+                    Reset
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </>
         ) : (

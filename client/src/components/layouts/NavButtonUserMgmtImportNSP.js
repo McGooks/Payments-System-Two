@@ -6,7 +6,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import CallMerge from "@material-ui/icons/CallMerge";
+
+import GroupAddIcon from "@material-ui/icons/GroupAdd";
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
 // UI
@@ -53,6 +54,7 @@ const NavButtonUserMgmtImport = () => {
       openDialog();
     }
   }
+
   const actions = [
     {
       id: 1,
@@ -75,15 +77,13 @@ const NavButtonUserMgmtImport = () => {
     {
       id: 3,
       icon: (
-        <Link to="/importNSP">
-          <CallMerge />
+        <Link to="/import">
+          <GroupAddIcon />
         </Link>
       ),
-      name: "Import NSP Data",
+      name: "Import Multi Users",
     },
   ];
-
-
 
   return (
     <div className={classes.root}>

@@ -4,7 +4,7 @@ import UserAdminContext from "../../context/userAdmin/userAdminContext";
 import AuthContext from "../../context/auth/authContext";
 //UI
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Card, CardHeader, Typography, Paper } from "@material-ui/core";
+import { Grid, Typography, Paper } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import EditIcon from "@material-ui/icons/Edit";
 import Upload from "@material-ui/icons/Backup";
@@ -40,7 +40,6 @@ const Import = (props) => {
   const classes = useStyles();
   const userAdminContext = useContext(UserAdminContext);
   const { addUser, error, clearErrors } = userAdminContext;
-
   const [filestate, setFilestate] = useState({
     file: "",
   });

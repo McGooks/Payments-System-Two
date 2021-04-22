@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import AuthContext from "../../context/auth/authContext";
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
-import NavButtonUserMgmtImport from "../layouts/NavButtonUserMgmtImport"
+import NavButtonUserMgmtImportNSP from "../layouts/NavButtonUserMgmtImportNSP"
 import { useSnackbar } from "notistack";
 import ImportNSP from "../import/ImportNSP"
 
@@ -36,7 +36,7 @@ const ImportNSPData = (props) => {
 
   return (
     <div>
-      <NavButtonUserMgmtImport />
+      <NavButtonUserMgmtImportNSP />
       <div className="grid-1">
         <ImportNSP isAdmin={isAdmin}/>
       </div>
