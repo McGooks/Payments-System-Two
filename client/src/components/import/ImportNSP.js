@@ -10,6 +10,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import Upload from "@material-ui/icons/Backup";
 import TextField from "@material-ui/core/TextField";
 import PublishIcon from "@material-ui/icons/Publish";
+import CheckCircleOutline from "@material-ui/icons/CheckCircleOutline"
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     margin: theme.spacing(1),
-  }
+  },
 }));
 
 const mergeById = (a1, a2) =>
@@ -66,6 +67,7 @@ const ImportNSP = (props) => {
   const [NSPUserState, setNSPUserState] = useState(usersNSP);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const fileUploader = useRef(null);
+  const [enable, setEnable] = useState(true)
 
   const handleClick = (e) => {
     fileUploader.current.focus();
@@ -80,6 +82,26 @@ const ImportNSP = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
+
+  useEffect(() => {
+    if (filestate.ile !== "") {
+      userAdminContext.loading = true;
+      try {
+        jsonFile.map((d) => {
+          NSPUserState[d.__rowNum__ - 1] = usersNSP[d.__rowNum__ - 1];
+          setNSPUserState([...NSPUserState]);
+        });
+        setJsonFileState(mergeById(NSPUserState, jsonFile));
+        userAdminContext.loading = false;
+      } catch (err) {
+        console.error(err.message);
+        enqueueSnackbar(error, {
+          variant: "error",
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onChange = (e) => {
     try {
@@ -135,6 +157,7 @@ const ImportNSP = (props) => {
       });
       setJsonFileState(mergeById(NSPUserState, jsonFile));
       userAdminContext.loading = false;
+      setEnable(false)
     } catch (err) {
       console.error(err.message);
       enqueueSnackbar(error, {
@@ -264,7 +287,7 @@ const ImportNSP = (props) => {
                 <div>
                   <input
                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    className={clsx(classes.input,classes.button)}
+                    className={clsx(classes.input, classes.button)}
                     id="contained-button-file"
                     type="file"
                     ref={fileUploader}
@@ -297,7 +320,7 @@ const ImportNSP = (props) => {
             </Grid>
           </Paper>
         </Grid>
-        {jsonFile && !loading ? (
+        {jsonFile.length > 0 && !loading ? (
           <>
             <Grid item xs={12} spacing={1}>
               <MUIDataTable
@@ -306,22 +329,27 @@ const ImportNSP = (props) => {
                 options={options}
               />
               <Grid container spacing={1}>
-                <Grid item xs={12} className={clsx(classes.button, classes.right)}>
+                <Grid
+                  item
+                  xs={12}
+                  className={clsx(classes.button, classes.right)}
+                >
                   <Button
                     component="span"
                     size="large"
                     className={classes.button}
                     style={{
                       backgroundColor: "green",
-                      color: "white"
-                  }}
+                      color: "white",
+                    }}
                     variant="contained"
-                    startIcon={<PublishIcon />}
+                    startIcon={<CheckCircleOutline />}
                     onClick={onLookup}
                   >
                     Check Users
                   </Button>
                   <Button
+                    disabled={enable}
                     component="span"
                     size="large"
                     className={classes.button}
@@ -348,8 +376,15 @@ const ImportNSP = (props) => {
             </Grid>
           </>
         ) : (
-          <ProgressIndicator />
+          <hr></hr>
         )}
+      </Grid>
+      <Grid container spacing={10}>
+        <Grid
+          item
+          xs={12}
+          className={clsx(classes.footer, classes.left)}
+        ></Grid>
       </Grid>
     </>
   );
