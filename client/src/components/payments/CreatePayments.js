@@ -46,6 +46,7 @@ import UserPayments from "./UserPayments";
 
 const CUR = "£";
 const TAX_RATE = -0.2;
+const ACCOUNT_NUM = 6202;
 const AC1_RATE = 14.73;
 const AC2_RATE = 17.57;
 const BANDA_RATE = 15.01;
@@ -102,7 +103,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     color: "black",
     fontSize: theme.typography.pxToRem(14),
-    backgroundColor: "#edfced"
+    backgroundColor: "#edfced",
   },
   finalButton: {
     margin: theme.spacing(2),
@@ -197,13 +198,13 @@ const CreatePayment = (props) => {
     ),
     semester: "1",
     QUBID: "10000000",
-    account: "",
-    projectCode: "",
+    account: ACCOUNT_NUM,
+    projectCode: "A2517EEC",
     projectName: "",
     subAnalysis: "",
     amount: 0.0,
     student_cohort: true,
-    cohort_id: "00",
+    cohort_id: "26",
     paymentStatus: "Pending",
     grade1: "AC1",
     grade2: "AC2",
@@ -1141,7 +1142,7 @@ const CreatePayment = (props) => {
                       xs={4}
                       className={clsx(classes.root, classes.right)}
                     >
-                       <Button
+                      <Button
                         variant="contained"
                         component={Link}
                         to="/payments/"
@@ -1427,7 +1428,6 @@ const CreatePayment = (props) => {
                             xs={6}
                             className={clsx(classes.root, classes.right)}
                           >
-                            
                             <Button
                               type="submit"
                               variant="contained"
@@ -1580,7 +1580,6 @@ const CreatePayment = (props) => {
                                         size="small"
                                         margin="dense"
                                         disableUnderline={true}
-
                                         variant="filled"
                                         name="time"
                                       />
@@ -1625,7 +1624,6 @@ const CreatePayment = (props) => {
                                         size="small"
                                         margin="dense"
                                         disableUnderline={true}
-                                        
                                         variant="filled"
                                         name="time"
                                       />
@@ -1918,11 +1916,16 @@ const CreatePayment = (props) => {
                             xs={12}
                             className={clsx(classes.root, classes.right)}
                           >
-                             <div>
-                        <Typography variant="caption">
-                          All values entered here will be calculated on the next view<p>Please check you have entered the correct details before proceeding</p> 
-                        </Typography>
-                      </div>
+                            <div>
+                              <Typography variant="caption">
+                                All values entered here will be calculated on
+                                the next view
+                                <p>
+                                  Please check you have entered the correct
+                                  details before proceeding
+                                </p>
+                              </Typography>
+                            </div>
                             <Button
                               disabled={
                                 isDisabled.panel2 ||
@@ -3167,52 +3170,55 @@ const CreatePayment = (props) => {
                                 subtotal(paymentCalc.marking)
                               )}`}</TableCell>
                             </TableRow>
-                            {grade.grade2 !== "Band B" ?
-                                <>
-                            <TableRow key={uuidv4()}>
-                              <TableCell>Training</TableCell>
-                              <TableCell align="left">
-                                {paymentCalc.training[0].activity}
-                              </TableCell>
-                              <TableCell align="center">
-                                {grade.grade1}
-                              </TableCell>
-                              <TableCell />
-                              <TableCell />
-                              <TableCell align="center">
-                                <Input
-                                  type="number"
-                                  size="small"
-                                  margin="dense"
-                                  classes={{
-                                    input: classes.inputEdit,
-                                  }}
-                                  variant="filled"
-                                  name="totalhrs"
-                                  value={paymentCalc.training[0].totalhrs}
-                                  onChange={(e) =>
-                                    onChange(
-                                      e,
-                                      4,
-                                      grade.grade1,
-                                      paymentCalc.training[0]
-                                    )
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                paymentCalc.training[0].payment
-                              )}`}</TableCell>
-                            </TableRow>
-                            <TableRow key={uuidv4()} selected={true}>
-                              <TableCell colSpan={6} align="left">
-                                Total Training
-                              </TableCell>
-                              <TableCell align="center">{`${CUR}${ccyFormat(
-                                subtotal(paymentCalc.training)
-                              )}`}</TableCell>
-                            </TableRow>
-                                </> : "" }
+                            {grade.grade2 !== "Band B" ? (
+                              <>
+                                <TableRow key={uuidv4()}>
+                                  <TableCell>Training</TableCell>
+                                  <TableCell align="left">
+                                    {paymentCalc.training[0].activity}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {grade.grade1}
+                                  </TableCell>
+                                  <TableCell />
+                                  <TableCell />
+                                  <TableCell align="center">
+                                    <Input
+                                      type="number"
+                                      size="small"
+                                      margin="dense"
+                                      classes={{
+                                        input: classes.inputEdit,
+                                      }}
+                                      variant="filled"
+                                      name="totalhrs"
+                                      value={paymentCalc.training[0].totalhrs}
+                                      onChange={(e) =>
+                                        onChange(
+                                          e,
+                                          4,
+                                          grade.grade1,
+                                          paymentCalc.training[0]
+                                        )
+                                      }
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">{`${CUR}${ccyFormat(
+                                    paymentCalc.training[0].payment
+                                  )}`}</TableCell>
+                                </TableRow>
+                                <TableRow key={uuidv4()} selected={true}>
+                                  <TableCell colSpan={6} align="left">
+                                    Total Training
+                                  </TableCell>
+                                  <TableCell align="center">{`${CUR}${ccyFormat(
+                                    subtotal(paymentCalc.training)
+                                  )}`}</TableCell>
+                                </TableRow>
+                              </>
+                            ) : (
+                              ""
+                            )}
                             <TableRow key={uuidv4()}>
                               <TableCell rowSpan={3} />
                               <TableCell />
