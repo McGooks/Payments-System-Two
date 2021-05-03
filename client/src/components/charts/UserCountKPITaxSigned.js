@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const UserCountKPITAxSigned = () => {
+const UserCountKPI = () => {
   const classes = useStyles();
   const statsContext = useContext(StatsContext);
   const { stats, getStatData, loading } = statsContext;
@@ -21,13 +21,14 @@ const UserCountKPITAxSigned = () => {
     getStatData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  console.log(stats)
   return (
     <>
       {stats !== null && !loading ? (
         <Card className={classes.root}>
           <CardHeader
-            title={stats[0].statsActive}
-            subheader={"Active Users"}
+            title={stats[9].statsActiveTaxSigned}
+            subheader={"Active &\nApproved Users"}
           />
         </Card>
       ) : (
@@ -36,4 +37,4 @@ const UserCountKPITAxSigned = () => {
     </>
   );
 };
-export default UserCountKPITAxSigned;
+export default UserCountKPI;

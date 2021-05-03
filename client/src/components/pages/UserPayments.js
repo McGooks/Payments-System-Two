@@ -6,7 +6,7 @@ import UserPayments from "../payments/UserPayments"
 //State
 import AuthContext from "../../context/auth/authContext";
 
-const Home = () => {
+const UserPaymentsHome = (props) => {
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
@@ -22,4 +22,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default UserPaymentsHome;

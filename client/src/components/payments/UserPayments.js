@@ -1,48 +1,18 @@
-import React, { useContext, Fragment, useEffect } from "react";
-import { useLocation, useHistory, useParams, Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { Fragment } from "react";
+import { useHistory } from "react-router-dom";
 //Context
-import UserContext from "../../context/user/userContext";
-import PaymentContext from "../../context/payment/paymentContext";
 import { monthWords } from "../../utils/dropdowns";
 
 //Components
-import { Grid, Paper, Chip, Button, Typography } from "@material-ui/core";
-import { ThumbUp, ThumbDown, Pause, Pageview } from "@material-ui/icons";
+import { Grid, Chip, Typography } from "@material-ui/core";
+import { Pageview } from "@material-ui/icons";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
-import { useSnackbar } from "notistack";
-import clsx from "clsx";
-// import CustomToolbar from "../layouts/CustomToolbar";
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    "& > *": {
-      margin: theme.spacing(1),
-    },
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: "right",
-    color: theme.palette.text.secondary,
-  },
-  right: {
-    textAlign: "right",
-  },
-  left: {
-    textAlign: "left",
-  },
-}));
 
 const date = new Date().toUTCString();
 
 const UserPayments = (props) => {
-  const classes = useStyles();
-  const userContext = useContext(UserContext);
   const { user, userPayments, userPaymentsLoading } = props;
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const { id } = useParams();
 
   const history = useHistory();
 
@@ -51,15 +21,10 @@ const UserPayments = (props) => {
     return arr[i - 1];
   }
 
-  if (userPayments !== null && !userPayments.length && !userPaymentsLoading) {
-    return <h4>You have no userPayments recorded</h4>; // if user list is empty
-  }
-
   const viewPayment = (dataIndex) => {
     let path = `/payments/${dataIndex}`;
     history.push(path);
   };
-
 
   const CustomChip = ({ label, onDelete }) => {
     return (
@@ -175,7 +140,10 @@ const UserPayments = (props) => {
         download: true,
         sort: false,
         customBodyRender: (value, tableMeta, updateValue) => {
-          return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(value)
+          return new Intl.NumberFormat("en-GB", {
+            style: "currency",
+            currency: "GBP",
+          }).format(value);
         },
       },
     },
@@ -206,7 +174,7 @@ const UserPayments = (props) => {
                 alignItems="center"
               >
                 <Typography align="center">
-                <Pageview
+                  <Pageview
                     fontSize="small"
                     onClick={() => viewPayment(tableMeta.rowData[0])}
                     userID={tableMeta.rowData[0]}

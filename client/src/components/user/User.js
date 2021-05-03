@@ -88,13 +88,7 @@ const User = (props) => {
   const userContext = useContext(UserContext);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { isAdmin } = props;
-  const {
-    user,
-    current,
-    getUser,
-    setCurrent,
-    updateUser,
-  } = userContext;
+  const { user, current, getUser, setCurrent, updateUser } = userContext;
 
   useEffect(() => {
     if (current !== null) {
@@ -175,6 +169,7 @@ const User = (props) => {
   const handleChangeTab = (event, newValue) => {
     setTab(newValue);
   };
+  const [preSigned, setPreSign] = useState(false);
   const onSubmit = (e) => {
     e.preventDefault();
     updateUser(data);
@@ -207,6 +202,7 @@ const User = (props) => {
         break;
       case 4:
         data.taxDeclaration[0][e.target.name] = e.target.value;
+        setPreSign(true);
         setData({ ...data });
         break;
       default:
@@ -1278,76 +1274,64 @@ const User = (props) => {
                         </>
                       ) : (
                         <>
-                          {data.taxDeclaration[0].signed ? (
-                            <>
-                              <Box
-                                display={"flex"}
-                                mt={2}
-                                mb={2}
-                                alignItems={"center"}
-                              >
-                                <Typography weight={"medium"}>
-                                  {
-                                    "I confirm the data provided is correct & hereby sign this declaration"
-                                  }
-                                </Typography>
-                                <Switch
-                                  disabled={
-                                    data.taxDeclaration[0].signed ? true : false
-                                  }
-                                  checked={data.taxDeclaration[0].signed}
-                                  onChange={(e) => handleSwitchChange(e, 4)}
-                                  name="signed"
-                                  color={"secondary"}
-                                />
-                              </Box>
-                              <Box>
-                                <Button
-                                  disabled={
-                                    !data.taxDeclaration[0].signed ||
-                                    data.taxDeclaration[0]
-                                      .employeeStatements_section1 === "" ||
-                                    data.taxDeclaration[0]
-                                      .employeeStatements_section2 === "" ||
-                                    data.taxDeclaration[0]
-                                      .employeeStatements_section3q1 === "" ||
-                                    (data.taxDeclaration[0]
-                                      .employeeStatements_section3q1 ===
-                                      "true" &&
-                                      data.taxDeclaration[0]
-                                        .employeeStatements_section3q2 ===
-                                        "") ||
-                                    (data.taxDeclaration[0]
-                                      .employeeStatements_section3q2 ===
-                                      "true" &&
-                                      data.taxDeclaration[0]
-                                        .employeeStatements_section3q3 ===
-                                        "") ||
-                                    (data.taxDeclaration[0]
-                                      .employeeStatements_section3q3 ===
-                                      "false" &&
-                                      data.taxDeclaration[0]
-                                        .employeeStatements_section3q4 ===
-                                        "") ||
-                                    (data.taxDeclaration[0]
-                                      .employeeStatements_section3q4 !== "" &&
-                                      data.taxDeclaration[0]
-                                        .employeeStatements_section3q5 === "")
-                                  }
-                                  size="large"
-                                  fullWidth={true}
-                                  className={classes.button}
-                                  onClick={(e) => onSubmit(e)}
-                                  color="secondary"
-                                  variant="contained"
-                                >
-                                  Save
-                                </Button>
-                              </Box>
-                            </>
-                          ) : (
-                            ""
-                          )}
+                          <Box
+                            display={"flex"}
+                            mt={2}
+                            mb={2}
+                            alignItems={"center"}
+                          >
+                            <Typography weight={"medium"}>
+                              {
+                                "I confirm the data provided is correct & hereby sign this declaration"
+                              }
+                            </Typography>
+                            <Switch
+                              disabled={
+                                data.taxDeclaration[0].signed || !preSigned ? true : false
+                              }
+                              checked={data.taxDeclaration[0].signed}
+                              onChange={(e) => handleSwitchChange(e, 4)}
+                              name="signed"
+                              color={"secondary"}
+                            />
+                          </Box>
+                          <Box>
+                            <Button
+                              disabled={
+                                !data.taxDeclaration[0].signed ||
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section1 === "" ||
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section2 === "" ||
+                                data.taxDeclaration[0]
+                                  .employeeStatements_section3q1 === "" ||
+                                (data.taxDeclaration[0]
+                                  .employeeStatements_section3q1 === "true" &&
+                                  data.taxDeclaration[0]
+                                    .employeeStatements_section3q2 === "") ||
+                                (data.taxDeclaration[0]
+                                  .employeeStatements_section3q2 === "true" &&
+                                  data.taxDeclaration[0]
+                                    .employeeStatements_section3q3 === "") ||
+                                (data.taxDeclaration[0]
+                                  .employeeStatements_section3q3 === "false" &&
+                                  data.taxDeclaration[0]
+                                    .employeeStatements_section3q4 === "") ||
+                                (data.taxDeclaration[0]
+                                  .employeeStatements_section3q4 !== "" &&
+                                  data.taxDeclaration[0]
+                                    .employeeStatements_section3q5 === "")
+                              }
+                              size="large"
+                              fullWidth={true}
+                              className={classes.button}
+                              onClick={(e) => onSubmit(e)}
+                              color="secondary"
+                              variant="contained"
+                            >
+                              Save
+                            </Button>
+                          </Box>
                         </>
                       )}
                     </>

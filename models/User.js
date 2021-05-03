@@ -97,7 +97,6 @@ const UserSchema = mongoose.Schema({
   },
   NSPID: {
     type: Number,
-    unique: true
   },
   qubSchool: {
     type: String,

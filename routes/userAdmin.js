@@ -36,12 +36,13 @@ router.get("/", auth, async (req, res) => {
 //@access   Private
 router.get("/active", auth, async (req, res) => {
   try {
-    const activeUser = await User.find({ status: "Active" })
+    const activeUser = await User.find({ status: "Active", "taxDeclaration.0.signed": 'true'})
       .sort({
         firstName: 1,
         lastName: 1,
       })
       .select(["firstName", "lastName", "QUBID"]);
+    console.log(activeUser)
     res.json(activeUser);
   } catch (err) {
     console.error(err.message);
@@ -318,7 +319,7 @@ router.post(
 </html>
         `,
         };
-        // mg.messages().send(data); // Send Email
+        mg.messages().send(data); // Send Email
         newUser = new User({
           address,
           contact,
@@ -388,11 +389,11 @@ router.put("/:id", auth, async (req, res) => {
     let user = await User.findById(req.params.id); // find user by ID
     if (!user) return res.status(404).json({ error: "User not found" });
     // ensure user is not current user
-    if (user._id.toString() === req.user.id) {
-      return res
-        .status(401)
-        .json({ error: "Users cannot edit their own records" });
-    }
+    // if (user._id.toString() === req.user.id) {
+    //   return res
+    //     .status(401)
+    //     .json({ error: "Users cannot edit their own records" });
+    // }
     user = await User.findByIdAndUpdate(
       req.params.id,
       { $set: userFields },

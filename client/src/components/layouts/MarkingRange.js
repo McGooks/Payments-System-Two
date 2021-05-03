@@ -5,27 +5,25 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import {
-  Grid,
-  Paper,
-} from "@material-ui/core";
+import { Grid, Paper } from "@material-ui/core";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   table: {
-    minWidth: 700,
-    fontSize: theme.typography.pxToRem(5),
+    width: "auto",
+    tableLayout: "auto",
+    fontSize: [10, "!important"]
   },
 }));
 
 const MarkingRange = () => {
   const classes = useStyles();
   return (
-    <Grid item xs={12}>
+    <Grid>
       <TableContainer component={Paper}>
         <Table
-          className={clsx(classes.table, classes.root)}
+          className={clsx(classes.table)}
           aria-label="spanning table"
           size="small"
         >
@@ -38,7 +36,7 @@ const MarkingRange = () => {
               <TableCell align="center">Min Competence Level</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody className={clsx(classes.table)}>
             <TableRow key={1}>
               <TableCell align="center">A</TableCell>
               <TableCell align="left">

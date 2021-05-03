@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Import = (props) => {
+const Import = () => {
   const classes = useStyles();
   const userAdminContext = useContext(UserAdminContext);
   const { addUser, error, clearErrors } = userAdminContext;

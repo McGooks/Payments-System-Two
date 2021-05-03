@@ -53,6 +53,10 @@ let PrevAcaYear = getPrevAcademicYear();
 router.get("/", auth, async (req, res) => {
   try {
     const statsActive = await User.countDocuments({ status: "Active" });
+    const statsActiveTaxSigned = await User.countDocuments({
+      status: "Active",
+      "taxDeclaration.0.signed": "true",
+    });
     const statsPending = await Stat.countDocuments({
       paymentStatus: "Pending",
     });
@@ -199,6 +203,7 @@ router.get("/", auth, async (req, res) => {
       { CurrentAcaYear },
       { statsCurrentSemComp },
       { statsPrevSemComp },
+      { statsActiveTaxSigned },
     ];
     res.json(stats);
   } catch (err) {

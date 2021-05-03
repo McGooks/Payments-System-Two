@@ -38,6 +38,7 @@ router.post(
         .json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
     const { QUBID, email, password } = req.body;
+    console.log(req.body)
     try {
       let user = await User.findOne({ QUBID }); // find user
       if (user) {
