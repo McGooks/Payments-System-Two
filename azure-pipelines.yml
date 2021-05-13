@@ -17,6 +17,6 @@ steps:
 
 - script: |
     npm install concurrently
-    npm install --prefix client && npm run build --prefix client
+    npm install --prefix client
     npm run dev
   displayName: 'npm install and build'
