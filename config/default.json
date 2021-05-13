@@ -1,0 +1,9 @@
+{
+    "mongoURI": "mongodb+srv://admin:cBVGNPTYbnpI6ZRl@payment-system.rvgfb.mongodb.net/payment-system?authSource=admin&replicaSet=atlas-p5ops4-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true",
+    "jwtSecret": "Q5id3CL8k3f344JRgXocsbGCrCcx7rYbqxsJRxFj",
+    "mailgun_APIKEY": "41728bf46882b8f2d161e3c676475bdd-4de08e90-097b58e0",
+    "mailgun_DOMAIN": "sandboxd69201c6ab584996925385ff0ba51de3.mailgun.org",
+    "JWT_ACC_ACTIVATE": "yKFiT3hM9xkMRRKo9RAHBxrEhJxnBmjm3Hf3zEHn",
+    "JWT_PWDRESET": "rYXqABFcLo7FirTKnfG3ep7fnndPtyF8PsDs3FHf",
+    "CLIENT_URL": "http://localhost:3000"
+}

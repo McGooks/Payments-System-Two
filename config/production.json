@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb+srv://admin:yK3qpfL0hTsZxCC7@contact-keeper.gsg50.mongodb.net/contact-app?authSource=admin&replicaSet=atlas-v9ag5p-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true",
+    "jwtSecret": "secret"
+}
