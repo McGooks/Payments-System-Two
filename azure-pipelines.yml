@@ -18,5 +18,5 @@ steps:
 - script: |
     npm install concurrently
     npm install --prefix client
-    npm run dev
+    npm run heroku-postbuild
   displayName: 'npm install and build'
