@@ -33,24 +33,31 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ error: errors.array({ onlyFirstError: true })[0].msg });
+      res
+        .status(400)
+        .json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
     const { email, password } = req.body;
     try {
-      let user = await User.findOne({ email }); // find user email and return in user.id
-      if (!user) {
+      let user = await User.findOne({ email }); // find user email and return user.id
+      if (!user) { // if user does not exist in DB throw error
         res.status(400).json({
           error: "User account not found, please register an account",
-        }); // if user does not exist throw error
+        }); 
       }
       const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
+      if (!isMatch) { // if user password does not match exist throw error
         res
           .status(400)
-          .json({ error: "The password you have entered is invalid"}); // if user password does not match exist throw error
+          .json({ error: "The password you have entered is invalid" }); 
       }
-      if (user.status === "Disabled") {
-        res.status(403).json({ error: "This account has been disabled, please contact the system administrator for support"})
+      if (user.status === "Disabled") { // if user account is disabled throw error
+        res
+          .status(403)
+          .json({
+            error:
+              "This account has been disabled, please contact the system administrator for support",
+          });
       }
       // set payload variable for jwt sign (token)
       const payload = {

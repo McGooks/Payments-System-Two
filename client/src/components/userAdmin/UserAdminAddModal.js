@@ -282,7 +282,7 @@ const UserAdminAddModal = () => {
                 id="dob"
                 type="date"
                 name="dob"
-                value={dob}
+                value={dob || "2000-01-01"}
                 onChange={onChange}
                 label="Date Of Birth"
                 variant="outlined"
@@ -302,7 +302,7 @@ const UserAdminAddModal = () => {
                   />
                 <TextField
                   className={classes.textField}
-                  required
+                  disabled={!role || role !== "User" ? true : false}
                   id="NSPID"
                   type="text"
                   name="NSPID"

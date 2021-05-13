@@ -85,7 +85,7 @@ const PaymentState = (props) => {
     }
   };
 
-  //Add Payment
+  //Add User Payment
 
   const addUserPayment = async (id, payment) => {
     const config = {

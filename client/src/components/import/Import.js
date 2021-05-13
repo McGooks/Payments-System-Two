@@ -110,7 +110,7 @@ const Import = () => {
     }
     return result;
   };
-
+  
   const onSubmit = (e) => {
     e.preventDefault();
     try {
@@ -167,6 +167,7 @@ const Import = () => {
       });
     }
   };
+
   const options = {
     filter: true,
     filterType: "dropdown",

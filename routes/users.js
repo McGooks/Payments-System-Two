@@ -38,7 +38,7 @@ router.post(
         .json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
     const { QUBID, email, password } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     try {
       let user = await User.findOne({ QUBID }); // find user
       if (user) {
@@ -577,7 +577,7 @@ router.put(
 //@route    GET api/users
 //@desc     Get all users
 //@access   Private
-router.get("/", auth, async (req, res) => {
+router.get("/", auth, async (req, res, next) => {
   try {
     const users = await User.find()
       .sort({
@@ -589,6 +589,7 @@ router.get("/", auth, async (req, res) => {
     console.error(err.message);
     res.status(500).send({ error: err.message });
   }
+  next();
 });
 
 //@route    POST api/users/password-reset-request-public
@@ -616,22 +617,21 @@ router.post("/password-reset-request-public", async (req, res) => {
 //@access   PUBLIC
 
 router.put("/confirm-email/:token", async (req, res) => {
-  const token = req.params.token;
+  const token = req.params.token; //Get token string from URL
   try {
-    if (token) {
+    if (token) { //If token exists, try to decode using JWT
       const decode = jwt.verify(
         token,
-        config.get("JWT_ACC_ACTIVATE"),
+        config.get("JWT_ACC_ACTIVATE"), //access encryption key from middleware 
         function (err, decodedToken) {
-          if (err) {
+          if (err) { //if unable to decrypt, throw error
             return res.status(400).json({ error: "This token has expired" });
           }
           return decodedToken;
         }
       );
-      const { email, iat, exp } = decode;
-
-      const userFields = {};
+      const { email, iat, exp } = decode; // if able to decrypt extract data
+      const userFields = {}; // create userFields object
       userFields.emailTokenIssued = new Date(iat * 1000);
       userFields.emailTokenExpiry = new Date(exp * 1000);
       userFields.emailVerified = true;
@@ -646,23 +646,23 @@ router.put("/confirm-email/:token", async (req, res) => {
               "This email address has already been confirmed, please log in",
           });
         }
-        const updatedUserId = UpdatedUser.id; // Extract User ID
+        const updatedUserId = UpdatedUser.id; // Extract ObjectID of user found by email
         if (!UpdatedUser) {
           return res.status(404).json({ error: "User not found" });
         } else {
-          NewUpdatedUser = await User.findByIdAndUpdate(
+          NewUpdatedUser = await User.findByIdAndUpdate( //using ObjectID update the user record with userFields object
             updatedUserId,
             { $set: userFields },
             { new: true }
-          ); // find user by ID address
-          res.json(NewUpdatedUser); // Return
+          );
+          res.json(NewUpdatedUser); // Return json to client UI
         }
       } catch (err) {
         console.error(err.message);
         res.status(500).json({ error: "User record cannot be verified" });
       }
     } else {
-      return res.json({ error: "An error occurred here" });
+      return res.json({ error: "An error occurred" });
     }
   } catch (error) {
     res.status(500).send({ error: error.message });
@@ -675,7 +675,7 @@ router.put("/confirm-email/:token", async (req, res) => {
 router.post(
   "/",
   [auth, [check("QUBID", "Name is required").not().isEmpty()]],
-  async (req, res) => {
+  async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res
@@ -699,6 +699,7 @@ router.post(
       console.error(err.message);
       res.status(500).send({ error: err.message });
     }
+    next();
   }
 );
 

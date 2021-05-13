@@ -475,6 +475,7 @@ const CreatePayment = (props) => {
   });
   const [formShowing, setFormShowing] = useState(false);
   const [stage, setStage] = useState("");
+  
   //Events
   const onChange = (e, i, g, r, rng) => {
     let rate = "";

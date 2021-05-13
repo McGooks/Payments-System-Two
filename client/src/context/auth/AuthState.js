@@ -4,7 +4,6 @@ import AuthContext from "./authContext";
 import AuthReducer from "./AuthReducer";
 import SetAuthToken from "../../utils/SetAuthToken";
 import { useSnackbar } from "notistack";
-
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
@@ -19,7 +18,6 @@ import {
   LOGOUT,
   CLEAR_ERRORS,
 } from "../types";
-import id from "date-fns/esm/locale/id";
 
 const AuthState = (props) => {
   const initialState = {
@@ -30,11 +28,10 @@ const AuthState = (props) => {
     user: null,
     error: null,
   };
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   const [state, dispatch] = useReducer(AuthReducer, initialState);
 
   //LOAD USER
-
   const loadUser = async () => {
     if (localStorage.token) {
       SetAuthToken(localStorage.token);
