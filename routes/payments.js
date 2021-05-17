@@ -33,7 +33,7 @@ router.get("/:id", auth, async (req, res) => {
   }
 });
 
-//@route    POST api/payments/add
+//@route    POST api/payments/new
 //@desc     Add new Payment
 //@access   PRIVATE
 router.post(
@@ -131,7 +131,7 @@ router.put("/approve", auth, async (req, res) => {
 });
 
 //@route    PUT api/payments/approve
-//@desc     Update All Pending payments as approved
+//@desc     Update All Pending payments as paid
 //@access   PRIVATE
 router.put("/paid", auth, async (req, res) => {
   try {
@@ -269,7 +269,7 @@ router.put("/:id/pending", auth, async (req, res) => {
 });
 
 //@route    PUT api/payments/:id/pending
-//@desc     Update User Payment as pending
+//@desc     Update User Payment as paid
 //@access   PRIVATE
 router.put("/:id/paid", auth, async (req, res) => {
   try {
@@ -297,7 +297,7 @@ router.put("/:id/paid", auth, async (req, res) => {
 });
 
 //@route    DELETE api/payments/:id
-//@desc     Delete Payment
+//@desc     Delete User Payment
 //@access   PRIVATE
 router.delete("/:id", auth, async (req, res) => {
   try {
@@ -311,7 +311,7 @@ router.delete("/:id", auth, async (req, res) => {
     await User.updateOne({ _id: payment.user }, { $pull: { payments: payment._id }});
     await Payment.findByIdAndRemove(
       req.params.id,
-      res.json({ msg: "Payment Removed" })
+      res.json({ error: "Payment Removed" })
     );
   } catch (error) {
     res.status(500).send({ error: error.message });

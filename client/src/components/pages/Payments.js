@@ -41,11 +41,14 @@ const Payment = (props) => {
       clearErrors();
     }
   }, [isAdmin, props.history, error, loading]);
+
   const [formShowing, setFormShowing] = useState(false);
   const [stage, setStage] = useState("");
+
   const showForm = () => {
     setFormShowing(true);
   };
+  
   const hideForm = () => {
     setFormShowing(false);
   };
@@ -95,12 +98,16 @@ const Payment = (props) => {
         <ProgressIndicator />
       ) : (
         <>
-          <NavButtonPayments />
+            <NavButtonPayments />
+            
+
           <PaymentsNav
             onClickReject={onClickReject}
             onClickApprove={onClickApprove}
             onClickPaid={onClickPaid}
-          />
+            />
+            
+
           <Payments user={user} isAdmin={isAdmin} payments={payments} />
           {formShowing && (
             <Dialog

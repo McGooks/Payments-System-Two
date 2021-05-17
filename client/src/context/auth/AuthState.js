@@ -1,9 +1,3 @@
-import React, { useReducer } from "react";
-import axios from "axios";
-import AuthContext from "./authContext";
-import AuthReducer from "./AuthReducer";
-import SetAuthToken from "../../utils/SetAuthToken";
-import { useSnackbar } from "notistack";
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
@@ -18,6 +12,13 @@ import {
   LOGOUT,
   CLEAR_ERRORS,
 } from "../types";
+import React, { useReducer } from "react";
+import axios from "axios";
+import AuthContext from "./authContext";
+import AuthReducer from "./AuthReducer";
+import SetAuthToken from "../../utils/SetAuthToken";
+import { useSnackbar } from "notistack";
+
 
 const AuthState = (props) => {
   const initialState = {
@@ -30,6 +31,30 @@ const AuthState = (props) => {
   };
   const { enqueueSnackbar } = useSnackbar();
   const [state, dispatch] = useReducer(AuthReducer, initialState);
+
+  //Password Reset Request Email
+  const passwordUpdateRequest = async (token, formData) => {
+    const config = {
+      headers: { "Content-Type": "application/json" },
+    };
+    try {
+      const res = await axios.put(
+        `/api/users/password-reset/${token}`,
+        formData,
+        config
+      );
+      dispatch({ type: PASSWORD_RESET, payload: res.data });
+      enqueueSnackbar("Password reset, please login", {
+        variant: "success",
+      });
+      logout();
+    } catch (error) {
+      dispatch({
+        type: PASSWORD_RESET_EMAIL_FAIL,
+        payload: error.response.data.error,
+      });
+    }
+  };
 
   //LOAD USER
   const loadUser = async () => {
@@ -120,30 +145,6 @@ const AuthState = (props) => {
   };
 
   //Password Reset Request Email
-  const passwordUpdateRequest = async (token, formData) => {
-    const config = {
-      headers: { "Content-Type": "application/json" },
-    };
-    try {
-      const res = await axios.put(
-        `/api/users/password-reset/${token}`,
-        formData,
-        config
-      );
-      dispatch({ type: PASSWORD_RESET, payload: res.data });
-      enqueueSnackbar("Password reset, please login", {
-        variant: "success",
-      });
-      logout();
-    } catch (error) {
-      dispatch({
-        type: PASSWORD_RESET_EMAIL_FAIL,
-        payload: error.response.data.error,
-      });
-    }
-  };
-
-  //Password Reset Request Email
   const passwordResetRequestPublic = async (formData) => {
     const config = {
       headers: { "Content-Type": "application/json" },
@@ -181,7 +182,6 @@ const AuthState = (props) => {
   };
 
   //LOGIN USER
-
   const login = async (formData) => {
     const config = {
       headers: {
@@ -204,13 +204,11 @@ const AuthState = (props) => {
   };
 
   //LOGOUT
-
   const logout = () => {
     dispatch({ type: LOGOUT });
   };
 
   //CLEAR ERRORS
-
   const clearErrors = () => {
     dispatch({ type: CLEAR_ERRORS });
   };

@@ -46,7 +46,7 @@ router.get("/:id/payments", auth, async (req, res) => {
 });
 
 //@route    POST api/user/resend/:id
-//@desc     Get User and resend email to verify email address
+//@desc     Post User and resend email to verify email address
 //@access   PRIVATE
 router.post("/resend/:id", auth, async (req, res) => {
   try {
