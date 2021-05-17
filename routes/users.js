@@ -276,7 +276,7 @@ router.post(
 );
 
 //@route    POST api/user/password-reset/:id
-//@desc     Get User and issue password reset to email address
+//@desc     Post User and issue password reset to email address
 //@access   PUBLIC
 router.post("/password-reset-request/:id", async (req, res) => {
   try {
@@ -503,7 +503,7 @@ router.post("/password-reset-request/:id", async (req, res) => {
 });
 
 //@route    PUT api/user/password-reset/:token
-//@desc     Get User and issue password reset to email address
+//@desc     Decrypt token and update User password
 //@access   Public
 router.put(
   "/password-reset/:token",
@@ -615,7 +615,6 @@ router.post("/password-reset-request-public", async (req, res) => {
 //@route    POST api/users/confirm-email/:token
 //@desc     Activate User Account with token
 //@access   PUBLIC
-
 router.put("/confirm-email/:token", async (req, res) => {
   const token = req.params.token; //Get token string from URL
   try {

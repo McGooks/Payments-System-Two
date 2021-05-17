@@ -16,6 +16,14 @@ import {
 
 export default (state, action) => {
   switch (action.type) {
+    case PASSWORD_RESET_REQUEST:
+    case PASSWORD_RESET:
+    case REGISTER_SUCCESS:
+      return {
+        ...state,
+        ...action.payload,
+        loading: false,
+      };
     case USER_LOADED:
       return {
         ...state,
@@ -30,14 +38,6 @@ export default (state, action) => {
         ...state,
         ...action.payload,
         isAuthenticated: true,
-        loading: false,
-      };
-    case PASSWORD_RESET_REQUEST:
-    case PASSWORD_RESET:
-    case REGISTER_SUCCESS:
-      return {
-        ...state,
-        ...action.payload,
         loading: false,
       };
     case REGISTER_FAIL:

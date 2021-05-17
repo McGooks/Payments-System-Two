@@ -18,12 +18,12 @@ const mg = mailgun({ apiKey: config.get("mailgun_APIKEY"), domain: DOMAIN });
 //@access   Private
 router.get("/", auth, async (req, res) => {
   try {
-    const user = await User.find()
+    const users = await User.find()
       .sort({
         date: -1,
       })
       .select(["-password"]);
-    res.json(user);
+    res.json(users);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -52,7 +52,7 @@ router.get("/active", auth, async (req, res) => {
 });
 
 //@route    GET api/userAdmin/:qubID
-//@desc     Get all ACTIVE users
+//@desc     Get users when using NSP Data import
 //@access   Private
 router.get("/:qubid", auth, async (req, res) => {
   try {
@@ -65,7 +65,7 @@ router.get("/:qubid", auth, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
-    res.status(500).json({ msg: "Unable to get users" });
+    res.status(500).json({ error: "Unable to get users" });
   }
 });
 
@@ -435,6 +435,9 @@ router.put("/NSP/:id", auth, async (req, res) => {
   }
 });
 
+//@route    DELETE api/userAdmin/:id
+//@desc     Delete User
+//@access   PRIVATE
 router.delete("/:id", auth, async (req, res) => {
   try {
     let user = await User.findById(req.params.id); // find user by ID
