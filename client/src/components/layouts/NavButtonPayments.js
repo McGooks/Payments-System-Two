@@ -8,6 +8,7 @@ import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Import from "@material-ui/icons/Publish";
 import Reports from "@material-ui/icons/Assessment";
+import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -86,7 +87,7 @@ const NavButtonPayments = () => {
       >
         {actions.map((action) => (
           <SpeedDialAction
-            key={action.name}
+            key={uuidv4()}
             icon={action.icon}
             tooltipTitle={action.name}
             onClick={handleClose}

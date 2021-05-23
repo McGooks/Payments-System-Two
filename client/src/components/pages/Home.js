@@ -223,7 +223,7 @@ const Home = () => {
                   Please click the verify link issued to {user.email} or click
                   the resend email button
                 </MuiAlert>
-              ) : user && !user.NINO ? (
+              ) : user && user.NINO === ""? (
                 <>
                   <MuiAlert
                     style={{ marginBottom: "20px" }}

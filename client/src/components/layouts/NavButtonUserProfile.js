@@ -13,6 +13,7 @@ import Reports from "@material-ui/icons/Assessment";
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
 // UI
 import UserAdminAddModal from "../userAdmin/UserAdminAddModal";
+import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,7 +92,7 @@ const NavButtonUserProfile = (props) => {
       >
         {actions.map((action) => (
           <SpeedDialAction
-            key={action.id}
+            key={uuidv4()}
             icon={action.icon}
             tooltipTitle={action.name}
             onClick={handleClose}
