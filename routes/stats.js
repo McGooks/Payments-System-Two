@@ -61,6 +61,7 @@ router.get("/", auth, async (req, res) => {
       paymentStatus: "Pending",
     });
     const statsExpired = await Stat.countDocuments({ status: "Expired" });
+  
     const statsPaymentPendingAuth = await Stat.aggregate([
       { $match: { paymentStatus: "Pending" } },
       {
@@ -70,6 +71,7 @@ router.get("/", auth, async (req, res) => {
         },
       },
     ]);
+
     const statsPaymentAuthMTD = await Stat.aggregate([
       {
         $project: {

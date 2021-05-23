@@ -118,7 +118,8 @@ const Home = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
-
+  
+  
   const resendEmail = () => {
     resendVerifyEmail(userID.id);
   };
@@ -285,7 +286,7 @@ const Home = () => {
                   <Grid item xs={12}>
                     <UserPaymentsView
                       user={user}
-                      userPayments={userPayments.length}
+                      userPayments={userPayments.payments}
                       userPaymentsLoading={loading}
                     />
                   </Grid>

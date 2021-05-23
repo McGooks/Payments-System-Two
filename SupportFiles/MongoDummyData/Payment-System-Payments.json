@@ -1,0 +1,118 @@
+[{
+  "_id": {
+    "$oid": "6090082d89f777247172f312"
+  },
+  "student_cohort": true,
+  "paymentStatus": "Approved",
+  "user": {
+    "$oid": "6090066389f777247172f30c"
+  },
+  "deliveredBy": "TA",
+  "school": "Electronics, Electrical Engineering and Computer Science",
+  "academicYear": "2020/2021",
+  "paymentPeriod": "5",
+  "paymentPeriodNum": 202105,
+  "semester": "1",
+  "QUBID": 1342628,
+  "account": 6202,
+  "projectCode": "A2517EEC",
+  "projectName": "",
+  "subAnalysis": "",
+  "amount": 353.95,
+  "cohort_id": "26",
+  "grade1": "AC1",
+  "grade2": "AC2",
+  "rate1": 14.73,
+  "rate2": 17.57,
+  "addedByUser": {
+    "$oid": "60468d9fadfb72f289060acb"
+  },
+  "addedByUserDate": {
+    "$date": "2021-05-03T14:26:53.969Z"
+  },
+  "updatedByUserDate": {
+    "$date": "2021-05-03T14:26:53.969Z"
+  },
+  "paymentDetail": {
+    "$oid": "6090082d89f777247172f311"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "609008c689f777247172f315"
+  },
+  "student_cohort": true,
+  "paymentStatus": "Pending",
+  "user": {
+    "$oid": "6090066389f777247172f30c"
+  },
+  "deliveredBy": "PGTA",
+  "school": "Electronics, Electrical Engineering and Computer Science",
+  "academicYear": "2020/2021",
+  "paymentPeriod": "5",
+  "paymentPeriodNum": 202105,
+  "semester": "1",
+  "QUBID": 1342628,
+  "account": 6202,
+  "projectCode": "A2517EEC",
+  "projectName": "",
+  "subAnalysis": "",
+  "amount": 2036.75,
+  "cohort_id": "26",
+  "grade1": "AC1",
+  "grade2": "AC2",
+  "rate1": 14.73,
+  "rate2": 17.57,
+  "addedByUser": {
+    "$oid": "60468d9fadfb72f289060acb"
+  },
+  "addedByUserDate": {
+    "$date": "2021-05-03T14:29:26.604Z"
+  },
+  "updatedByUserDate": {
+    "$date": "2021-05-03T14:29:26.604Z"
+  },
+  "paymentDetail": {
+    "$oid": "609008c689f777247172f314"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "60a6d738c5caf511046c74b7"
+  },
+  "student_cohort": true,
+  "paymentStatus": "Approved",
+  "user": {
+    "$oid": "609018c93f57d52a5d4abf8f"
+  },
+  "deliveredBy": "TA",
+  "school": "Electronics, Electrical Engineering and Computer Science",
+  "academicYear": "2020/2021",
+  "paymentPeriod": "5",
+  "paymentPeriodNum": 202105,
+  "semester": "1",
+  "QUBID": 10000000,
+  "account": 6202,
+  "projectCode": "A2517EEC",
+  "projectName": "",
+  "subAnalysis": "",
+  "amount": 245.55,
+  "cohort_id": "26",
+  "grade1": "AC1",
+  "grade2": "AC2",
+  "rate1": 14.73,
+  "rate2": 17.57,
+  "addedByUser": {
+    "$oid": "60468d9fadfb72f289060acb"
+  },
+  "addedByUserDate": {
+    "$date": "2021-05-20T21:40:08.027Z"
+  },
+  "updatedByUserDate": {
+    "$date": "2021-05-20T21:40:08.027Z"
+  },
+  "paymentDetail": {
+    "$oid": "60a6d738c5caf511046c74b6"
+  },
+  "__v": 0
+}]

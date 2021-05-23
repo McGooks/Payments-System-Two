@@ -1,0 +1,769 @@
+[{
+  "_id": {
+    "$oid": "6090082d89f777247172f311"
+  },
+  "markingCalc": [
+    {
+      "range": "A",
+      "grade": "AC1",
+      "numOfStudents": 1,
+      "numOfCWPcsPerStudent": 2,
+      "OralExamHours": 0,
+      "total": 2,
+      "totalPaidHours": 0.33
+    },
+    {
+      "range": "B",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-1",
+      "grade": "AC2",
+      "numOfStudents": 3,
+      "numOfCWPcsPerStudent": 3,
+      "OralExamHours": 0,
+      "total": 9,
+      "totalPaidHours": 3
+    },
+    {
+      "range": "C-2",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-3",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-4",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-5",
+      "grade": "AC2",
+      "numOfStudents": 4,
+      "numOfCWPcsPerStudent": 5,
+      "OralExamHours": 0,
+      "total": 20,
+      "totalPaidHours": 10
+    },
+    {
+      "range": "D",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    }
+  ],
+  "officeHours": [
+    {
+      "description": "No of Seminar Groups per week",
+      "count": 2
+    },
+    {
+      "description": "No of weeks",
+      "count": 5
+    }
+  ],
+  "paymentCalc": {
+    "lecture": [
+      {
+        "activity": "Prep - 1st delivery",
+        "paymentGrade": "",
+        "paymentRate": 0,
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - Repeat in same week (one repeat only)",
+        "paymentGrade": "",
+        "paymentRate": 0,
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Delivery",
+        "paymentGrade": "",
+        "paymentRate": 0,
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "seminar": [
+      {
+        "activity": "Prep - 1st delivery (1hr)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - 1st delivery (2hrs)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - Repeat in same week (one repeat only)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Delivery",
+        "paymentGrade": "AC2",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 1,
+        "payment": 17.57
+      }
+    ],
+    "lab": [
+      {
+        "activity": "Prep - 1st delivery (0.5hrs)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - 1st delivery (1hr)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - Repeat in same week (one repeat only)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Delivery",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "fieldTrip": [
+      {
+        "activity": "Number of contact hours",
+        "paymentGrade": "AC1",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 1,
+        "payment": 14.73
+      }
+    ],
+    "office": [
+      {
+        "activity": "0.5 hours per seminar group per week",
+        "paymentGrade": "AC1",
+        "time": 10,
+        "count": 0,
+        "totalhrs": 5,
+        "payment": 73.65
+      }
+    ],
+    "marking": [
+      {
+        "activity": "Exam / Non Exam / Coursework",
+        "paymentGrade": "AC1",
+        "time": 0.33,
+        "count": 0,
+        "totalhrs": 0.33,
+        "payment": 4.86
+      },
+      {
+        "activity": "Exam / Non Exam / Coursework",
+        "paymentGrade": "AC2",
+        "time": 13,
+        "count": 0,
+        "totalhrs": 13,
+        "payment": 228.41
+      },
+      {
+        "activity": "Oral Exam",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "training": [
+      {
+        "activity": "Number of hours",
+        "paymentGrade": "AC1",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 1,
+        "payment": 14.73
+      }
+    ]
+  },
+  "addedByUser": {
+    "$oid": "60468d9fadfb72f289060acb"
+  },
+  "updatedByUser": {
+    "$oid": "60468d9fadfb72f289060acb"
+  },
+  "addedByUserDate": {
+    "$date": "2021-05-03T14:26:53.967Z"
+  },
+  "updatedByUserDate": {
+    "$date": "2021-05-03T14:26:53.967Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "609008c689f777247172f314"
+  },
+  "markingCalc": [
+    {
+      "range": "A",
+      "grade": "Band A",
+      "numOfStudents": 10,
+      "numOfCWPcsPerStudent": 80,
+      "OralExamHours": 0,
+      "total": 800,
+      "totalPaidHours": 133.36
+    },
+    {
+      "range": "B",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-1",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-2",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-3",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-4",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-5",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "D",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    }
+  ],
+  "officeHours": [
+    {
+      "description": "No of Seminar Groups per week",
+      "count": 0
+    },
+    {
+      "description": "No of weeks",
+      "count": 0
+    }
+  ],
+  "paymentCalc": {
+    "lecture": [
+      {
+        "activity": "Prep - 1st delivery",
+        "paymentGrade": "",
+        "paymentRate": 0,
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - Repeat in same week (one repeat only)",
+        "paymentGrade": "",
+        "paymentRate": 0,
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Delivery",
+        "paymentGrade": "",
+        "paymentRate": 0,
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "seminar": [
+      {
+        "activity": "Prep - 1st delivery (1hr)",
+        "paymentGrade": "Band B",
+        "time": 1,
+        "count": 1,
+        "totalhrs": 1,
+        "payment": 20.01
+      },
+      {
+        "activity": "Prep - 1st delivery (2hrs)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - Repeat in same week (one repeat only)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Delivery",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "lab": [
+      {
+        "activity": "Prep - 1st delivery (0.5hrs)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - 1st delivery (1hr)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - Repeat in same week (one repeat only)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Delivery",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "fieldTrip": [
+      {
+        "activity": "Number of contact hours",
+        "paymentGrade": "Band A",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 1,
+        "payment": 15.01
+      }
+    ],
+    "office": [
+      {
+        "activity": "0.5 hours per seminar group per week",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "marking": [
+      {
+        "activity": "Exam / Non Exam / Coursework",
+        "paymentGrade": "Band A",
+        "time": 133.36,
+        "count": 0,
+        "totalhrs": 133.36,
+        "payment": 2001.73
+      },
+      {
+        "activity": "Exam / Non Exam / Coursework",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Oral Exam",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "training": [
+      {
+        "activity": "Number of hours",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ]
+  },
+  "addedByUser": {
+    "$oid": "60468d9fadfb72f289060acb"
+  },
+  "updatedByUser": {
+    "$oid": "60468d9fadfb72f289060acb"
+  },
+  "addedByUserDate": {
+    "$date": "2021-05-03T14:29:26.604Z"
+  },
+  "updatedByUserDate": {
+    "$date": "2021-05-03T14:29:26.604Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "60a6d738c5caf511046c74b6"
+  },
+  "markingCalc": [
+    {
+      "range": "A",
+      "grade": "AC1",
+      "numOfStudents": 10,
+      "numOfCWPcsPerStudent": 10,
+      "OralExamHours": 0,
+      "total": 100,
+      "totalPaidHours": 16.67
+    },
+    {
+      "range": "B",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-1",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-2",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-3",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-4",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "C-5",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    },
+    {
+      "range": "D",
+      "grade": "",
+      "numOfStudents": 0,
+      "numOfCWPcsPerStudent": 0,
+      "OralExamHours": 0,
+      "total": 0,
+      "totalPaidHours": 0
+    }
+  ],
+  "officeHours": [
+    {
+      "description": "No of Seminar Groups per week",
+      "count": 0
+    },
+    {
+      "description": "No of weeks",
+      "count": 0
+    }
+  ],
+  "paymentCalc": {
+    "lecture": [
+      {
+        "activity": "Prep - 1st delivery",
+        "paymentGrade": "",
+        "paymentRate": 0,
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - Repeat in same week (one repeat only)",
+        "paymentGrade": "",
+        "paymentRate": 0,
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Delivery",
+        "paymentGrade": "",
+        "paymentRate": 0,
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "seminar": [
+      {
+        "activity": "Prep - 1st delivery (1hr)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - 1st delivery (2hrs)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - Repeat in same week (one repeat only)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Delivery",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "lab": [
+      {
+        "activity": "Prep - 1st delivery (0.5hrs)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - 1st delivery (1hr)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Prep - Repeat in same week (one repeat only)",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Delivery",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "fieldTrip": [
+      {
+        "activity": "Number of contact hours",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "office": [
+      {
+        "activity": "0.5 hours per seminar group per week",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "marking": [
+      {
+        "activity": "Exam / Non Exam / Coursework",
+        "paymentGrade": "AC1",
+        "time": 16.67,
+        "count": 0,
+        "totalhrs": 16.67,
+        "payment": 245.55
+      },
+      {
+        "activity": "Exam / Non Exam / Coursework",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      },
+      {
+        "activity": "Oral Exam",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ],
+    "training": [
+      {
+        "activity": "Number of hours",
+        "paymentGrade": "",
+        "time": 0,
+        "count": 0,
+        "totalhrs": 0,
+        "payment": 0
+      }
+    ]
+  },
+  "addedByUser": {
+    "$oid": "60468d9fadfb72f289060acb"
+  },
+  "updatedByUser": {
+    "$oid": "60468d9fadfb72f289060acb"
+  },
+  "addedByUserDate": {
+    "$date": "2021-05-20T21:40:08.026Z"
+  },
+  "updatedByUserDate": {
+    "$date": "2021-05-20T21:40:08.026Z"
+  },
+  "__v": 0
+}]

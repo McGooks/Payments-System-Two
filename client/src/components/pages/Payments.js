@@ -107,7 +107,6 @@ const Payment = (props) => {
             onClickPaid={onClickPaid}
             />
             
-
           <Payments user={user} isAdmin={isAdmin} payments={payments} />
           {formShowing && (
             <Dialog

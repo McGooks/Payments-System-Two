@@ -19,7 +19,6 @@ import AuthReducer from "./AuthReducer";
 import SetAuthToken from "../../utils/SetAuthToken";
 import { useSnackbar } from "notistack";
 
-
 const AuthState = (props) => {
   const initialState = {
     token: localStorage.getItem("token"),
@@ -32,25 +31,23 @@ const AuthState = (props) => {
   const { enqueueSnackbar } = useSnackbar();
   const [state, dispatch] = useReducer(AuthReducer, initialState);
 
-  //Password Reset Request Email
-  const passwordUpdateRequest = async (token, formData) => {
+  //LOGIN USER
+  const login = async (formData) => {
     const config = {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
     };
     try {
-      const res = await axios.put(
-        `/api/users/password-reset/${token}`,
-        formData,
-        config
-      );
-      dispatch({ type: PASSWORD_RESET, payload: res.data });
-      enqueueSnackbar("Password reset, please login", {
-        variant: "success",
+      const res = await axios.post("/api/auth", formData, config);
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: res.data,
       });
-      logout();
+      loadUser();
     } catch (error) {
       dispatch({
-        type: PASSWORD_RESET_EMAIL_FAIL,
+        type: LOGIN_FAIL,
         payload: error.response.data.error,
       });
     }
@@ -125,6 +122,30 @@ const AuthState = (props) => {
   };
 
   //Password Reset Request Email
+  const passwordUpdateRequest = async (token, formData) => {
+    const config = {
+      headers: { "Content-Type": "application/json" },
+    };
+    try {
+      const res = await axios.put(
+        `/api/users/password-reset/${token}`,
+        formData,
+        config
+      );
+      dispatch({ type: PASSWORD_RESET, payload: res.data });
+      enqueueSnackbar("Password reset, please login", {
+        variant: "success",
+      });
+      logout();
+    } catch (error) {
+      dispatch({
+        type: PASSWORD_RESET_EMAIL_FAIL,
+        payload: error.response.data.error,
+      });
+    }
+  };
+
+  //Password Reset Request Email
   const passwordResetRequest = async (id) => {
     const config = {
       headers: { "Content-Type": "application/json" },
@@ -176,28 +197,6 @@ const AuthState = (props) => {
     } catch (error) {
       dispatch({
         type: REGISTER_FAIL,
-        payload: error.response.data.error,
-      });
-    }
-  };
-
-  //LOGIN USER
-  const login = async (formData) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    try {
-      const res = await axios.post("/api/auth", formData, config);
-      dispatch({
-        type: LOGIN_SUCCESS,
-        payload: res.data,
-      });
-      loadUser();
-    } catch (error) {
-      dispatch({
-        type: LOGIN_FAIL,
         payload: error.response.data.error,
       });
     }

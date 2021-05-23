@@ -78,7 +78,7 @@ router.post(
         expiresIn: 360000,
       });
 
-      const data = {
+      const data = { //email template
         from: "DemPay <noreply@dempay.com>",
         to: email,
         subject: "Verify Your Email",
@@ -274,6 +274,44 @@ router.post(
     }
   }
 );
+
+//@route    GET api/users
+//@desc     Get all users
+//@access   Private
+router.get("/", auth, async (req, res, next) => {
+  try {
+    const users = await User.find()
+      .sort({
+        date: -1,
+      })
+      .select("-password");
+    res.json(users);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send({ error: err.message });
+  }
+  next();
+});
+
+//@route    POST api/users/password-reset-request-public
+//@desc     POST user ID
+//@access   Public
+router.post("/password-reset-request-public", async (req, res) => {
+  const { QUBID, email } = req.body;
+  try {
+    let users = await User.findOne({ QUBID: QUBID }).select(["id", "email"]);
+    if (users.email !== email) {
+      res
+        .status(401)
+        .send({ error: "An error occurred, please contact the system admin" });
+    } else {
+      res.json(users.id);
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send({ error: err.message });
+  }
+});
 
 //@route    POST api/user/password-reset/:id
 //@desc     Post User and issue password reset to email address
@@ -574,56 +612,20 @@ router.put(
   }
 );
 
-//@route    GET api/users
-//@desc     Get all users
-//@access   Private
-router.get("/", auth, async (req, res, next) => {
-  try {
-    const users = await User.find()
-      .sort({
-        date: -1,
-      })
-      .select("-password");
-    res.json(users);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send({ error: err.message });
-  }
-  next();
-});
-
-//@route    POST api/users/password-reset-request-public
-//@desc     POST user ID
-//@access   Public
-router.post("/password-reset-request-public", async (req, res) => {
-  const { QUBID, email } = req.body;
-  try {
-    let users = await User.findOne({ QUBID: QUBID }).select(["id", "email"]);
-    if (users.email !== email) {
-      res
-        .status(401)
-        .send({ error: "An error occurred, please contact the system admin" });
-    } else {
-      res.json(users.id);
-    }
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send({ error: err.message });
-  }
-});
-
 //@route    POST api/users/confirm-email/:token
 //@desc     Activate User Account with token
 //@access   PUBLIC
 router.put("/confirm-email/:token", async (req, res) => {
   const token = req.params.token; //Get token string from URL
   try {
-    if (token) { //If token exists, try to decode using JWT
+    if (token) {
+      //If token exists, try to decode using JWT
       const decode = jwt.verify(
         token,
-        config.get("JWT_ACC_ACTIVATE"), //access encryption key from middleware 
+        config.get("JWT_ACC_ACTIVATE"), //access encryption key from middleware
         function (err, decodedToken) {
-          if (err) { //if unable to decrypt, throw error
+          if (err) {
+            //if unable to decrypt, throw error
             return res.status(400).json({ error: "This token has expired" });
           }
           return decodedToken;
@@ -649,7 +651,8 @@ router.put("/confirm-email/:token", async (req, res) => {
         if (!UpdatedUser) {
           return res.status(404).json({ error: "User not found" });
         } else {
-          NewUpdatedUser = await User.findByIdAndUpdate( //using ObjectID update the user record with userFields object
+          NewUpdatedUser = await User.findByIdAndUpdate(
+            //using ObjectID update the user record with userFields object
             updatedUserId,
             { $set: userFields },
             { new: true }
