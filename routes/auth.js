@@ -26,7 +26,7 @@ router.get("/", auth, async (req, res, next) => {
 router.post(
   "/",
   [
-    check("email", "Please insert an email address").not().isEmpty(),
+    check("email", "Please insert an email address").not().isEmpty() ,
     check("email", "A valid email address is required").isEmail(),
     check("password", "A valid password is required").not().isEmpty(),
   ],
@@ -37,6 +37,7 @@ router.post(
         .status(400)
         .json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
+
     const { email, password } = req.body;
     try {
       let user = await User.findOne({ email }); // find user email and return user.id
@@ -59,6 +60,7 @@ router.post(
               "This account has been disabled, please contact the system administrator for support",
           });
       }
+      
       // set payload variable for jwt sign (token)
       const payload = {
         user: {

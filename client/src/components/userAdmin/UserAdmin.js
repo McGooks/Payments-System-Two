@@ -213,7 +213,13 @@ const UserAdmin = (props) => {
         customBodyRenderLite: (dataIndex) => {
           return (
             <>
-              <Grid container direction="row" alignContent="center" alignItems="center" justify="space-around">
+              <Grid
+                container
+                direction="row"
+                alignContent="center"
+                alignItems="center"
+                justify="space-around"
+              >
                 <Grid item align="center">
                   <EditIcon
                     onClick={(e) => {

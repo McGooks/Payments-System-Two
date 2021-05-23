@@ -14,7 +14,7 @@ const StatsState = (props) => {
 
   const [state, dispatch] = useReducer(StatsReducer, initialState);
 
-  //Get Users where their status is set to "Active"
+  //Return Stats
   const getStatData = async () => {
     try {
       let res = await axios.get("/api/stats");

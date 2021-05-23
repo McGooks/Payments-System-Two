@@ -57,56 +57,19 @@ const App = () => {
                     <div className="container">
                       <Switch>
                         <PrivateRoute exact path="/" component={Home} />
-                        <PrivateRoute
-                          exact
-                          path="/userAdmin"
-                          component={UserAdmin}
-                        />
+                        <PrivateRoute exact path="/userAdmin" component={UserAdmin} />
                         <PrivateRoute exact path="/import" component={Import} />
                         <PrivateRoute exact path="/importNSP" component={ImportNSP} />
-                        <PrivateRoute
-                          exact
-                          path="/payments"
-                          component={Payments}
-                        />
-                        <PrivateRoute
-                          exact
-                          path="/payments/new"
-                          component={PaymentsCreate}
-                        />
-                        <PrivateRoute
-                          exact
-                          path="/payments/:id"
-                          component={ViewPayments}
-                        />
-                        <PrivateRoute
-                          exact
-                          path="/user/:id/payments"
-                          component={UserPayments}
-                        />
+                        <PrivateRoute exact path="/payments" component={Payments} />
+                        <PrivateRoute exact path="/payments/new" component={PaymentsCreate} />
+                        <PrivateRoute exact path="/payments/:id" component={ViewPayments} />
+                        <PrivateRoute exact path="/user/:id/payments" component={UserPayments}/>
                         <PrivateRoute exact path="/user/:id" component={User} />
-
-                        <Route
-                          exact
-                          path="/users/confirm-email/:token"
-                          component={Verify}
-                        />
-                        <Route
-                          exact
-                          path="/users/password-reset/:token"
-                          component={PasswordReset}
-                        />
+                        <Route exact path="/users/confirm-email/:token" component={Verify} />
+                        <Route exact path="/users/password-reset/:token" component={PasswordReset} />
                         <Route exact path="/about" component={About} />
-                        <Route
-                          exact
-                          path="/users/register"
-                          component={Register}
-                        />
-                        <Route
-                          exact
-                          path="/password-reset"
-                          component={PasswordResetRequest}
-                        />
+                        <Route exact path="/users/register" component={Register} />
+                        <Route exact path="/password-reset" component={PasswordResetRequest} />
                         <Route exact path="/login" component={Login} />
                         <Redirect from="*" to="/" />
                       </Switch>

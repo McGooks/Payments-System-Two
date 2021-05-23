@@ -7,7 +7,6 @@ const auth = require("../middleware/auth");
 const User = require("../models/User");
 const Payment = require("../models/Payments");
 const config = require("config");
-
 //Mail Gun
 const mailgun = require("mailgun-js");
 const DOMAIN = config.get("mailgun_DOMAIN");

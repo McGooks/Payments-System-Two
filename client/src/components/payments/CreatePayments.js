@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "left",
   },
   table: {
-    width: "auto",
+    width: "100%",
     tableLayout: "auto",
   },
   spacer: {
@@ -1777,18 +1777,19 @@ const CreatePayment = (props) => {
                             </TableBody>
                           </Table>
                         </TableContainer>
+                        
                         <TableContainer
-                          className={clsx(classes.spacer)}
+                          className={classes.spacer}
                           component={Paper}
                         >
                           <Table
-                            className={clsx(classes.table)}
+                            className={classes.table}
                             aria-label="spanning table"
                             size="small"
                           >
                             <TableHead>
                               <TableRow key={uuidv4()}>
-                                <TableCell align="left">
+                                <TableCell align="left" >
                                   Office hours Calculation
                                 </TableCell>
                                 <TableCell />

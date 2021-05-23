@@ -20,18 +20,6 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-//@route    GET api/payments/:id
-//@desc     Get selected payment
-//@access   Private
-router.get("/:id", auth, async (req, res) => {
-  try {
-    const payments = await Payment.findById(req.params.id)
-      .populate("paymentDetail")
-    res.json(payments);
-  } catch (error) {
-    res.status(500).send({ error: error.message });
-  }
-});
 
 //@route    POST api/payments/new
 //@desc     Add new Payment
@@ -77,6 +65,7 @@ router.post(
     }
   }
 );
+
 
 //@route    PUT api/payments/reject
 //@desc     Update All Pending payments as rejected
@@ -295,6 +284,19 @@ router.put("/:id/paid", auth, async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+//@route    GET api/payments/:id
+//@desc     Get selected payment
+//@access   Private
+router.get("/:id", auth, async (req, res) => {
+  try {
+    const payments = await Payment.findById(req.params.id)
+      .populate("paymentDetail")
+    res.json(payments);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
 
 //@route    DELETE api/payments/:id
 //@desc     Delete User Payment
