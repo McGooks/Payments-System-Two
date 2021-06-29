@@ -1,6 +1,17 @@
-# Payments-System-Two
+# Demonstrator Payment System (DemPay)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![alt text](https://user-images.githubusercontent.com/26790282/123791419-5032b200-d8d7-11eb-83a0-eff5b6904e9a.png)
+<p align="center">Home Screen</p>
+
+This project exists to provide a solution to a currently very manual process of onboarding and arranging payments to demonstrators within the School of Electronics, Electrical Engineering and Computer Science at Queens University. A secure web application was created through iterative development processes that sought to provide an efficient solution to registering & managing demonstrator payments. 
+
+Using several innovative technologies such as MongoDB, Express.js, React.js, Node.js (MERN), the Demonstrator Payment System (DemPay) provides a workflow-based solution that enables the demonstrator coordinator to reclaim administrative time throughout the school semester. DemPay also gives demonstrators an accessible system to track their payments.This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+![alt text](https://user-images.githubusercontent.com/26790282/123791692-a69ff080-d8d7-11eb-8399-c5e4de4f20e3.png)
+<p align="center">Payment Screen</p>
+
+![alt text](https://user-images.githubusercontent.com/26790282/123791697-a869b400-d8d7-11eb-8c39-7506ce44bf3b.png)
+<p align="center">Edit User Screen</p>
 
 ## Available Scripts
 
