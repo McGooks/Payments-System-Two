@@ -55,10 +55,10 @@ const AuthState = (props) => {
 
   //LOAD USER
   const loadUser = async () => {
-    if (localStorage.token) {
-      SetAuthToken(localStorage.token);
-    }
     try {
+      if (localStorage.token) {
+        SetAuthToken(localStorage.token);
+      }
       const res = await axios.get("/api/auth");
       dispatch({
         type: USER_LOADED,

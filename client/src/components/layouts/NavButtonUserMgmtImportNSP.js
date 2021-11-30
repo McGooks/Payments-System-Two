@@ -6,6 +6,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import { v4 as uuidv4 } from "uuid";
 
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 //Context
@@ -98,7 +99,7 @@ const NavButtonUserMgmtImport = () => {
       >
         {actions.map((action) => (
           <SpeedDialAction
-            key={action.id}
+            key={uuidv4()}
             icon={action.icon}
             tooltipTitle={action.name}
             onClick={(e) => {

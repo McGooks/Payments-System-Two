@@ -10,6 +10,7 @@ import Payments from "@material-ui/icons/AccountBalanceWallet";
 import Reports from "@material-ui/icons/Assessment";
 import Admin from "@material-ui/icons/Settings";
 import InfoIcon from "@material-ui/icons/Info";
+import { v4 as uuidv4 } from "uuid";
 
 //State
 import AuthContext from "../../context/auth/authContext";
@@ -143,7 +144,7 @@ const NavButtonHome = (props) => {
       >
         {actions.map((action) => (
           <SpeedDialAction
-            key={action.id}
+            key={uuidv4()}
             icon={action.icon}
             tooltipTitle={action.name}
             onClick={handleClose}
