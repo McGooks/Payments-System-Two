@@ -7,6 +7,7 @@ import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import CallMerge from "@material-ui/icons/CallMerge";
+import { v4 as uuidv4 } from "uuid";
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
 // UI
@@ -98,7 +99,7 @@ const NavButtonUserMgmtImport = () => {
       >
         {actions.map((action) => (
           <SpeedDialAction
-            key={action.id}
+            key={uuidv4()}
             icon={action.icon}
             tooltipTitle={action.name}
             onClick={(e) => {

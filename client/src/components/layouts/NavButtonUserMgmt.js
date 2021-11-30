@@ -8,6 +8,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import CallMerge from '@material-ui/icons/CallMerge';
+import { v4 as uuidv4 } from "uuid";
 
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
@@ -66,7 +67,7 @@ const NavButtonUserMgmt = () => {
     { id: 1, icon: (<Link to="/"><ArrowBackIcon /></Link>), name: "Back", },
     { id: 2, icon: (<Link to="#"><PersonAddIcon /></Link>), name: "Manually Add User" },
     { id: 3, icon: (<Link to="/import"><GroupAddIcon /></Link>), name: "Import User File" },
-    { id: 3, icon: (<Link to="/importNSP"><CallMerge /></Link>), name: "Import NSP Data File" },
+    { id: 4, icon: (<Link to="/importNSP"><CallMerge /></Link>), name: "Import NSP Data File" },
   ];
   
 
@@ -83,7 +84,7 @@ const NavButtonUserMgmt = () => {
       >
         {actions.map((action) => (
           <SpeedDialAction
-            key={action.id}
+            key={uuidv4()}
             icon={action.icon}
             tooltipTitle={action.name}
             onClick={(e) => {

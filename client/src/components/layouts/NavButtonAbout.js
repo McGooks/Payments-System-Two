@@ -5,6 +5,7 @@ import SpeedDial from "@material-ui/lab/SpeedDial";
 import MenuIcon from "@material-ui/icons/Menu";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,7 +57,7 @@ const NavButtonAbout = () => {
       >
         {actions.map((action) => (
           <SpeedDialAction
-            key={action.id}
+            key={uuidv4()}
             icon={action.icon}
             tooltipTitle={action.name}
             onClick={handleClose}
