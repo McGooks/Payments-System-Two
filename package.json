@@ -2,7 +2,7 @@
   "name": "gma-payment-system",
   "version": "1.0.0",
   "engines": {
-    "node": "12.19.0"
+    "node": "^v16.15.0"
   },
   "description": "Glenn Marshall-Adams MSc Final Year payment app",
   "main": "server.js",
