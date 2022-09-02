@@ -6,17 +6,17 @@ import { Alert, AlertTitle } from "@mui/lab";
 import Button from "@mui/material/Button";
 import clsx from "clsx";
 //ScoreCards
-import UserCountKPI from "../../components/charts/UserCountKPI";
-import UserCountKPITaxSigned from "../../components/charts/UserCountKPITaxSigned";
-import PaymentPendingAuthCountKPI from "../../components/charts/PaymentPendingAuthCountKPI";
-import PaymentPendingAuthValueKPI from "../../components/charts/PaymentPendingAuthValueKPI";
-import PaymentsAuthValueKPI from "../../components/charts/PaymentsAuthValueKPI";
-import PaymentsAuthValueYTDKPI from "../../components/charts/PaymentsAuthValueYTDKPI";
-import UserPaymentsView from "../../components/payments/UserPayments";
+import UserCountKPI from "../charts/UserCountKPI";
+import UserCountKPITaxSigned from "../charts/UserCountKPITaxSigned";
+import PaymentPendingAuthCountKPI from "../charts/PaymentPendingAuthCountKPI";
+import PaymentPendingAuthValueKPI from "../charts/PaymentPendingAuthValueKPI";
+import PaymentsAuthValueKPI from "../charts/PaymentsAuthValueKPI";
+import PaymentsAuthValueYTDKPI from "../charts/PaymentsAuthValueYTDKPI";
+import UserPaymentsView from "../payments/UserPayments";
 import ProgressIndicator from "../layouts/Spinner";
 
 //Navigation
-import NavButtonHome from "../../components/layouts/NavButtonHome";
+import NavButtonHome from "../layouts/NavButtonHome";
 //State
 import AuthContext from "../../context/auth/authContext";
 import StatsContext from "../../context/stats/statsContext";
