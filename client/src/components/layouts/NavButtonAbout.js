@@ -1,27 +1,39 @@
 import React, { useState } from "react";
+import { styled } from '@mui/material/styles';
 import { Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import MenuIcon from "@material-ui/icons/Menu";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import SpeedDial from "@mui/lab/SpeedDial";
+import MenuIcon from "@mui/icons-material/Menu";
+import SpeedDialAction from "@mui/lab/SpeedDialAction";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { v4 as uuidv4 } from "uuid";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const PREFIX = 'NavButtonAbout';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  speedDial: `${PREFIX}-speedDial`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.root}`]: {
     "& > *": {
       margin: theme.spacing(1),
     },
   },
-  speedDial: {
+
+  [`& .${classes.speedDial}`]: {
     position: "fixed",
     bottom: theme.spacing(2),
     right: theme.spacing(2),
-  },
+  }
 }));
 
 const NavButtonAbout = () => {
-  const classes = useStyles();
+
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -45,7 +57,7 @@ const NavButtonAbout = () => {
   ];
 
   return (
-    <div className={classes.root}>
+    <Root className={classes.root}>
       <SpeedDial
         ariaLabel="About Navigation Control"
         className={classes.speedDial}
@@ -64,7 +76,7 @@ const NavButtonAbout = () => {
           />
         ))}
       </SpeedDial>
-    </div>
+    </Root>
   );
 };
 

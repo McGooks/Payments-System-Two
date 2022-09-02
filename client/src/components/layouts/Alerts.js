@@ -5,7 +5,7 @@ import { useSnackbar } from "notistack";
 
 const Alerts = () => {
   const alertContext = useContext(AlertContext);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   return (
     <>
     {alertContext.alerts.length > 0 &&
@@ -16,7 +16,7 @@ const Alerts = () => {
     ))}
     </>
   );
-  
+
 };
 
 export default Alerts;

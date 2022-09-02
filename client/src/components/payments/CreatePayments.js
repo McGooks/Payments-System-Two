@@ -1,6 +1,6 @@
 import React, { useContext, Fragment, useEffect, useState } from "react";
+import { styled } from '@mui/material/styles';
 import { useHistory, useParams, Link } from "react-router-dom";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { v4 as uuidv4 } from "uuid";
 import {
   deliveryCategory,
@@ -34,14 +34,104 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from "@material-ui/core";
-import InfoIcon from "@material-ui/icons/Info";
+} from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
 import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
 import clsx from "clsx";
 import MarkingRange from "../layouts/MarkingRange";
 import Dialog from "../layouts/ConfirmationDialog";
 import UserPayments from "./UserPayments";
+const PREFIX = 'CreatePayment';
+
+const classes = {
+  tooltip: `${PREFIX}-tooltip`,
+  root: `${PREFIX}-root`,
+  paper: `${PREFIX}-paper`,
+  right: `${PREFIX}-right`,
+  left: `${PREFIX}-left`,
+  table: `${PREFIX}-table`,
+  spacer: `${PREFIX}-spacer`,
+  textField: `${PREFIX}-textField`,
+  footer: `${PREFIX}-footer`,
+  inputField: `${PREFIX}-inputField`,
+  inputCenter: `${PREFIX}-inputCenter`,
+  inputEdit: `${PREFIX}-inputEdit`,
+  finalButton: `${PREFIX}-finalButton`,
+  BandB: `${PREFIX}-BandB`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.root}`]: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+    flexGrow: 1,
+  },
+
+  [`& .${classes.paper}`]: {
+    padding: theme.spacing(2),
+    textAlign: "right",
+    color: theme.palette.text.secondary,
+  },
+
+  [`& .${classes.right}`]: {
+    textAlign: "right",
+  },
+
+  [`& .${classes.left}`]: {
+    textAlign: "left",
+  },
+
+  [`& .${classes.table}`]: {
+    width: "100%",
+    tableLayout: "auto",
+  },
+
+  [`& .${classes.spacer}`]: {
+    marginTop: theme.spacing(2),
+  },
+
+  [`& .${classes.textField}`]: {
+    "& > *": {},
+  },
+
+  [`& .${classes.footer}`]: {
+    minHeight: 100,
+  },
+
+  [`& .${classes.inputField}`]: {
+    textAlign: "center",
+  },
+
+  [`& .${classes.inputCenter}`]: {
+    textAlign: "center",
+    color: "black",
+    fontSize: theme.typography.pxToRem(14),
+  },
+
+  [`& .${classes.inputEdit}`]: {
+    textAlign: "center",
+    color: "black",
+    fontSize: theme.typography.pxToRem(14),
+    backgroundColor: "#edfced",
+  },
+
+  [`& .${classes.finalButton}`]: {
+    margin: theme.spacing(2),
+  },
+
+  [`& .${classes.BandB}`]: {
+    backgroundColor: "white",
+    color: "white !important",
+  }
+}));
+
 // import CustomToolbar from "../layouts/CustomToolbar";
 
 const CUR = "£";
@@ -61,69 +151,7 @@ const MHC_C5 = 0.5;
 const MHC_D = 1.5;
 const OFFR = 0.5;
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    "& > *": {
-      margin: theme.spacing(1),
-    },
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: "right",
-    color: theme.palette.text.secondary,
-  },
-  right: {
-    textAlign: "right",
-  },
-  left: {
-    textAlign: "left",
-  },
-  table: {
-    width: "100%",
-    tableLayout: "auto",
-  },
-  spacer: {
-    marginTop: theme.spacing(2),
-  },
-  textField: {
-    "& > *": {},
-  },
-  footer: {
-    minHeight: 100,
-  },
-  inputField: {
-    textAlign: "center",
-  },
-  inputCenter: {
-    textAlign: "center",
-    color: "black",
-    fontSize: theme.typography.pxToRem(14),
-  },
-  inputEdit: {
-    textAlign: "center",
-    color: "black",
-    fontSize: theme.typography.pxToRem(14),
-    backgroundColor: "#edfced",
-  },
-  finalButton: {
-    margin: theme.spacing(2),
-  },
-  BandB: {
-    backgroundColor: "white",
-    color: "white !important",
-  },
-
-}));
-
-const HtmlTooltip = withStyles((theme) => ({
-  tooltip: {
-    backgroundColor: "#f5f5f9",
-    color: "rgba(0, 0, 0, 0.87)",
-    maxWidth: 1200,
-    border: "1px solid #dadde9",
-  },
-}))(Tooltip);
+const HtmlTooltip = Tooltip;
 
 function ccyFormat(num) {
   return `${num.toFixed(2)}`;
@@ -158,7 +186,7 @@ function pad(num, size) {
 }
 
 const CreatePayment = (props) => {
-  const classes = useStyles();
+
   const paymentContext = useContext(PaymentContext);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { payments, addPayment, loading, error } = paymentContext;
@@ -475,7 +503,7 @@ const CreatePayment = (props) => {
   });
   const [formShowing, setFormShowing] = useState(false);
   const [stage, setStage] = useState("");
-  
+
   //Events
   const onChange = (e, i, g, r, rng) => {
     let rate = "";
@@ -1118,7 +1146,7 @@ const CreatePayment = (props) => {
   // const invoiceTaxes = TAX_RATE * 0;
   const invoiceTotal = invoiceSubtotal;
   return (
-    <Fragment>
+    <Root>
       <div>
         <div>
           {payments !== null && !loading ? (
@@ -1469,11 +1497,13 @@ const CreatePayment = (props) => {
                         <HtmlTooltip
                           placement="bottom-end"
                           title={
-                            <React.Fragment >
+                            <React.Fragment>
                               <MarkingRange />
                             </React.Fragment>
                           }
-                        >
+                          classes={{
+                            tooltip: classes.tooltip
+                          }}>
                           <InfoIcon></InfoIcon>
                         </HtmlTooltip>
                       </Grid>
@@ -1777,7 +1807,7 @@ const CreatePayment = (props) => {
                             </TableBody>
                           </Table>
                         </TableContainer>
-                        
+
                         <TableContainer
                           className={classes.spacer}
                           component={Paper}
@@ -1789,7 +1819,7 @@ const CreatePayment = (props) => {
                           >
                             <TableHead>
                               <TableRow key={uuidv4()}>
-                                <TableCell align="left" >
+                                <TableCell align="left">
                                   Office hours Calculation
                                 </TableCell>
                                 <TableCell />
@@ -3334,7 +3364,7 @@ const CreatePayment = (props) => {
           invoiceTotal={ccyFormat(invoiceTotal)}
         />
       )}
-    </Fragment>
+    </Root>
   );
 };
 

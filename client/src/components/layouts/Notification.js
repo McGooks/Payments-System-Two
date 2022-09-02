@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import {
   NotificationsNone as NotificationsIcon,
   ThumbUp as ThumbUpIcon,
@@ -13,9 +13,9 @@ import {
   Error as DefenceIcon,
   AccountBox as CustomerIcon,
   Done as ShippedIcon,
-  Publish as UploadIcon
-} from "@material-ui/icons";
-import { useTheme } from "@material-ui/styles";
+  Publish as UploadIcon,
+} from "@mui/icons-material";
+import { useTheme } from "@mui/styles";
 import classnames from "classnames";
 import tinycolor from "tinycolor2";
 
@@ -38,7 +38,7 @@ const typesIcons = {
   defence: <DefenceIcon />,
   report: <ReportIcon />,
   upload: <UploadIcon />,
-  disc: <DiscIcon />
+  disc: <DiscIcon />,
 };
 
 export default function Notification({ variant, ...props }) {
@@ -48,33 +48,33 @@ export default function Notification({ variant, ...props }) {
   const icon = getIconByType(props.type);
   const iconWithStyles = React.cloneElement(icon, {
     classes: {
-      root: classes.notificationIcon
+      root: classes.notificationIcon,
     },
     style: {
       color:
         variant !== "contained" &&
         theme.palette[props.color] &&
-        theme.palette[props.color].main
-    }
+        theme.palette[props.color].main,
+    },
   });
 
   return (
     <div
       className={classnames(classes.notificationContainer, props.className, {
         [classes.notificationContained]: variant === "contained",
-        [classes.notificationContainedShadowless]: props.shadowless
+        [classes.notificationContainedShadowless]: props.shadowless,
       })}
       style={{
         backgroundColor:
           variant === "contained" &&
           theme.palette[props.color] &&
-          theme.palette[props.color].main
+          theme.palette[props.color].main,
       }}
     >
       <div
         className={classnames(classes.notificationIconContainer, {
           [classes.notificationIconContainerContained]: variant === "contained",
-          [classes.notificationIconContainerRounded]: variant === "rounded"
+          [classes.notificationIconContainerRounded]: variant === "rounded",
         })}
         style={{
           backgroundColor:
@@ -82,7 +82,7 @@ export default function Notification({ variant, ...props }) {
             theme.palette[props.color] &&
             tinycolor(theme.palette[props.color].main)
               .setAlpha(0.15)
-              .toRgbString()
+              .toRgbString(),
         }}
       >
         {iconWithStyles}
@@ -90,7 +90,7 @@ export default function Notification({ variant, ...props }) {
       <div className={classes.messageContainer}>
         <Typography
           className={classnames({
-            [classes.containedTypography]: variant === "contained"
+            [classes.containedTypography]: variant === "contained",
           })}
           variant={props.typographyVariant}
           size={variant !== "contained" && !props.typographyVariant && "md"}

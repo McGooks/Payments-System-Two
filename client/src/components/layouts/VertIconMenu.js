@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import IconButton from "@material-ui/core/IconButton";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import ViewListIcon from "@material-ui/icons/ViewList";
-import ThumbUpIcon from "@material-ui/icons/ThumbUp";
-import ThumbDownIcon from "@material-ui/icons/ThumbDown";
-import { Typography, Grid } from "@material-ui/core";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ViewListIcon from "@mui/icons-material/ViewList";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import { Typography, Grid } from "@mui/material";
 
 const options = [
   {
@@ -61,7 +61,7 @@ const LongMenu = () => {
         aria-controls="long-menu"
         aria-haspopup="true"
         onClick={handleClick}
-      >
+        size="large">
         <MoreVertIcon />
       </IconButton>
       <Menu
@@ -75,7 +75,7 @@ const LongMenu = () => {
           container
           spacing={1}
           direction="column"
-          justify="flex-start"
+          justifyContent="flex-start"
           alignItems="center"
         >
           {options.map((option) => (

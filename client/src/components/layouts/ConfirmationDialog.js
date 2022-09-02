@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import React from "react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/styles";
 
 const ResponsiveDialog = (props) => {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const {
     hideForm,
     stage,
@@ -18,7 +18,7 @@ const ResponsiveDialog = (props) => {
     invoiceTotal,
     RejectAllPayments,
     ApproveAllPayments,
-    PaidAllPayments
+    PaidAllPayments,
   } = props;
 
   return (
@@ -95,24 +95,24 @@ const ResponsiveDialog = (props) => {
             </Button>
           ) : stage === "ApproveAllPayments" ? (
             <Button
-            onClick={() => {
-              ApproveAllPayments();
-            }}
-            color="primary"
-            autoFocus
-          >
-            Approve All
-          </Button>
+              onClick={() => {
+                ApproveAllPayments();
+              }}
+              color="primary"
+              autoFocus
+            >
+              Approve All
+            </Button>
           ) : stage === "PaidAllPayments" ? (
             <Button
-            onClick={() => {
-              PaidAllPayments();
-            }}
-            color="primary"
-            autoFocus
-          >
-            Set All to Paid
-          </Button>
+              onClick={() => {
+                PaidAllPayments();
+              }}
+              color="primary"
+              autoFocus
+            >
+              Set All to Paid
+            </Button>
           ) : (
             "Something Went Wrong"
           )}

@@ -1,34 +1,46 @@
 import React, { useState, useContext } from "react";
+import { styled } from '@mui/material/styles';
 import { Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import MenuIcon from "@material-ui/icons/Menu";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import SpeedDial from "@mui/lab/SpeedDial";
+import MenuIcon from "@mui/icons-material/Menu";
+import SpeedDialAction from "@mui/lab/SpeedDialAction";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { v4 as uuidv4 } from "uuid";
 
-import GroupAddIcon from "@material-ui/icons/GroupAdd";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
 // UI
 import UserAdminAddModal from "../userAdmin/UserAdminAddModal";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const PREFIX = 'NavButtonUserMgmtImport';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  speedDial: `${PREFIX}-speedDial`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.root}`]: {
     "& > *": {
       margin: theme.spacing(1),
     },
   },
-  speedDial: {
+
+  [`& .${classes.speedDial}`]: {
     position: "fixed",
     bottom: theme.spacing(2),
     right: theme.spacing(2),
-  },
+  }
 }));
 
 const NavButtonUserMgmtImport = () => {
-  const classes = useStyles();
+
   const [open, setOpen] = useState(false);
   const userAdminContext = useContext(UserAdminContext);
   const { setDialogOpen, setDialogClosed, toggleDialog } = userAdminContext;
@@ -87,7 +99,7 @@ const NavButtonUserMgmtImport = () => {
   ];
 
   return (
-    <div className={classes.root}>
+    <Root className={classes.root}>
       <SpeedDial
         ariaLabel="User Import Navigation Control"
         className={classes.speedDial}
@@ -111,7 +123,7 @@ const NavButtonUserMgmtImport = () => {
       <>
         <UserAdminAddModal open={toggleDialog} onClose={closeDialog} />
       </>
-    </div>
+    </Root>
   );
 };
 

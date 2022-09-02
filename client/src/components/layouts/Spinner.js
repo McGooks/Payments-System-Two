@@ -1,25 +1,35 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import React from "react";
+import { styled } from '@mui/material/styles';
+import CircularProgress from "@mui/material/CircularProgress";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    '& > * + *': {
+const PREFIX = 'ProgressIndicator';
+
+const classes = {
+  root: `${PREFIX}-root`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.root}`]: {
+    display: "flex",
+    "& > * + *": {
       marginLeft: theme.spacing(2),
     },
     flexDirection: "row",
     justifyContent: "center",
-  },
+  }
 }));
 
 const ProgressIndicator = () => {
-  const classes = useStyles();
+
 
   return (
-    <div className={classes.root}> 
+    <Root className={classes.root}>
       <CircularProgress color="secondary" />
-    </div>
+    </Root>
   );
-}
+};
 export default ProgressIndicator;

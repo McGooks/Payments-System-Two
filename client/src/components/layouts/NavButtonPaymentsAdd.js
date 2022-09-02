@@ -1,26 +1,38 @@
 import React from "react";
+import { styled } from '@mui/material/styles';
 import { Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import MenuIcon from "@material-ui/icons/Menu";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import Import from "@material-ui/icons/Publish";
-import Reports from "@material-ui/icons/Assessment";
+import SpeedDial from "@mui/lab/SpeedDial";
+import MenuIcon from "@mui/icons-material/Menu";
+import SpeedDialAction from "@mui/lab/SpeedDialAction";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Import from "@mui/icons-material/Publish";
+import Reports from "@mui/icons-material/Assessment";
 import { v4 as uuidv4 } from "uuid";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const PREFIX = 'NavButtonPayments';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  speedDial: `${PREFIX}-speedDial`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.root}`]: {
     "& > *": {
       margin: theme.spacing(1),
     },
   },
-  speedDial: {
+
+  [`& .${classes.speedDial}`]: {
     position: "fixed",
     bottom: theme.spacing(2),
     right: theme.spacing(2),
-  },
+  }
 }));
 
 const actions = [
@@ -63,7 +75,7 @@ const actions = [
 ];
 
 const NavButtonPayments = () => {
-  const classes = useStyles();
+
   const [open, setOpen] = React.useState(false);
 
   const handleClose = () => {
@@ -75,7 +87,7 @@ const NavButtonPayments = () => {
   };
 
   return (
-    <div className={classes.root}>
+    <Root className={classes.root}>
       <SpeedDial
         ariaLabel="Payments Navigation Control"
         className={classes.speedDial}
@@ -94,7 +106,7 @@ const NavButtonPayments = () => {
           />
         ))}
       </SpeedDial>
-    </div>
+    </Root>
   );
 };
 

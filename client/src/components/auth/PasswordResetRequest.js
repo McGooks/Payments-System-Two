@@ -1,31 +1,43 @@
 import React, { useState, useContext, useEffect } from "react";
+import { styled } from '@mui/material/styles';
 //Components
 import { useSnackbar } from "notistack";
 //Context
 import AuthContext from "../../context/auth/authContext";
 //UI
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
+import { Button, TextField } from "@mui/material";
+const PREFIX = 'PasswordResetRequest';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const classes = {
+  root: `${PREFIX}-root`,
+  textFieldFull: `${PREFIX}-textFieldFull`,
+  button: `${PREFIX}-button`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.root}`]: {
     display: "flex",
     flexWrap: "wrap",
   },
-  textFieldFull: {
+
+  [`& .${classes.textFieldFull}`]: {
     marginTop: theme.spacing(2),
     width: "100%",
   },
-  button: {
+
+  [`& .${classes.button}`]: {
     backgroundColor: "rgb(214, 0, 13)",
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
-  },
+  }
 }));
 
 const PasswordResetRequest = (props) => {
-  const classes = useStyles();
+
   const authContext = useContext(AuthContext);
   const {
     register,
@@ -33,7 +45,7 @@ const PasswordResetRequest = (props) => {
     clearErrors,
     isAuthenticated,
     passwordResetRequestPublic,
-    logout
+    logout,
   } = authContext;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -76,7 +88,7 @@ const PasswordResetRequest = (props) => {
     }
   };
   return (
-    <div className="form-container">
+    <Root className="form-container">
       <h1>
         Password Reset <span className="text-primary">Request</span>
       </h1>
@@ -123,7 +135,7 @@ const PasswordResetRequest = (props) => {
           Request Reset
         </Button>
       </form>
-    </div>
+    </Root>
   );
 };
 

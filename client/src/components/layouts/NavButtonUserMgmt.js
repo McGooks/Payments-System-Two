@@ -1,13 +1,13 @@
-import React, {useState, useContext} from "react";
+import React, { useState, useContext } from "react";
+import { styled } from '@mui/material/styles';
 import { Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import MenuIcon from '@material-ui/icons/Menu';
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
-import CallMerge from '@material-ui/icons/CallMerge';
+import SpeedDial from "@mui/lab/SpeedDial";
+import MenuIcon from "@mui/icons-material/Menu";
+import SpeedDialAction from "@mui/lab/SpeedDialAction";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import CallMerge from "@mui/icons-material/CallMerge";
 import { v4 as uuidv4 } from "uuid";
 
 //Context
@@ -15,29 +15,36 @@ import UserAdminContext from "../../context/userAdmin/userAdminContext";
 // UI
 import UserAdminAddModal from "../userAdmin/UserAdminAddModal";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const PREFIX = 'NavButtonUserMgmt';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  speedDial: `${PREFIX}-speedDial`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.root}`]: {
     "& > *": {
       margin: theme.spacing(1),
     },
   },
-  speedDial: {
+
+  [`& .${classes.speedDial}`]: {
     position: "fixed",
     bottom: theme.spacing(2),
     right: theme.spacing(2),
-  },
+  }
 }));
 
-
 const NavButtonUserMgmt = () => {
-  const classes = useStyles();
-  const [open, setOpen] = useState(false)
+
+  const [open, setOpen] = useState(false);
   const userAdminContext = useContext(UserAdminContext);
-  const {
-    setDialogOpen,
-    setDialogClosed,
-    toggleDialog,
-  } = userAdminContext;
+  const { setDialogOpen, setDialogClosed, toggleDialog } = userAdminContext;
 
   const handleClose = () => {
     setOpen(false);
@@ -48,31 +55,61 @@ const NavButtonUserMgmt = () => {
   };
 
   const openDialog = () => {
-    setDialogOpen()
-  }
-
-  const closeDialog = () => {
-    setDialogClosed()
-  }
-
-
-  function handleClick (e,id){
-    e.preventDefault();
-    if(id === 2){
-      openDialog()
-    }
+    setDialogOpen();
   };
 
+  const closeDialog = () => {
+    setDialogClosed();
+  };
+
+  function handleClick(e, id) {
+    e.preventDefault();
+    if (id === 2) {
+      openDialog();
+    }
+  }
+
   const actions = [
-    { id: 1, icon: (<Link to="/"><ArrowBackIcon /></Link>), name: "Back", },
-    { id: 2, icon: (<Link to="#"><PersonAddIcon /></Link>), name: "Manually Add User" },
-    { id: 3, icon: (<Link to="/import"><GroupAddIcon /></Link>), name: "Import User File" },
-    { id: 4, icon: (<Link to="/importNSP"><CallMerge /></Link>), name: "Import NSP Data File" },
+    {
+      id: 1,
+      icon: (
+        <Link to="/">
+          <ArrowBackIcon />
+        </Link>
+      ),
+      name: "Back",
+    },
+    {
+      id: 2,
+      icon: (
+        <Link to="#">
+          <PersonAddIcon />
+        </Link>
+      ),
+      name: "Manually Add User",
+    },
+    {
+      id: 3,
+      icon: (
+        <Link to="/import">
+          <GroupAddIcon />
+        </Link>
+      ),
+      name: "Import User File",
+    },
+    {
+      id: 4,
+      icon: (
+        <Link to="/importNSP">
+          <CallMerge />
+        </Link>
+      ),
+      name: "Import NSP Data File",
+    },
   ];
-  
 
   return (
-    <div className={classes.root}>
+    <Root className={classes.root}>
       <SpeedDial
         ariaLabel="User Management Navigation Control"
         className={classes.speedDial}
@@ -80,7 +117,7 @@ const NavButtonUserMgmt = () => {
         onClose={handleClose}
         onOpen={handleOpen}
         open={open}
-        FabProps={{ color: "secondary"}}
+        FabProps={{ color: "secondary" }}
       >
         {actions.map((action) => (
           <SpeedDialAction
@@ -88,15 +125,15 @@ const NavButtonUserMgmt = () => {
             icon={action.icon}
             tooltipTitle={action.name}
             onClick={(e) => {
-              handleClick(e, action.id)
-         }}
+              handleClick(e, action.id);
+            }}
           />
         ))}
       </SpeedDial>
       <>
-      <UserAdminAddModal open={toggleDialog} onClose={closeDialog}/>
+        <UserAdminAddModal open={toggleDialog} onClose={closeDialog} />
       </>
-    </div>
+    </Root>
   );
 };
 

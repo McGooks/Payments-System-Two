@@ -1,6 +1,6 @@
 import React, { useContext, Fragment, useEffect, useState } from "react";
+import { styled } from '@mui/material/styles';
 import { useHistory, useParams, Link } from "react-router-dom";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { v4 as uuidv4 } from "uuid";
 
 //Context
@@ -24,57 +24,88 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from "@material-ui/core";
+} from "@mui/material";
 
 import { useSnackbar } from "notistack";
 import clsx from "clsx";
 
-const CUR = "£";
-const AC1_RATE = 14.73;
-const AC2_RATE = 17.57;
+const PREFIX = 'ViewPayment';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const classes = {
+  root: `${PREFIX}-root`,
+  paper: `${PREFIX}-paper`,
+  right: `${PREFIX}-right`,
+  left: `${PREFIX}-left`,
+  table: `${PREFIX}-table`,
+  spacer: `${PREFIX}-spacer`,
+  textField: `${PREFIX}-textField`,
+  footer: `${PREFIX}-footer`,
+  inputField: `${PREFIX}-inputField`,
+  inputCenter: `${PREFIX}-inputCenter`,
+  finalButton: `${PREFIX}-finalButton`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.root}`]: {
     "& > *": {
       margin: theme.spacing(1),
     },
     flexGrow: 1,
   },
-  paper: {
+
+  [`& .${classes.paper}`]: {
     padding: theme.spacing(2),
     textAlign: "right",
     color: theme.palette.text.secondary,
   },
-  right: {
+
+  [`& .${classes.right}`]: {
     textAlign: "right",
   },
-  left: {
+
+  [`& .${classes.left}`]: {
     textAlign: "left",
   },
-  table: {
+
+  [`& .${classes.table}`]: {
     minWidth: 700,
   },
-  spacer: {
+
+  [`& .${classes.spacer}`]: {
     marginTop: theme.spacing(2),
   },
-  textField: {
+
+  [`& .${classes.textField}`]: {
     "& > *": {},
   },
-  footer: {
+
+  [`& .${classes.footer}`]: {
     minHeight: 100,
   },
-  inputField: {
+
+  [`& .${classes.inputField}`]: {
     textAlign: "center",
   },
-  inputCenter: {
+
+  [`& .${classes.inputCenter}`]: {
     textAlign: "center",
     color: "black",
     fontSize: theme.typography.pxToRem(14),
   },
-  finalButton: {
+
+  [`& .${classes.finalButton}`]: {
     margin: theme.spacing(2),
-  },
+  }
 }));
+
+const CUR = "£";
+const AC1_RATE = 14.73;
+const AC2_RATE = 17.57;
 
 function ccyFormat(num) {
   return `${num.toFixed(2)}`;
@@ -94,12 +125,18 @@ function totalOfficeHours(totals) {
 
 const ViewPayment = (props) => {
   const { current, isAdmin } = props;
-  const classes = useStyles();
+
   //State
   const [payment, setPayment] = useState(current);
-  const [markingCalc, setMarkingCalc] = useState([...current.paymentDetail.markingCalc]);
-  const [officeHoursCalc, setOfficeHoursCalc] = useState([...current.paymentDetail.officeHours]);
-  const [paymentCalc, setPaymentCalc] = useState(current.paymentDetail.paymentCalc);
+  const [markingCalc, setMarkingCalc] = useState([
+    ...current.paymentDetail.markingCalc,
+  ]);
+  const [officeHoursCalc, setOfficeHoursCalc] = useState([
+    ...current.paymentDetail.officeHours,
+  ]);
+  const [paymentCalc, setPaymentCalc] = useState(
+    current.paymentDetail.paymentCalc
+  );
   const [hourlyRates, setHourlyRates] = useState({
     rate1: AC1_RATE,
     rate2: AC2_RATE,
@@ -123,7 +160,7 @@ const ViewPayment = (props) => {
   //   const invoiceTaxes = TAX_RATE * invoiceSubtotal;
   const invoiceTotal = invoiceSubtotal;
   return (
-    <Fragment>
+    <Root>
       <div>
         <div>
           <Grid container spacing={1}>
@@ -148,14 +185,16 @@ const ViewPayment = (props) => {
                     xs={4}
                     className={clsx(classes.root, classes.right)}
                   >
-                    {isAdmin && <Button
-                      variant="contained"
-                      component={Link}
-                      to="/payments/"
-                      color="secondary"
-                    >
-                      Back to Payments
-                    </Button>}
+                    {isAdmin && (
+                      <Button
+                        variant="contained"
+                        component={Link}
+                        to="/payments/"
+                        color="secondary"
+                      >
+                        Back to Payments
+                      </Button>
+                    )}
                   </Grid>
                 </Grid>
               </Paper>
@@ -507,65 +546,64 @@ const ViewPayment = (props) => {
                         </Table>
                       </TableContainer>
                       <TableContainer
-                          className={clsx(classes.spacer)}
-                          component={Paper}
+                        className={clsx(classes.spacer)}
+                        component={Paper}
+                      >
+                        <Table
+                          className={clsx(classes.table)}
+                          aria-label="spanning table"
+                          size="small"
                         >
-                          <Table
-                            className={clsx(classes.table)}
-                            aria-label="spanning table"
-                            size="small"
-                          >
-                            <TableHead>
-                              <TableRow key={uuidv4()}>
-                                <TableCell align="left">
-                                  Lab Supervision/Demonstrating
-                                </TableCell>
-                                <TableCell />
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              <TableRow key={uuidv4()}>
-                                <TableCell align="left">
-                                  {paymentCalc.lab[3].activity}
-                                </TableCell>
-                                <TableCell align="right">
-                                  <Input
-                                    disabled
-                                    type="number"
-                                    size="small"
-                                    margin="dense"
-                                    disableUnderline={true}
-                                    classes={{
-                                      input: classes.inputCenter,
-                                    }}
-                                    variant="filled"
-                                    name="totalhrs"
-                                    value={paymentCalc.lab[3].totalhrs}
-                          
-                                  />
-                                </TableCell>
-                              </TableRow>
-                              <TableRow key={uuidv4()} selected={true}>
-                                <TableCell align="left">Total Hours</TableCell>
-                                <TableCell align="right">
-                                  <Input
-                                    disabled
-                                    type="number"
-                                    size="small"
-                                    margin="dense"
-                                    disableUnderline={true}
-                                    classes={{
-                                      input: classes.inputCenter,
-                                    }}
-                                    variant="filled"
-                                    name="count"
-                                    value={paymentCalc.lab[3].totalhrs}
-                                  />
-                                </TableCell>
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
+                          <TableHead>
+                            <TableRow key={uuidv4()}>
+                              <TableCell align="left">
+                                Lab Supervision/Demonstrating
+                              </TableCell>
+                              <TableCell />
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            <TableRow key={uuidv4()}>
+                              <TableCell align="left">
+                                {paymentCalc.lab[3].activity}
+                              </TableCell>
+                              <TableCell align="right">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  name="totalhrs"
+                                  value={paymentCalc.lab[3].totalhrs}
+                                />
+                              </TableCell>
+                            </TableRow>
+                            <TableRow key={uuidv4()} selected={true}>
+                              <TableCell align="left">Total Hours</TableCell>
+                              <TableCell align="right">
+                                <Input
+                                  disabled
+                                  type="number"
+                                  size="small"
+                                  margin="dense"
+                                  disableUnderline={true}
+                                  classes={{
+                                    input: classes.inputCenter,
+                                  }}
+                                  variant="filled"
+                                  name="count"
+                                  value={paymentCalc.lab[3].totalhrs}
+                                />
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
                     </Grid>
                   </form>
                 </AccordionDetails>
@@ -1577,7 +1615,7 @@ const ViewPayment = (props) => {
           </Grid>
         </div>
       </div>
-    </Fragment>
+    </Root>
   );
 };
 

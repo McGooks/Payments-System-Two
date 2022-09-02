@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { useParams } from 'react-router-dom';
 import AuthContext from "../../context/auth/authContext";
 //Components
-import { useSnackbar } from "notistack";
 
 const Verify = (props) => {
   const {token} = useParams()

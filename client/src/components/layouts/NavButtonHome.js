@@ -1,35 +1,47 @@
 import React, { useContext, useEffect, useState } from "react";
+import { styled } from '@mui/material/styles';
 import { Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import MenuIcon from "@material-ui/icons/Menu";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import GroupIcon from "@material-ui/icons/Group";
-import PersonIcon from "@material-ui/icons/Person";
-import Payments from "@material-ui/icons/AccountBalanceWallet";
-import Reports from "@material-ui/icons/Assessment";
-import Admin from "@material-ui/icons/Settings";
-import InfoIcon from "@material-ui/icons/Info";
+import SpeedDial from "@mui/lab/SpeedDial";
+import MenuIcon from "@mui/icons-material/Menu";
+import SpeedDialAction from "@mui/lab/SpeedDialAction";
+import GroupIcon from "@mui/icons-material/Group";
+import PersonIcon from "@mui/icons-material/Person";
+import Payments from "@mui/icons-material/AccountBalanceWallet";
+import Reports from "@mui/icons-material/Assessment";
+import Admin from "@mui/icons-material/Settings";
+import InfoIcon from "@mui/icons-material/Info";
 import { v4 as uuidv4 } from "uuid";
 
 //State
 import AuthContext from "../../context/auth/authContext";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const PREFIX = 'NavButtonHome';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  speedDial: `${PREFIX}-speedDial`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.root}`]: {
     "& > *": {
       margin: theme.spacing(1),
     },
   },
-  speedDial: {
+
+  [`& .${classes.speedDial}`]: {
     position: "fixed",
     bottom: theme.spacing(2),
     right: theme.spacing(2),
-  },
+  }
 }));
 
 const NavButtonHome = (props) => {
-  const classes = useStyles();
+
   const [open, setOpen] = React.useState(false);
   const authContext = useContext(AuthContext);
   const { user } = authContext;
@@ -132,7 +144,7 @@ const NavButtonHome = (props) => {
   };
 
   return (
-    <div className={classes.root}>
+    <Root className={classes.root}>
       <SpeedDial
         ariaLabel="Home Navigation Control"
         className={classes.speedDial}
@@ -151,7 +163,7 @@ const NavButtonHome = (props) => {
           />
         ))}
       </SpeedDial>
-    </div>
+    </Root>
   );
 };
 

@@ -1,34 +1,50 @@
 import React, { useState, useEffect, useContext } from "react";
+import { styled } from '@mui/material/styles';
 import { useParams } from "react-router-dom";
 import AuthContext from "../../context/auth/authContext";
 //Components
 import { useSnackbar } from "notistack";
-import { Typography, TextField, Box, Button } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { TextField, Button, Box } from "@mui/material";
+const PREFIX = 'PasswordReset';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const classes = {
+  root: `${PREFIX}-root`,
+  textFieldFull: `${PREFIX}-textFieldFull`,
+  button: `${PREFIX}-button`,
+  text: `${PREFIX}-text`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.root}`]: {
     display: "flex",
     flexWrap: "wrap",
     fontSize: "1.2rem",
   },
-  textFieldFull: {
+
+  [`& .${classes.textFieldFull}`]: {
     margin: theme.spacing(1),
     width: "97%",
   },
-  button: {
+
+  [`& .${classes.button}`]: {
     backgroundColor: "rgb(214, 0, 13)",
     margin: theme.spacing(1),
     width: "97%",
   },
-  text: {
+
+  [`& .${classes.text}`]: {
     textAlign: "center",
     marginBottom: 30,
-  },
+  }
 }));
 
 const PasswordReset = (props) => {
-  const classes = useStyles();
+
   const { token } = useParams();
   const authContext = useContext(AuthContext);
   const { passwordUpdateRequest, logout, error, clearErrors } = authContext;
@@ -78,7 +94,7 @@ const PasswordReset = (props) => {
   };
 
   return (
-    <>
+    (<Root>
       <div className="form-container">
         <h1>
           Password <span className="text-primary">Reset</span>
@@ -118,7 +134,7 @@ const PasswordReset = (props) => {
           </Button>
         </Box>
       </div>
-    </>
+    </Root>)
   );
 };
 

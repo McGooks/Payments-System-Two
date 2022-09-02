@@ -1,6 +1,6 @@
 import React, { useContext, Fragment, useEffect } from "react";
+import { styled } from '@mui/material/styles';
 import { useLocation, useHistory, useParams, Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
 //Context
 import UserContext from "../../context/user/userContext";
@@ -8,7 +8,7 @@ import PaymentContext from "../../context/payment/paymentContext";
 import { monthWords } from "../../utils/dropdowns";
 
 //Components
-import { Grid, Paper, Chip, Button, Typography } from "@material-ui/core";
+import { Grid, Paper, Chip, Button, Typography } from "@mui/material";
 import {
   ThumbUp,
   ThumbDown,
@@ -16,31 +16,46 @@ import {
   PlayCircleOutline,
   Pageview,
   Receipt,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
 import clsx from "clsx";
-// import CustomToolbar from "../layouts/CustomToolbar";
+const PREFIX = 'Payments';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const classes = {
+  root: `${PREFIX}-root`,
+  paper: `${PREFIX}-paper`,
+  right: `${PREFIX}-right`,
+  left: `${PREFIX}-left`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.root}`]: {
     "& > *": {
       margin: theme.spacing(1),
     },
     flexGrow: 1,
   },
-  paper: {
+
+  [`& .${classes.paper}`]: {
     padding: theme.spacing(2),
     textAlign: "right",
     color: theme.palette.text.secondary,
   },
-  right: {
+
+  [`& .${classes.right}`]: {
     textAlign: "right",
   },
-  left: {
+
+  [`& .${classes.left}`]: {
     textAlign: "left",
-  },
+  }
 }));
 
 const date = new Date().toUTCString();
@@ -50,7 +65,7 @@ function ccyFormat(num) {
 }
 
 const Payments = (props) => {
-  const classes = useStyles();
+
   const userContext = useContext(UserContext);
   const paymentContext = useContext(PaymentContext);
   const { user, payments } = props;
@@ -312,137 +327,135 @@ const Payments = (props) => {
         empty: true,
         download: false,
         customBodyRender: (value, tableMeta, updateValue) => {
-          return (
-            <>
-              <Grid container direction="row" justify="space-between">
-                {tableMeta.rowData.find((element) => element === "Rejected") ===
-                  "Rejected" ||
-                tableMeta.rowData.find((element) => element === "Paid") ===
-                  "Paid" ? (
-                  ""
-                ) : tableMeta.rowData.find(
-                    (element) => element === "Pending"
-                  ) === "Pending" ? (
-                  <>
-                    <Typography color="primary" align="center">
-                      <ThumbUp
-                        fontSize="small"
-                        onClick={() =>
-                          onClickApprovePayment(tableMeta.rowData[0])
-                        }
-                      />
-                      <Typography
-                        align="center"
-                        display="block"
-                        variant="caption"
-                      >
-                        Approve
-                      </Typography>
-                    </Typography>
-                    <Typography color="secondary" align="center">
-                      <ThumbDown
-                        fontSize="small"
-                        onClick={() => {
-                          onClickRejectPayment(tableMeta.rowData[0]);
-                        }}
-                      />
-                      <Typography
-                        align="center"
-                        display="block"
-                        variant="caption"
-                      >
-                        Reject
-                      </Typography>
-                    </Typography>
-                    <Typography color="textSecondary" align="center">
-                      <PauseCircleOutline
-                        fontSize="small"
-                        onClick={(e) => {
-                          onClickHoldPayment(tableMeta.rowData[0]);
-                        }}
-                      />
-                      <Typography
-                        align="center"
-                        display="block"
-                        variant="caption"
-                      >
-                        Hold
-                      </Typography>
-                    </Typography>
-                  </>
-                ) : tableMeta.rowData.find(
-                    (element) => element === "On Hold"
-                  ) === "On Hold" ? (
-                  <>
-                    <Typography color="primary" align="center">
-                      <ThumbUp
-                        fontSize="small"
-                        onClick={() =>
-                          onClickApprovePayment(tableMeta.rowData[0])
-                        }
-                      />
-                      <Typography
-                        align="center"
-                        display="block"
-                        variant="caption"
-                      >
-                        Approve
-                      </Typography>
-                    </Typography>
-                    <Typography color="secondary" align="center">
-                      <ThumbDown
-                        fontSize="small"
-                        onClick={() => {
-                          onClickRejectPayment(tableMeta.rowData[0]);
-                        }}
-                      />
-                      <Typography
-                        align="center"
-                        display="block"
-                        variant="caption"
-                      >
-                        Reject
-                      </Typography>
-                    </Typography>
-                    <Typography color="textSecondary" align="center">
-                      <PlayCircleOutline
-                        fontSize="small"
-                        onClick={() => {
-                          onClickPendingPayment(tableMeta.rowData[0]);
-                        }}
-                      />
-                      <Typography
-                        align="center"
-                        display="block"
-                        variant="caption"
-                      >
-                        Pending
-                      </Typography>
-                    </Typography>
-                  </>
-                ) : (
-                  <Typography
-                    style={{
-                      color: "green",
-                    }}
-                    align="center"
-                  >
-                    <Receipt
+          return <>
+            <Grid container direction="row" justifyContent="space-between">
+              {tableMeta.rowData.find((element) => element === "Rejected") ===
+                "Rejected" ||
+              tableMeta.rowData.find((element) => element === "Paid") ===
+                "Paid" ? (
+                ""
+              ) : tableMeta.rowData.find(
+                  (element) => element === "Pending"
+                ) === "Pending" ? (
+                <>
+                  <Typography color="primary" align="center">
+                    <ThumbUp
                       fontSize="small"
-                      onClick={() => onClickPaidPayment(tableMeta.rowData[0])}
+                      onClick={() =>
+                        onClickApprovePayment(tableMeta.rowData[0])
+                      }
                     />
                     <Typography
                       align="center"
                       display="block"
                       variant="caption"
                     >
-                      Paid
+                      Approve
                     </Typography>
                   </Typography>
-                )}
-              </Grid>
-            </>
-          );
+                  <Typography color="secondary" align="center">
+                    <ThumbDown
+                      fontSize="small"
+                      onClick={() => {
+                        onClickRejectPayment(tableMeta.rowData[0]);
+                      }}
+                    />
+                    <Typography
+                      align="center"
+                      display="block"
+                      variant="caption"
+                    >
+                      Reject
+                    </Typography>
+                  </Typography>
+                  <Typography color="textSecondary" align="center">
+                    <PauseCircleOutline
+                      fontSize="small"
+                      onClick={(e) => {
+                        onClickHoldPayment(tableMeta.rowData[0]);
+                      }}
+                    />
+                    <Typography
+                      align="center"
+                      display="block"
+                      variant="caption"
+                    >
+                      Hold
+                    </Typography>
+                  </Typography>
+                </>
+              ) : tableMeta.rowData.find(
+                  (element) => element === "On Hold"
+                ) === "On Hold" ? (
+                <>
+                  <Typography color="primary" align="center">
+                    <ThumbUp
+                      fontSize="small"
+                      onClick={() =>
+                        onClickApprovePayment(tableMeta.rowData[0])
+                      }
+                    />
+                    <Typography
+                      align="center"
+                      display="block"
+                      variant="caption"
+                    >
+                      Approve
+                    </Typography>
+                  </Typography>
+                  <Typography color="secondary" align="center">
+                    <ThumbDown
+                      fontSize="small"
+                      onClick={() => {
+                        onClickRejectPayment(tableMeta.rowData[0]);
+                      }}
+                    />
+                    <Typography
+                      align="center"
+                      display="block"
+                      variant="caption"
+                    >
+                      Reject
+                    </Typography>
+                  </Typography>
+                  <Typography color="textSecondary" align="center">
+                    <PlayCircleOutline
+                      fontSize="small"
+                      onClick={() => {
+                        onClickPendingPayment(tableMeta.rowData[0]);
+                      }}
+                    />
+                    <Typography
+                      align="center"
+                      display="block"
+                      variant="caption"
+                    >
+                      Pending
+                    </Typography>
+                  </Typography>
+                </>
+              ) : (
+                <Typography
+                  style={{
+                    color: "green",
+                  }}
+                  align="center"
+                >
+                  <Receipt
+                    fontSize="small"
+                    onClick={() => onClickPaidPayment(tableMeta.rowData[0])}
+                  />
+                  <Typography
+                    align="center"
+                    display="block"
+                    variant="caption"
+                  >
+                    Paid
+                  </Typography>
+                </Typography>
+              )}
+            </Grid>
+          </>;
         },
       },
     },
@@ -481,7 +494,7 @@ const Payments = (props) => {
   ];
 
   return (
-    <Fragment>
+    <Root>
       <div>
         <div>
           {payments !== null && !loading ? (
@@ -510,7 +523,7 @@ const Payments = (props) => {
           )}
         </div>
       </div>
-    </Fragment>
+    </Root>
   );
 };
 

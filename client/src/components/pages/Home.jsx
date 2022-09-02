@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
+import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
-import { Grid } from "@material-ui/core";
-import { Alert, AlertTitle } from "@material-ui/lab";
-import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
+import { Grid } from "@mui/material";
+import { Alert, AlertTitle } from "@mui/lab";
+import Button from "@mui/material/Button";
 import clsx from "clsx";
 //ScoreCards
 import UserCountKPI from "../../components/charts/UserCountKPI";
@@ -22,55 +22,82 @@ import AuthContext from "../../context/auth/authContext";
 import StatsContext from "../../context/stats/statsContext";
 import PaymentContext from "../../context/payment/paymentContext";
 
-function MuiAlert(props) {
-  return <Alert elevation={6} variant="filled" {...props} />;
-}
+const PREFIX = "Home";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const classes = {
+  root: `${PREFIX}-root`,
+  paper: `${PREFIX}-paper`,
+  right: `${PREFIX}-right`,
+  left: `${PREFIX}-left`,
+  table: `${PREFIX}-table`,
+  spacer: `${PREFIX}-spacer`,
+  textField: `${PREFIX}-textField`,
+  footer: `${PREFIX}-footer`,
+  inputField: `${PREFIX}-inputField`,
+  inputCenter: `${PREFIX}-inputCenter`,
+  finalButton: `${PREFIX}-finalButton`,
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled("div")(({ theme }) => ({
+  [`& .${classes.root}`]: {
     "& > *": {
       margin: theme.spacing(1),
     },
     flexGrow: 1,
+
   },
-  paper: {
+
+  [`& .${classes.paper}`]: {
     padding: theme.spacing(2),
     textAlign: "right",
     color: theme.palette.text.secondary,
   },
-  right: {
+
+  [`& .${classes.right}`]: {
     textAlign: "right",
   },
-  left: {
+
+  [`& .${classes.left}`]: {
     textAlign: "left",
   },
-  table: {
+
+  [`& .${classes.table}`]: {
     minWidth: 700,
   },
-  spacer: {
+
+  [`& .${classes.spacer}`]: {
     marginTop: theme.spacing(2),
   },
-  textField: {
+
+  [`& .${classes.textField}`]: {
     "& > *": {},
   },
-  footer: {
+
+  [`& .${classes.footer}`]: {
     minHeight: 100,
   },
-  inputField: {
+
+  [`& .${classes.inputField}`]: {
     textAlign: "center",
   },
-  inputCenter: {
+
+  [`& .${classes.inputCenter}`]: {
     textAlign: "center",
     color: "black",
     fontSize: theme.typography.pxToRem(14),
   },
-  finalButton: {
+
+  [`& .${classes.finalButton}`]: {
     margin: theme.spacing(2),
   },
 }));
 
+function MuiAlert(props) {
+  return <Alert elevation={6} variant="filled" {...props} />;
+}
+
 const Home = () => {
-  const classes = useStyles();
   const statsContext = useContext(StatsContext);
   const { stats, getStatData } = statsContext;
   const authContext = useContext(AuthContext);
@@ -118,18 +145,16 @@ const Home = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
-  
-  
+
   const resendEmail = () => {
     resendVerifyEmail(userID.id);
   };
 
   return (
-    <>
+    <Root>
       <h1 className="HomeGreeting">
         {getGreeting()}, {user && user.firstName}
       </h1>
-
       {loading && authContext.loading ? (
         <ProgressIndicator />
       ) : (
@@ -142,25 +167,24 @@ const Home = () => {
               ) : (
                 <h3 className="HomeGreetingSubtitle">You are all caught up</h3>
               )}
-              <Grid container direction="row" spacing={4} alignItems="stretch">
-                <Grid item md xs={12} sm={6}>
+              <Grid container direction={"row"} spacing={2}>
+                <Grid item md={3} xs={12} sm={6}>
                   <UserCountKPI key={1} />
-                  </Grid>
-                  <Grid item md xs={12} sm={6}>
+                </Grid>
+                <Grid item md={3} xs={12} sm={6}>
                   <UserCountKPITaxSigned key={10} />
                 </Grid>
-                <Grid item xs={12} md sm={6}>
+                <Grid item md={3}xs={12}  sm={6}>
                   <PaymentPendingAuthCountKPI key={2} />
                 </Grid>
-              </Grid>
-              <Grid container direction="row" spacing={4} alignItems="stretch">
-                <Grid item xs={12} md sm={6}>
+
+                <Grid item md={3}xs={12}  sm={6}>
                   <PaymentPendingAuthValueKPI key={3} />
                 </Grid>
-                <Grid item xs={12} md sm={6}>
+                <Grid item md={3}xs={12}  sm={6}>
                   <PaymentsAuthValueKPI />
                 </Grid>
-                <Grid item xs={12} md sm={6}>
+                <Grid item md={3}xs={12}  sm={6}>
                   <PaymentsAuthValueYTDKPI />
                 </Grid>
               </Grid>
@@ -223,7 +247,7 @@ const Home = () => {
                   Please click the verify link issued to {user.email} or click
                   the resend email button
                 </MuiAlert>
-              ) : user && user.NINO === ""? (
+              ) : user && user.NINO === "" ? (
                 <>
                   <MuiAlert
                     style={{ marginBottom: "20px" }}
@@ -231,13 +255,12 @@ const Home = () => {
                     action={
                       <Button
                         component={Link}
-                        to={`/user/${user._id }`}
+                        to={`/user/${user._id}`}
                         color="inherit"
                         size="small"
                       >
                         My Profile
                       </Button>
-
                     }
                   >
                     <AlertTitle>Please complete your User Profile</AlertTitle>
@@ -257,7 +280,7 @@ const Home = () => {
                     action={
                       <Button
                         component={Link}
-                        to={`/user/${user._id }`}
+                        to={`/user/${user._id}`}
                         color="inherit"
                         size="small"
                       >
@@ -308,7 +331,7 @@ const Home = () => {
           )}
         </>
       )}
-    </>
+    </Root>
   );
 };
 

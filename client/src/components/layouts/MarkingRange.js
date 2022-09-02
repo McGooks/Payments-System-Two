@@ -1,26 +1,35 @@
 import React from "react";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import { Grid, Paper } from "@material-ui/core";
+import { styled } from '@mui/material/styles';
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import { Grid, Paper } from "@mui/material";
 import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
+const PREFIX = 'MarkingRange';
 
-const useStyles = makeStyles((theme) => ({
-  table: {
+const classes = {
+  table: `${PREFIX}-table`
+};
+
+const StyledGrid = styled(Grid)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.table}`]: {
     width: "auto",
     tableLayout: "auto",
-    fontSize: [10, "!important"]
-  },
+    fontSize: [10, "!important"],
+  }
 }));
 
 const MarkingRange = () => {
-  const classes = useStyles();
+
   return (
-    <Grid>
+    <StyledGrid>
       <TableContainer component={Paper}>
         <Table
           className={clsx(classes.table)}
@@ -121,7 +130,7 @@ const MarkingRange = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </Grid>
+    </StyledGrid>
   );
 };
 

@@ -1,31 +1,44 @@
 import React, { useState, useContext, useEffect } from "react";
+import { styled } from '@mui/material/styles';
 //Components
 import { useSnackbar } from "notistack";
 //Context
 import AuthContext from "../../context/auth/authContext";
 //UI
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+const PREFIX = 'Register';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const classes = {
+  root: `${PREFIX}-root`,
+  textFieldFull: `${PREFIX}-textFieldFull`,
+  button: `${PREFIX}-button`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.root}`]: {
     display: "flex",
     flexWrap: "wrap",
   },
-  textFieldFull: {
+
+  [`& .${classes.textFieldFull}`]: {
     marginTop: theme.spacing(2),
     width: "100%",
   },
-  button: {
+
+  [`& .${classes.button}`]: {
     backgroundColor: "rgb(214, 0, 13)",
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
-  },
+  }
 }));
 
 const Register = (props) => {
-  const classes = useStyles();
+
   const authContext = useContext(AuthContext);
   const { register, error, clearErrors, isAuthenticated } = authContext;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -35,12 +48,9 @@ const Register = (props) => {
       props.history.push("/");
     }
     if (error) {
-      enqueueSnackbar(
-        error,
-        {
-          variant: "error",
-        }
-      );
+      enqueueSnackbar(error, {
+        variant: "error",
+      });
       clearErrors();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,13 +90,13 @@ const Register = (props) => {
     }
   };
   return (
-    <div className="form-container">
+    <Root className="form-container">
       <h1>
         Account <span className="text-primary">Register</span>
       </h1>
       <form onSubmit={onSubmit}>
         <div>
-        <div>
+          <div>
             <TextField
               className={classes.textFieldFull}
               required
@@ -158,7 +168,7 @@ const Register = (props) => {
           Register
         </Button>
       </form>
-    </div>
+    </Root>
   );
 };
 

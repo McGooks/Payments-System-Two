@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState, Fragment } from "react";
+import { styled } from '@mui/material/styles';
 import { useParams } from "react-router-dom";
 import moment from "moment";
 //State
@@ -28,62 +29,90 @@ import {
   Switch,
   Select,
   MenuItem,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import LockIcon from "@material-ui/icons/Lock";
-import SettingsIcon from "@material-ui/icons/Settings";
-import PersonIcon from "@material-ui/icons/Person";
-import AccountBoxIcon from "@material-ui/icons/AccountBox";
-import BusinessCenterIcon from "@material-ui/icons/BusinessCenter";
+} from "@mui/material";
+import LockIcon from "@mui/icons-material/Lock";
+import SettingsIcon from "@mui/icons-material/Settings";
+import PersonIcon from "@mui/icons-material/Person";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import clsx from "clsx";
 import { useSnackbar } from "notistack";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const PREFIX = 'User';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  textFieldFull: `${PREFIX}-textFieldFull`,
+  button: `${PREFIX}-button`,
+  textField: `${PREFIX}-textField`,
+  textLabel: `${PREFIX}-textLabel`,
+  text: `${PREFIX}-text`,
+  taxText: `${PREFIX}-taxText`,
+  taxTextSpacingTop: `${PREFIX}-taxTextSpacingTop`,
+  taxTextSpacingBottom: `${PREFIX}-taxTextSpacingBottom`,
+  Subtext: `${PREFIX}-Subtext`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.root}`]: {
     display: "flex",
     flexWrap: "wrap",
     fontSize: "1.2rem",
   },
-  textFieldFull: {
+
+  [`& .${classes.textFieldFull}`]: {
     margin: theme.spacing(1),
     width: "97%",
   },
-  button: {
+
+  [`& .${classes.button}`]: {
     backgroundColor: "rgb(214, 0, 13)",
     margin: theme.spacing(1),
     width: "97%",
   },
-  textField: {
+
+  [`& .${classes.textField}`]: {
     margin: theme.spacing(1),
     width: "47%",
   },
-  textLabel: {
+
+  [`& .${classes.textLabel}`]: {
     marginLeft: theme.spacing(1),
     marginTop: theme.spacing(2),
     marginRight: theme.spacing(1),
     width: "26ch",
   },
-  text: {
+
+  [`& .${classes.text}`]: {
     textAlign: "center",
     marginBottom: 30,
   },
-  taxText: {
+
+  [`& .${classes.taxText}`]: {
     textAlign: "center",
     fontWeight: "bold",
   },
-  taxTextSpacingTop: {
+
+  [`& .${classes.taxTextSpacingTop}`]: {
     marginTop: 30,
   },
-  taxTextSpacingBottom: {
+
+  [`& .${classes.taxTextSpacingBottom}`]: {
     marginBottom: 30,
   },
-  Subtext: {
+
+  [`& .${classes.Subtext}`]: {
     margin: theme.spacing(1),
-  },
+  }
 }));
 
 const User = (props) => {
-  const classes = useStyles();
+
   const { id } = useParams();
   const userContext = useContext(UserContext);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -218,7 +247,7 @@ const User = (props) => {
   };
 
   return (
-    <Fragment>
+    <Root>
       <div>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -238,7 +267,7 @@ const User = (props) => {
             </Box>
           </Grid>
           <Grid item xs={12}>
-            <Grid item justify={"center"} container>
+            <Grid item justifyContent={"center"} container>
               <Box display={"flex"} flexDirection={"column"} width={600}>
                 <form>
                   {tab === 0 ? (
@@ -1287,7 +1316,9 @@ const User = (props) => {
                             </Typography>
                             <Switch
                               disabled={
-                                data.taxDeclaration[0].signed || !preSigned ? true : false
+                                data.taxDeclaration[0].signed || !preSigned
+                                  ? true
+                                  : false
                               }
                               checked={data.taxDeclaration[0].signed}
                               onChange={(e) => handleSwitchChange(e, 4)}
@@ -1454,7 +1485,7 @@ const User = (props) => {
           </Grid>
         </Grid>
       </div>
-    </Fragment>
+    </Root>
   );
 };
 

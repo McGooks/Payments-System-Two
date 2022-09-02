@@ -1,21 +1,17 @@
 import React, { useContext, useEffect } from "react";
 import StatsContext from "../../context/stats/statsContext";
 import { Chart } from "react-charts";
-import Card from "@material-ui/core/Card";
+import Card from "@mui/material/Card";
 
-function ccyFormat(num) {
-  return `${num.toFixed(2)}`;
-}
 
 const PaymentTrend = () => {
   const statsContext = useContext(StatsContext);
-  const { stats, getStatData, loading } = statsContext;
+  const { getStatData } = statsContext;
 
   useEffect(() => {
     getStatData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   const data = React.useMemo(
     () => [
@@ -61,7 +57,7 @@ const PaymentTrend = () => {
           width: 450,
           height: 300,
           margin: 15,
-          padding: 1
+          padding: 1,
         }}
       >
         <Chart data={data} axes={axes} />

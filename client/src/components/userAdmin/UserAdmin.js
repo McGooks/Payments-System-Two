@@ -3,11 +3,11 @@ import React, { useContext, Fragment, useEffect } from "react";
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
 import UserContext from "../../context/user/userContext";
 //Components
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography } from "@mui/material";
 import { useHistory } from "react-router-dom";
-import EditIcon from "@material-ui/icons/Edit";
-import PersonIcon from "@material-ui/icons/Person";
-import Chip from "@material-ui/core/Chip";
+import EditIcon from "@mui/icons-material/Edit";
+import PersonIcon from "@mui/icons-material/Person";
+import Chip from "@mui/material/Chip";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
 import { useSnackbar } from "notistack";
@@ -211,38 +211,36 @@ const UserAdmin = (props) => {
         empty: true,
         download: false,
         customBodyRenderLite: (dataIndex) => {
-          return (
-            <>
-              <Grid
-                container
-                direction="row"
-                alignContent="center"
-                alignItems="center"
-                justify="space-around"
-              >
-                <Grid item align="center">
-                  <EditIcon
-                    onClick={(e) => {
-                      openDialog(e, dataIndex);
-                    }}
-                  />
-                  <Typography align="center" display="block" variant="caption">
-                    Edit
-                  </Typography>
-                </Grid>
-                <Typography align="center">
-                  <PersonIcon
-                    onClick={(e) => {
-                      editProfile(e, dataIndex);
-                    }}
-                  />
-                  <Typography align="center" display="block" variant="caption">
-                    View
-                  </Typography>
+          return <>
+            <Grid
+              container
+              direction="row"
+              alignContent="center"
+              alignItems="center"
+              justifyContent="space-around"
+            >
+              <Grid item align="center">
+                <EditIcon
+                  onClick={(e) => {
+                    openDialog(e, dataIndex);
+                  }}
+                />
+                <Typography align="center" display="block" variant="caption">
+                  Edit
                 </Typography>
               </Grid>
-            </>
-          );
+              <Typography align="center">
+                <PersonIcon
+                  onClick={(e) => {
+                    editProfile(e, dataIndex);
+                  }}
+                />
+                <Typography align="center" display="block" variant="caption">
+                  View
+                </Typography>
+              </Typography>
+            </Grid>
+          </>;
         },
       },
     },

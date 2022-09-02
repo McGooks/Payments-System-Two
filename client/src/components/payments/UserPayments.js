@@ -4,8 +4,8 @@ import { useHistory } from "react-router-dom";
 import { monthWords } from "../../utils/dropdowns";
 
 //Components
-import { Grid, Chip, Typography } from "@material-ui/core";
-import { Pageview } from "@material-ui/icons";
+import { Grid, Chip, Typography } from "@mui/material";
+import { Pageview } from "@mui/icons-material";
 import MUIDataTable, { TableFilterList } from "mui-datatables";
 import ProgressIndicator from "../layouts/Spinner";
 

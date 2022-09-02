@@ -1,11 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
+import { styled } from '@mui/material/styles';
 //Context
 import UserAdminContext from "../../context/userAdmin/userAdminContext";
 import AuthContext from "../../context/auth/authContext";
 import { schoolMenu, statusMenu, roleMenu } from "../../utils/dropdowns";
 import { useSnackbar } from "notistack";
 //UI
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import {
   TextField,
   Tooltip,
@@ -16,35 +17,51 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+} from "@mui/material";
+const PREFIX = 'UserAdminAddModal';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const classes = {
+  root: `${PREFIX}-root`,
+  textField: `${PREFIX}-textField`,
+  textLabel: `${PREFIX}-textLabel`,
+  textFieldFull: `${PREFIX}-textFieldFull`,
+  text: `${PREFIX}-text`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.root}`]: {
     display: "flex",
     flexWrap: "wrap",
   },
-  textField: {
+
+  [`& .${classes.textField}`]: {
     margin: theme.spacing(1),
     width: "47%",
   },
-  textLabel: {
+
+  [`& .${classes.textLabel}`]: {
     marginLeft: theme.spacing(1),
     marginTop: theme.spacing(2),
     marginRight: theme.spacing(1),
     width: "26ch",
   },
-  textFieldFull: {
+
+  [`& .${classes.textFieldFull}`]: {
     margin: theme.spacing(1),
     width: "97%",
   },
-  text: {
+
+  [`& .${classes.text}`]: {
     textAlign: "center",
-  },
+  }
 }));
 
 const UserAdminAddModal = () => {
-  const classes = useStyles();
+
   const authContext = useContext(AuthContext);
   const { passwordResetRequest } = authContext;
   const userAdminContext = useContext(UserAdminContext);
@@ -216,7 +233,7 @@ const UserAdminAddModal = () => {
   };
 
   return (
-    <div>
+    <Root>
       <Dialog
         open={toggleDialog}
         onClose={onCloseDialog}
@@ -288,18 +305,18 @@ const UserAdminAddModal = () => {
                 variant="outlined"
               />
               <div>
-                  <TextField
-                    className={classes.textField}
-                    required
-                    id="QUBID"
-                    type="text"
-                    name="QUBID"
-                    placeholder="QUB ID"
-                    value={QUBID}
-                    onChange={onChange}
-                    label="QUB ID"
-                    variant="outlined"
-                  />
+                <TextField
+                  className={classes.textField}
+                  required
+                  id="QUBID"
+                  type="text"
+                  name="QUBID"
+                  placeholder="QUB ID"
+                  value={QUBID}
+                  onChange={onChange}
+                  label="QUB ID"
+                  variant="outlined"
+                />
                 <TextField
                   className={classes.textField}
                   disabled={!role || role !== "User" ? true : false}
@@ -452,7 +469,7 @@ const UserAdminAddModal = () => {
           </form>
         </DialogContent>
       </Dialog>
-    </div>
+    </Root>
   );
 };
 
