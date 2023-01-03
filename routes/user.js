@@ -1,16 +1,16 @@
-const express = require("express");
-const router = express.Router();
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const { check, validationResult } = require("express-validator");
-const auth = require("../middleware/auth");
-const User = require("../models/User");
-const config = require("config");
+import { Router } from "express";
+const router = Router();
+import { sign } from "jsonwebtoken";
+import { genSalt, hash } from "bcryptjs";
+import { check, validationResult } from "express-validator";
+import auth from "../middleware/auth";
+import User from "../models/User";
+import { get } from "config";
 
 //Mail Gun
-const mailgun = require("mailgun-js");
-const DOMAIN = config.get("mailgun_DOMAIN");
-const mg = mailgun({ apiKey: config.get("mailgun_APIKEY"), domain: DOMAIN });
+// const mailgun = require("mailgun-js");
+const DOMAIN = get("mailgun_DOMAIN");
+// const mg = mailgun({ apiKey: config.get("mailgun_APIKEY"), domain: DOMAIN });
 
 //@route    GET api/user/:id
 //@desc     Get user
@@ -57,9 +57,9 @@ router.post("/resend/:id", auth, async (req, res) => {
     } else if (findUser.email === true) {
       res.status(400).json({ error: `This email address has been verified` }); // if emailVerified is true, this has already been verified throw error
     } else {
-      const emailToken = jwt.sign(
+      const emailToken = sign(
         { QUBID, email, password },
-        config.get("JWT_ACC_ACTIVATE"),
+        get("JWT_ACC_ACTIVATE"),
         { expiresIn: 360000 }
       );
       const data = {
@@ -224,7 +224,7 @@ router.post("/resend/:id", auth, async (req, res) => {
                                     <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td align="center" style="border-radius: 3px;" bgcolor="#d6000d"><a href="${config.get(
+                                                <td align="center" style="border-radius: 3px;" bgcolor="#d6000d"><a href="${get(
                                                   "CLIENT_URL"
                                                 )}/users/confirm-email/${emailToken}" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #FFA73B; display: inline-block;">Confirm Your Email Address</a></td>
                                             </tr>
@@ -265,7 +265,7 @@ router.post("/resend/:id", auth, async (req, res) => {
 </html>
         `,
       };
-      mg.messages().send(data); // Send Email
+      //   mg.messages().send(data); // Send Email
       res.status(200).json(findUser);
     }
   } catch (error) {
@@ -294,24 +294,16 @@ router.post(
         .status(400)
         .json({ error: errors.array({ onlyFirstError: true })[0].msg });
     }
-    const {
-      dob,
-      email,
-      firstName,
-      lastName,
-      password,
-      QUBID,
-      role,
-      status,
-    } = req.body;
+    const { dob, email, firstName, lastName, password, QUBID, role, status } =
+      req.body;
     try {
       let newUser = await User.findOne({ email });
       if (newUser) {
         res.status(400).json({ error: `User ${newUser.email} already exists` }); // if user already exists throw error
       } else {
-        const emailToken = jwt.sign(
+        const emailToken = sign(
           { QUBID, email, password },
-          config.get("JWT_ACC_ACTIVATE"),
+          get("JWT_ACC_ACTIVATE"),
           { expiresIn: 360000 }
         );
 
@@ -475,7 +467,7 @@ router.post(
                                     <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td align="center" style="border-radius: 3px;" bgcolor="#d6000d"><a href="${config.get(
+                                                <td align="center" style="border-radius: 3px;" bgcolor="#d6000d"><a href="${get(
                                                   "CLIENT_URL"
                                                 )}/users/confirm-email/${emailToken}" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #FFA73B; display: inline-block;">Confirm Your Email Address</a></td>
                                             </tr>
@@ -516,7 +508,7 @@ router.post(
 </html>
         `,
         };
-        mg.messages().send(data); // Send Email
+        // mg.messages().send(data); // Send Email
         newUser = new User({
           dob,
           email,
@@ -528,8 +520,8 @@ router.post(
           status,
           createdById: req.user.id,
         });
-        const salt = await bcrypt.genSalt(10); // Password salt
-        newUser.password = await bcrypt.hash(password, salt); // Pass in password and hash
+        const salt = await genSalt(10); // Password salt
+        newUser.password = await hash(password, salt); // Pass in password and hash
         const user = await newUser.save();
         res.status(200).json(user);
       }
@@ -587,4 +579,4 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

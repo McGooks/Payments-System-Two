@@ -1,17 +1,17 @@
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const router = express.Router();
-const { check, validationResult } = require("express-validator");
+import { Router } from "express";
+import { genSalt, hash } from "bcryptjs";
+import { sign, verify } from "jsonwebtoken";
+const router = Router();
+import { check, validationResult } from "express-validator";
 
-const config = require("config");
-const User = require("../models/User");
-const auth = require("../middleware/auth");
+import { get } from "config";
+import User from "../models/User";
+import auth from "../middleware/auth";
 
 //Mail Gun
-const mailgun = require("mailgun-js");
-const DOMAIN = config.get("mailgun_DOMAIN");
-const mg = mailgun({ apiKey: config.get("mailgun_APIKEY"), domain: DOMAIN });
+// const mailgun = require("mailgun-js");
+const DOMAIN = get("mailgun_DOMAIN");
+// const mg = mailgun({ apiKey: config.get("mailgun_APIKEY"), domain: DOMAIN });
 
 //@route    POST api/users/register
 //@desc     Register a user
@@ -52,8 +52,8 @@ router.post(
         email,
         password,
       });
-      const salt = await bcrypt.genSalt(10); // Password salt
-      user.password = await bcrypt.hash(password, salt); // Pass in password and hash
+      const salt = await genSalt(10); // Password salt
+      user.password = await hash(password, salt); // Pass in password and hash
       await user.save();
 
       // set payload variable for jwt sign (token)
@@ -63,9 +63,9 @@ router.post(
         },
       };
       // on sign pass in payload and also token to expire in secs
-      jwt.sign(
+      sign(
         payload,
-        config.get("jwtSecret"),
+        get("jwtSecret"),
         {
           expiresIn: 360000,
         },
@@ -74,11 +74,12 @@ router.post(
           res.json({ token, msg: "Validated" });
         }
       );
-      const emailToken = jwt.sign(payload, config.get("JWT_ACC_ACTIVATE"), {
+      const emailToken = sign(payload, get("JWT_ACC_ACTIVATE"), {
         expiresIn: 360000,
       });
 
-      const data = { //email template
+      const data = {
+        //email template
         from: "DemPay <noreply@dempay.com>",
         to: email,
         subject: "Verify Your Email",
@@ -226,7 +227,7 @@ router.post(
                                                 <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                     <table border="0" cellspacing="0" cellpadding="0">
                                                         <tr>
-                                                            <td align="center" style="border-radius: 3px;" bgcolor="#d6000d"><a href="${config.get(
+                                                            <td align="center" style="border-radius: 3px;" bgcolor="#d6000d"><a href="${get(
                                                               "CLIENT_URL"
                                                             )}/users/confirm-email/${emailToken}" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #FFA73B; display: inline-block;">Confirm Account</a></td>
                                                         </tr>
@@ -267,7 +268,7 @@ router.post(
             </html>
         `,
       };
-      mg.messages().send(data); // Send Email
+      // mg.messages().send(data); // Send Email
     } catch (err) {
       console.error(err.message);
       res.status(500).json({ error: err.message });
@@ -327,7 +328,7 @@ router.post("/password-reset-request/:id", async (req, res) => {
     if (!findUser) {
       res.status(400).json({ error: `User does not exist` }); // if user already exists throw error
     } else {
-      const emailToken = jwt.sign({ email, _id }, config.get("JWT_PWDRESET"), {
+      const emailToken = sign({ email, _id }, get("JWT_PWDRESET"), {
         expiresIn: 360000,
       });
       const data = {
@@ -491,7 +492,7 @@ router.post("/password-reset-request/:id", async (req, res) => {
                                     <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td align="center" style="border-radius: 3px;" bgcolor="#d6000d"><a href="${config.get(
+                                                <td align="center" style="border-radius: 3px;" bgcolor="#d6000d"><a href="${get(
                                                   "CLIENT_URL"
                                                 )}/users/password-reset/${emailToken}" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #FFA73B; display: inline-block;">Reset Your Password</a></td>
                                             </tr>
@@ -532,7 +533,7 @@ router.post("/password-reset-request/:id", async (req, res) => {
 </html>
         `,
       };
-      mg.messages().send(data); // Send Email
+      // mg.messages().send(data); // Send Email
       res.status(200).json(findUser);
     }
   } catch (error) {
@@ -563,9 +564,9 @@ router.put(
     const { password } = req.body;
     try {
       if (token) {
-        const decode = jwt.verify(
+        const decode = verify(
           token,
-          config.get("JWT_PWDRESET"),
+          get("JWT_PWDRESET"),
           function (err, decodedToken) {
             if (err) {
               return res.status(400).json({ error: err.message });
@@ -579,9 +580,9 @@ router.put(
         if (longExp < date) {
           return res.status(400).json({ error: "Token has expired" });
         }
-        const salt = await bcrypt.genSalt(10); // Password salt
+        const salt = await genSalt(10); // Password salt
         const userFields = {};
-        userFields.password = await bcrypt.hash(password, salt); // Pass in password and hash
+        userFields.password = await hash(password, salt); // Pass in password and hash
         userFields.passwordResetTokenExpiresAt = new Date(exp * 1000);
         userFields.passwordResetToken = token;
         userFields.updatedById = _id;
@@ -620,9 +621,9 @@ router.put("/confirm-email/:token", async (req, res) => {
   try {
     if (token) {
       //If token exists, try to decode using JWT
-      const decode = jwt.verify(
+      const decode = verify(
         token,
-        config.get("JWT_ACC_ACTIVATE"), //access encryption key from middleware
+        get("JWT_ACC_ACTIVATE"), //access encryption key from middleware
         function (err, decodedToken) {
           if (err) {
             //if unable to decrypt, throw error
@@ -750,4 +751,4 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import {Schema} from "mongoose";
 
 
-const BankSchema = Schema({
+
+const BankSchema = new Schema({
   bankName: {
     type: String,
     default: ""
@@ -45,4 +45,4 @@ const BankSchema = Schema({
   },
 });
 
-module.exports = BankSchema
+export default BankSchema

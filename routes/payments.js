@@ -1,17 +1,24 @@
-const express = require("express");
-const router = express.Router();
-const auth = require("../middleware/auth");
-const { check, validationResult } = require("express-validator");
-const Payment = require("../models/Payments");
-const User = require("../models/User");
-const PaymentDetail = require("../models/PaymentDetail");
+import { Router } from "express";
+const router = Router();
+import auth from "../middleware/auth";
+import { check, validationResult } from "express-validator";
+import Payment, {
+  find,
+  findById,
+  findByIdAndUpdate,
+  findByIdAndRemove,
+} from "../models/Payments";
+import User from "../models/User";
+import PaymentDetail, {
+  findByIdAndRemove as _findByIdAndRemove,
+} from "../models/PaymentDetail";
 
 //@route    GET api/payments
 //@desc     Get all payments for all users
 //@access   Private
 router.get("/", auth, async (req, res) => {
   try {
-    const payments = await Payment.find().sort({
+    const payments = await find().sort({
       date: -1,
     });
     res.json(payments);
@@ -19,7 +26,6 @@ router.get("/", auth, async (req, res) => {
     res.status(500).send({ error: err.message });
   }
 });
-
 
 //@route    POST api/payments/new
 //@desc     Add new Payment
@@ -66,26 +72,25 @@ router.post(
   }
 );
 
-
 //@route    PUT api/payments/reject
 //@desc     Update All Pending payments as rejected
 //@access   PRIVATE
 router.put("/reject", auth, async (req, res) => {
   try {
-    let payments = await Payment.find({ paymentStatus: "Pending" });
+    let payments = await find({ paymentStatus: "Pending" });
     if (!payments.length) {
       return res
         .status(404)
         .json({ error: "No pending payments found to reject" });
     } else {
-      payments = await Payment.find({ paymentStatus: "Pending" }).updateMany({
+      payments = await find({ paymentStatus: "Pending" }).updateMany({
         $set: {
           paymentStatus: "Rejected",
           updatedByUser: req.user.id,
           updatedByUserDate: Date.now(),
         },
       });
-      payments = await Payment.find({});
+      payments = await find({});
       res.status(200).json(payments);
     }
   } catch (error) {
@@ -98,20 +103,20 @@ router.put("/reject", auth, async (req, res) => {
 //@access   PRIVATE
 router.put("/approve", auth, async (req, res) => {
   try {
-    let payments = await Payment.find({ paymentStatus: "Pending" });
+    let payments = await find({ paymentStatus: "Pending" });
     if (!payments.length) {
       return res
         .status(404)
         .json({ error: "No pending payments found to Approve" });
     } else {
-      payments = await Payment.find({ paymentStatus: "Pending" }).updateMany({
+      payments = await find({ paymentStatus: "Pending" }).updateMany({
         $set: {
           paymentStatus: "Approved",
           updatedByUser: req.user.id,
           updatedByUserDate: Date.now(),
         },
       });
-      payments = await Payment.find({});
+      payments = await find({});
       res.status(200).json(payments);
     }
   } catch (error) {
@@ -124,20 +129,20 @@ router.put("/approve", auth, async (req, res) => {
 //@access   PRIVATE
 router.put("/paid", auth, async (req, res) => {
   try {
-    let payments = await Payment.find({ paymentStatus: "Approved" });
+    let payments = await find({ paymentStatus: "Approved" });
     if (!payments.length) {
       return res
         .status(404)
         .json({ error: "No approved payments, pending payment" });
     } else {
-      payments = await Payment.find({ paymentStatus: "Approved" }).updateMany({
+      payments = await find({ paymentStatus: "Approved" }).updateMany({
         $set: {
           paymentStatus: "Paid",
           updatedByUser: req.user.id,
           updatedByUserDate: Date.now(),
         },
       });
-      payments = await Payment.find({});
+      payments = await find({});
       res.status(200).json(payments);
     }
   } catch (error) {
@@ -150,7 +155,7 @@ router.put("/paid", auth, async (req, res) => {
 //@access   PRIVATE
 router.put("/:id/approve", auth, async (req, res) => {
   try {
-    let payments = await Payment.findById(req.params.id);
+    let payments = await findById(req.params.id);
     if (!payments) {
       return res
         .status(404)
@@ -160,12 +165,12 @@ router.put("/:id/approve", auth, async (req, res) => {
       paymentFields.paymentStatus = "Approved";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      payments = await Payment.findByIdAndUpdate(
+      payments = await findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
         { new: true }
       );
-      payments = await Payment.find({});
+      payments = await find({});
       res.status(200).json(payments);
     }
   } catch (error) {
@@ -178,7 +183,7 @@ router.put("/:id/approve", auth, async (req, res) => {
 //@access   PRIVATE
 router.put("/:id/reject", auth, async (req, res) => {
   try {
-    let payments = await Payment.findById(req.params.id);
+    let payments = await findById(req.params.id);
     if (!payments) {
       return res
         .status(404)
@@ -188,12 +193,12 @@ router.put("/:id/reject", auth, async (req, res) => {
       paymentFields.paymentStatus = "Rejected";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      payments = await Payment.findByIdAndUpdate(
+      payments = await findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
         { new: true }
       );
-      payments = await Payment.find({});
+      payments = await find({});
       res.status(200).json(payments);
     }
   } catch (error) {
@@ -206,7 +211,7 @@ router.put("/:id/reject", auth, async (req, res) => {
 //@access   PRIVATE
 router.put("/:id/onhold", auth, async (req, res) => {
   try {
-    let payments = await Payment.findById(req.params.id);
+    let payments = await findById(req.params.id);
     if (!payments) {
       return res
         .status(404)
@@ -216,12 +221,12 @@ router.put("/:id/onhold", auth, async (req, res) => {
       paymentFields.paymentStatus = "On Hold";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      payments = await Payment.findByIdAndUpdate(
+      payments = await findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
         { new: true }
       );
-      payments = await Payment.find({});
+      payments = await find({});
       res.status(200).json(payments);
     }
   } catch (error) {
@@ -234,7 +239,7 @@ router.put("/:id/onhold", auth, async (req, res) => {
 //@access   PRIVATE
 router.put("/:id/pending", auth, async (req, res) => {
   try {
-    let payments = await Payment.findById(req.params.id);
+    let payments = await findById(req.params.id);
     if (!payments) {
       return res
         .status(404)
@@ -244,12 +249,12 @@ router.put("/:id/pending", auth, async (req, res) => {
       paymentFields.paymentStatus = "Pending";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      payments = await Payment.findByIdAndUpdate(
+      payments = await findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
         { new: true }
       );
-      payments = await Payment.find({});
+      payments = await find({});
       res.status(200).json(payments);
     }
   } catch (error) {
@@ -262,7 +267,7 @@ router.put("/:id/pending", auth, async (req, res) => {
 //@access   PRIVATE
 router.put("/:id/paid", auth, async (req, res) => {
   try {
-    let payments = await Payment.findById(req.params.id);
+    let payments = await findById(req.params.id);
     if (!payments) {
       return res
         .status(404)
@@ -272,12 +277,12 @@ router.put("/:id/paid", auth, async (req, res) => {
       paymentFields.paymentStatus = "Paid";
       paymentFields.updatedById = req.user.id;
       paymentFields.updatedAt = Date.now();
-      payments = await Payment.findByIdAndUpdate(
+      payments = await findByIdAndUpdate(
         req.params.id,
         { $set: paymentFields },
         { new: true }
       );
-      payments = await Payment.find({});
+      payments = await find({});
       res.status(200).json(payments);
     }
   } catch (error) {
@@ -289,29 +294,30 @@ router.put("/:id/paid", auth, async (req, res) => {
 //@access   Private
 router.get("/:id", auth, async (req, res) => {
   try {
-    const payments = await Payment.findById(req.params.id)
-      .populate("paymentDetail")
+    const payments = await findById(req.params.id).populate("paymentDetail");
     res.json(payments);
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
 });
 
-
 //@route    DELETE api/payments/:id
 //@desc     Delete User Payment
 //@access   PRIVATE
 router.delete("/:id", auth, async (req, res) => {
   try {
-    let payment = await Payment.findById(req.params.id); // find payment by ID
+    let payment = await findById(req.params.id); // find payment by ID
     if (!payment) return res.status(404).json({ error: "payment not found" });
     //ensure user owns payment
     if (payment.user.toString() === req.user.id) {
       return res.status(401).json({ error: "You cannot delete this payment" });
     }
-    await PaymentDetail.findByIdAndRemove(payment.paymentDetail);
-    await User.updateOne({ _id: payment.user }, { $pull: { payments: payment._id }});
-    await Payment.findByIdAndRemove(
+    await _findByIdAndRemove(payment.paymentDetail);
+    await User.updateOne(
+      { _id: payment.user },
+      { $pull: { payments: payment._id } }
+    );
+    await findByIdAndRemove(
       req.params.id,
       res.json({ error: "Payment Removed" })
     );
@@ -320,4 +326,4 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

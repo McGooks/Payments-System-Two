@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
-const AddressSchema = require("./schemas/Address")
-const BankSchema = require("./schemas/Bank")
-const ContactDetailsSchema = require("./schemas/ContactDetails")
-const UserTaxDeclarationSchema = require("./schemas/UserTaxDeclaration")
+import { Schema, model } from "mongoose";
+import AddressSchema from "./schemas/Address";
+import BankSchema from "./schemas/Bank";
+import ContactDetailsSchema from "./schemas/ContactDetails";
+import UserTaxDeclarationSchema from "./schemas/UserTaxDeclaration";
 
 const role = [
   "User",
@@ -14,7 +14,7 @@ const role = [
 ];
 const status = ["Pending", "Active", "Disabled", "Expired"];
 const titlesArray = ["Mr", "Mrs", "Miss", "Dr", "Ms", "Prof"];
-const UserSchema = mongoose.Schema({
+const UserSchema = new Schema({
   address: [AddressSchema],
   bank: [BankSchema],
   contact: [ContactDetailsSchema],
@@ -23,7 +23,7 @@ const UserSchema = mongoose.Schema({
     default: Date.now,
   },
   createdById: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "users",
   },
   deletedAt: {
@@ -86,7 +86,7 @@ const UserSchema = mongoose.Schema({
   },
   payments: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "payments",
     },
   ],
@@ -121,7 +121,7 @@ const UserSchema = mongoose.Schema({
     default: Date.now,
   },
   updatedById: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "users",
   },
   taxDeclaration: [UserTaxDeclarationSchema],
@@ -142,9 +142,9 @@ function isValidTimestamp(date) {
 }
 
 UserSchema.pre("remove", function (next) {
-  const Payments = mongoose.model("payments");
+  const Payments = model("payments");
   Payments.remove({ _id: { $in: this.payments } }).then(() => next()); //iterates through the payments and finds all ID's "in" the model and removes
 });
 
-const User = mongoose.model("user", UserSchema);
-module.exports = User
+const User = model("user", UserSchema);
+export default User;

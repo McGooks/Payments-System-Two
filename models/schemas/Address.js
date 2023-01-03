@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema } from "mongoose";
 
 
-const AddressSchema = Schema({
+
+const AddressSchema = new Schema({
   street: {
     type: String,
     default: ""
@@ -41,4 +41,4 @@ const AddressSchema = Schema({
   },
 });
 
-module.exports = AddressSchema;
+export default AddressSchema;

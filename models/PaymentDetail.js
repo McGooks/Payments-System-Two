@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema, model } from "mongoose";
 
-const PaymentDetailSchema = Schema({
+
+const PaymentDetailSchema = new Schema({
   paymentCalc: {
     type: Object
   },
@@ -29,5 +29,5 @@ const PaymentDetailSchema = Schema({
   },
 });
 
-const PaymentDetail = mongoose.model("paymentDetail", PaymentDetailSchema);
-module.exports = PaymentDetail;
+const PaymentDetail = model("paymentDetail", PaymentDetailSchema);
+export default PaymentDetail;

@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 //Context
 import { monthWords } from "../../utils/dropdowns";
 
@@ -14,7 +14,7 @@ const date = new Date().toUTCString();
 const UserPayments = (props) => {
   const { user, userPayments, userPaymentsLoading } = props;
 
-  const history = useHistory();
+  const history = useNavigate();
 
   function MonthWords(i) {
     const arr = monthWords.map((value) => value.value);

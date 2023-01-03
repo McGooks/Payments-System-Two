@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema} from "mongoose";
 
-const ContactDetailsSchema = Schema({
+const ContactDetailsSchema = new Schema({
   mobile: {
     type: String,
     default: ""
@@ -16,4 +15,4 @@ const ContactDetailsSchema = Schema({
   },
 });
 
-module.exports = ContactDetailsSchema;
+export default ContactDetailsSchema;

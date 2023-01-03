@@ -1,12 +1,7 @@
 import React, { Fragment } from "react";
 
 import "./App.css";
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 //Authentication
 import SetAuthToken from "./utils/SetAuthToken";
 //Authenticated Pages
@@ -51,31 +46,89 @@ const App = () => {
           <StatsState>
             <UserAdminState>
               <PaymentState>
-                <Router>
+                <BrowserRouter>
                   <Fragment>
                     <NavigationBar />
                     <div className="container">
-                      <Switch>
-                        <PrivateRoute exact path="/" component={Home} />
-                        <PrivateRoute exact path="/userAdmin" component={UserAdmin} />
-                        <PrivateRoute exact path="/import" component={Import} />
-                        <PrivateRoute exact path="/importNSP" component={ImportNSP} />
-                        <PrivateRoute exact path="/payments" component={Payments} />
-                        <PrivateRoute exact path="/payments/new" component={PaymentsCreate} />
-                        <PrivateRoute exact path="/payments/:id" component={ViewPayments} />
-                        <PrivateRoute exact path="/user/:id/payments" component={UserPayments}/>
-                        <PrivateRoute exact path="/user/:id" component={User} />
-                        <Route exact path="/users/confirm-email/:token" component={Verify} />
-                        <Route exact path="/users/password-reset/:token" component={PasswordReset} />
-                        <Route exact path="/about" component={About} />
-                        <Route exact path="/users/register" component={Register} />
-                        <Route exact path="/password-reset" component={PasswordResetRequest} />
-                        <Route exact path="/login" component={Login} />
-                        <Redirect from="*" to="/" />
-                      </Switch>
+                      <Routes>
+                        <Route
+                          exact
+                          path="/"
+                          element={<PrivateRoute component={Home} />}
+                        />
+                        <Route
+                          exact
+                          path="/userAdmin"
+                          element={<PrivateRoute component={<UserAdmin />} />}
+                        />
+                        <Route
+                          exact
+                          path="/import"
+                          element={<PrivateRoute component={<Import />} />}
+                        />
+                        <Route
+                          exact
+                          path="/importNSP"
+                          element={<PrivateRoute component={<ImportNSP />} />}
+                        />
+                        <Route
+                          exact
+                          path="/payments"
+                          element={<PrivateRoute component={<Payments />} />}
+                        />
+                        <Route
+                          exact
+                          path="/payments/new"
+                          element={
+                            <PrivateRoute component={<PaymentsCreate />} />
+                          }
+                        />
+                        <Route
+                          exact
+                          path="/payments/:id"
+                          element={
+                            <PrivateRoute component={<ViewPayments />} />
+                          }
+                        />
+                        <Route
+                          exact
+                          path="/user/:id/payments"
+                          element={
+                            <PrivateRoute component={<UserPayments />} />
+                          }
+                        />
+                        <Route
+                          exact
+                          path="/user/:id"
+                          element={<PrivateRoute component={<User />} />}
+                        />
+                        <Route
+                          exact
+                          path="/users/confirm-email/:token"
+                          element={<Verify />}
+                        />
+                        <Route
+                          exact
+                          path="/users/password-reset/:token"
+                          element={<PasswordReset />}
+                        />
+                        <Route exact path="/about" element={<About />} />
+                        <Route
+                          exact
+                          path="/users/register"
+                          element={<Register />}
+                        />
+                        <Route
+                          exact
+                          path="/password-reset"
+                          element={<PasswordResetRequest />}
+                        />
+                        <Route exact path="/login" element={<Login />} />
+                        <Route element={<Navigate from="*" to="/" />} />
+                      </Routes>
                     </div>
                   </Fragment>
-                </Router>
+                </BrowserRouter>
               </PaymentState>
             </UserAdminState>
           </StatsState>

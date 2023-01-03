@@ -1,11 +1,11 @@
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const config = require("config");
-const router = express.Router();
-const { check, validationResult } = require("express-validator");
-const auth = require("../middleware/auth");
-const User = require("../models/User");
+import { Router } from "express";
+import { compare } from "bcryptjs";
+import { sign } from "jsonwebtoken";
+import { get } from "config";
+const router = Router();
+import { check, validationResult } from "express-validator";
+import auth from "../middleware/auth";
+import User from "../models/User";
 
 //@route    GET api/auth
 //@desc     Get logged in user
@@ -13,6 +13,7 @@ const User = require("../models/User");
 router.get("/", auth, async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
+    console.log(user);
     res.json(user);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -26,7 +27,7 @@ router.get("/", auth, async (req, res, next) => {
 router.post(
   "/",
   [
-    check("email", "Please insert an email address").not().isEmpty() ,
+    check("email", "Please insert an email address").not().isEmpty(),
     check("email", "A valid email address is required").isEmail(),
     check("password", "A valid password is required").not().isEmpty(),
   ],
@@ -41,26 +42,28 @@ router.post(
     const { email, password } = req.body;
     try {
       let user = await User.findOne({ email }); // find user email and return user.id
-      if (!user) { // if user does not exist in DB throw error
+      if (!user) {
+        // if user does not exist in DB throw error
         res.status(400).json({
           error: "User account not found, please register an account",
-        }); 
+        });
       }
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) { // if user password does not match exist throw error
+      const isMatch = await compare(password, user.password);
+      console.log(isMatch);
+      if (!isMatch) {
+        // if user password does not match exist throw error
         res
           .status(400)
-          .json({ error: "The password you have entered is invalid" }); 
+          .json({ error: "The password you have entered is invalid" });
       }
-      if (user.status === "Disabled") { // if user account is disabled throw error
-        res
-          .status(403)
-          .json({
-            error:
-              "This account has been disabled, please contact the system administrator for support",
-          });
+      if (user.status === "Disabled") {
+        // if user account is disabled throw error
+        res.status(403).json({
+          error:
+            "This account has been disabled, please contact the system administrator for support",
+        });
       }
-      
+
       // set payload variable for jwt sign (token)
       const payload = {
         user: {
@@ -68,9 +71,9 @@ router.post(
         },
       };
       // on sign pass in payload and also token to expire in secs
-      jwt.sign(
+      sign(
         payload,
-        config.get("jwtSecret"),
+        get("jwtSecret"),
         {
           expiresIn: 360000,
         },
@@ -85,4 +88,4 @@ router.post(
   }
 );
 
-module.exports = router;
+export default router;

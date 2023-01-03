@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { useHistory, useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 //Navigation
 import NavButtonPaymentsAdd from "../layouts/NavButtonPaymentsAdd";
 //Components

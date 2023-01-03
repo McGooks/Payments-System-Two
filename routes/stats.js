@@ -1,8 +1,8 @@
-const express = require("express");
-const router = express.Router();
-const auth = require("../middleware/auth");
-const Stat = require("../models/Payments");
-const User = require("../models/User");
+import { Router } from "express";
+const router = Router();
+import auth from "../middleware/auth";
+import { countDocuments, aggregate } from "../models/Payments";
+import User from "../models/User";
 
 function pad(num, size) {
   return ("0" + num).substr(-size);
@@ -57,12 +57,12 @@ router.get("/", auth, async (req, res) => {
       status: "Active",
       "taxDeclaration.0.signed": "true",
     });
-    const statsPending = await Stat.countDocuments({
+    const statsPending = await countDocuments({
       paymentStatus: "Pending",
     });
-    const statsExpired = await Stat.countDocuments({ status: "Expired" });
-  
-    const statsPaymentPendingAuth = await Stat.aggregate([
+    const statsExpired = await countDocuments({ status: "Expired" });
+
+    const statsPaymentPendingAuth = await aggregate([
       { $match: { paymentStatus: "Pending" } },
       {
         $group: {
@@ -72,7 +72,7 @@ router.get("/", auth, async (req, res) => {
       },
     ]);
 
-    const statsPaymentAuthMTD = await Stat.aggregate([
+    const statsPaymentAuthMTD = await aggregate([
       {
         $project: {
           paymentPeriodNum: 1,
@@ -101,7 +101,7 @@ router.get("/", auth, async (req, res) => {
         },
       },
     ]);
-    const statsPaymentAuthYTD = await Stat.aggregate([
+    const statsPaymentAuthYTD = await aggregate([
       {
         $project: {
           amount: 1,
@@ -130,7 +130,7 @@ router.get("/", auth, async (req, res) => {
         },
       },
     ]);
-    const statsCurrentSemComp = await Stat.aggregate([
+    const statsCurrentSemComp = await aggregate([
       {
         $project: {
           amount: 1,
@@ -162,7 +162,7 @@ router.get("/", auth, async (req, res) => {
       },
       { $unset: ["_id"] },
     ]);
-    const statsPrevSemComp = await Stat.aggregate([
+    const statsPrevSemComp = await aggregate([
       {
         $project: {
           amount: 1,
@@ -214,4 +214,4 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

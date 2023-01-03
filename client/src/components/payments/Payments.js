@@ -1,6 +1,6 @@
 import React, { useContext, Fragment, useEffect } from "react";
 import { styled } from '@mui/material/styles';
-import { useLocation, useHistory, useParams, Link } from "react-router-dom";
+import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import moment from "moment";
 //Context
 import UserContext from "../../context/user/userContext";
@@ -82,7 +82,7 @@ const Payments = (props) => {
     paidPayment,
   } = paymentContext;
 
-  const history = useHistory();
+  const history = useNavigate();
 
   function MonthWords(i) {
     const arr = monthWords.map((value) => value.value);

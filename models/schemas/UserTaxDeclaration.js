@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema } from "mongoose";
 
-const UserTaxSchema = Schema({
+
+const UserTaxSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now,
@@ -47,4 +47,4 @@ const UserTaxSchema = Schema({
   },
 });
 
-module.exports = UserTaxSchema;
+export default UserTaxSchema;

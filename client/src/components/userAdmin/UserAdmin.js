@@ -4,7 +4,7 @@ import UserAdminContext from "../../context/userAdmin/userAdminContext";
 import UserContext from "../../context/user/userContext";
 //Components
 import { Grid, Typography } from "@mui/material";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import PersonIcon from "@mui/icons-material/Person";
 import Chip from "@mui/material/Chip";
@@ -29,7 +29,7 @@ const UserAdmin = (props) => {
     setCurrent,
   } = userAdminContext;
 
-  const history = useHistory();
+  const history = useNavigate();
 
   useEffect(() => {
     getUsers();

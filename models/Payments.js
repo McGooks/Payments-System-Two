@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema, model } from "mongoose";
 
-const PaymentsSchema = Schema({
+const PaymentsSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "users",
@@ -104,5 +103,5 @@ const PaymentsSchema = Schema({
 //   PaymentDetail.remove({ _id: { $in: this.paymentDetail } }).then(() => next()); //iterates through the payments and finds all ID's "in" the model and removes
 // });
 
-const Payments = mongoose.model("payments", PaymentsSchema);
-module.exports = Payments;
+const Payments = model("payments", PaymentsSchema);
+export default Payments;

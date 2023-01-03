@@ -1,6 +1,6 @@
 import React, { useContext, Fragment, useEffect, useState } from "react";
 import { styled } from '@mui/material/styles';
-import { useHistory, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import {
   deliveryCategory,
@@ -190,7 +190,7 @@ const CreatePayment = (props) => {
   const paymentContext = useContext(PaymentContext);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { payments, addPayment, loading, error } = paymentContext;
-  const history = useHistory();
+  const history = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {

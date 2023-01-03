@@ -1,6 +1,6 @@
 import React, { useContext, Fragment, useEffect, useState } from "react";
 import { styled } from '@mui/material/styles';
-import { useHistory, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 //Context
