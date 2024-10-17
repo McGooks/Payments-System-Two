@@ -1,6 +1,6 @@
 {
   "name": "gma-payment-system",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "node": "^v16.15.0"
   },
@@ -34,7 +34,7 @@
     "mongoose": "^7.6.3",
     "mongoose-sequence": "^5.3.1",
     "netmask": "^2.0.2",
-    "pac-resolver": "^7.0.0",
+    "pac-resolver": "^7.0.1",
     "url-parse": "^1.5.10",
     "nth-check": ">=2.1.1"
   },
